@@ -42,6 +42,7 @@
     </nav>
     <div class="ly-spacer" style="flex:1"></div>
     <input class="ly-search" value="{{ q }}" sc-camel-on-change="{{ onQ }}" placeholder="搜尋標題、作者、關鍵詞、內文" style="width:280px;padding:8px 12px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+    <button sc-camel-on-click="{{ gChip }}" title="{{ gChipTitle }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:13px;display:flex;align-items:center;gap:7px;max-width:200px"><span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:{{ gDot }};color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center">G</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ gChipLabel }}</span></button>
     <button sc-camel-on-click="{{ openSettings }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:transparent;font-size:13px">設定與備份</button>
     <button sc-camel-on-click="{{ openAdd }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500">＋ 新增論文</button>
   </header>
@@ -95,8 +96,19 @@
               <div style="flex:1"></div>
               <button sc-camel-on-click="{{ copyApa }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">複製 APA</button>
               <button sc-camel-on-click="{{ copyBib }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">複製 BibTeX</button>
+              <a href="{{ scholarUrl }}" target="_blank" rel="noopener" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px;text-decoration:none" style-hover="color:#1d1b18">Google 學術</a>
+              <button sc-camel-on-click="{{ exportDoc }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">匯出 Google 文件</button>
+              <button sc-camel-on-click="{{ togglePlan }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">排入日曆</button>
               <button sc-camel-on-click="{{ deletePaper }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:oklch(0.5 0.15 25)">刪除</button>
             </div>
+            <sc-if value="{{ planOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;padding:10px 12px;background:#fff;border:1px solid #e2ddd3;border-radius:6px">
+                <span style="font-size:12px">排入 Google 日曆（1 小時）</span>
+                <input type="datetime-local" value="{{ planAt }}" sc-camel-on-change="{{ onPlanAt }}" style="padding:5px 8px;border:1px solid #e2ddd3;border-radius:5px;font-size:12px">
+                <button sc-camel-on-click="{{ planReading }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">加到日曆</button>
+                <button sc-camel-on-click="{{ togglePlan }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px">取消</button>
+              </div>
+            </sc-if>
             <div style="font-size:12px;color:#625d55;margin-bottom:8px">點選段落可加螢光、筆記或重新翻譯。</div>
             <div style="display:flex;flex-direction:column;gap:4px">
               <sc-for list="{{ paras }}" as="p" hint-placeholder-count="3">
@@ -326,6 +338,21 @@
           <input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ onFile }}" style="display:none">
         </label>
       </sc-if>
+      <sc-if value="{{ addDrive }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px;border:1px solid #e2ddd3;border-radius:8px;padding:12px;background:#fff">
+          <div style="display:flex;gap:8px">
+            <input value="{{ driveQ }}" sc-camel-on-change="{{ onDriveQ }}" sc-camel-on-key-down="{{ onDriveKey }}" placeholder="搜尋 Google 雲端硬碟裡的 PDF（留空列出最近的）" style="flex:1;min-width:0;padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <button sc-camel-on-click="{{ driveSearch }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">搜尋</button>
+          </div>
+          <div style="font-size:12px;color:#625d55;line-height:1.6">{{ driveMsg }}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;max-height:240px;overflow:auto">
+            <sc-for list="{{ driveFiles }}" as="df" hint-placeholder-count="0">
+              <button sc-camel-on-click="{{ df.onClick }}" style="text-align:left;border:0;border-radius:5px;padding:8px 10px;background:{{ df.bg }};display:flex;justify-content:space-between;gap:10px" style-hover="background:#f4f2ed"><span style="font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ df.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;flex-shrink:0">{{ df.meta }}</span></button>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;color:oklch(0.42 0.1 200)">{{ pdfStatus }}</div>
+        </div>
+      </sc-if>
       <sc-if value="{{ addText }}" hint-placeholder-val="{{ false }}">
         <textarea value="{{ form.text }}" sc-camel-on-change="{{ onF.text }}" rows="9" placeholder="貼上摘要或段落（任何語言，以空行分段）…" style="padding:11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-family:'Noto Serif TC',Georgia,serif;font-size:13px;line-height:1.7;resize:vertical;outline:none"></textarea>
       </sc-if>
@@ -347,20 +374,38 @@
 
 <sc-if value="{{ showSet }}" hint-placeholder-val="{{ false }}">
   <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:10">
-    <div style="width:560px;max-width:calc(100vw - 40px);max-height:calc(100vh - 60px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
+    <div style="width:600px;max-width:calc(100vw - 32px);max-height:calc(100vh - 40px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">設定與備份</h2>
         <button sc-camel-on-click="{{ closeSettings }}" style="border:0;background:none;font-size:13px;color:#625d55">關閉</button>
       </div>
       <div style="font-size:12px;font-weight:500">AI 連線</div>
       <div style="font-size:12px;line-height:1.6;color:#2c2925;background:oklch(0.95 0.025 200);padding:8px 10px;border-radius:5px">目前：{{ aiMode }}</div>
-      <input type="password" value="{{ keyDraft }}" sc-camel-on-change="{{ onKeyDraft }}" placeholder="Anthropic API 金鑰（sk-ant-…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-      <input value="{{ codeDraft }}" sc-camel-on-change="{{ onCodeDraft }}" placeholder="網站存取碼（Vercel 後端有設定時才需要）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+      <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px;align-self:flex-start">
+        <sc-for list="{{ aiBtns }}" as="ab" hint-placeholder-count="2"><button sc-camel-on-click="{{ ab.onClick }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ ab.bg }}">{{ ab.label }}</button></sc-for>
+      </div>
+      <sc-if value="{{ aiClaude }}" hint-placeholder-val="{{ true }}">
+        <input type="password" value="{{ keyDraft }}" sc-camel-on-change="{{ onKeyDraft }}" placeholder="Anthropic API 金鑰（sk-ant-…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+        <input value="{{ codeDraft }}" sc-camel-on-change="{{ onCodeDraft }}" placeholder="網站存取碼（Vercel 後端有設定時才需要）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+        <div style="font-size:12px;color:#625d55;line-height:1.6">在 Vercel 部署且已設定伺服器金鑰時，可以不填金鑰。GitHub Pages 沒有後端，必須填自己的金鑰。</div>
+      </sc-if>
+      <sc-if value="{{ aiGemini }}" hint-placeholder-val="{{ false }}">
+        <input type="password" value="{{ gemKeyDraft }}" sc-camel-on-change="{{ onGemKeyDraft }}" placeholder="Gemini API 金鑰（AIza…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+        <input value="{{ gemModelDraft }}" sc-camel-on-change="{{ onGemModelDraft }}" placeholder="模型名稱（預設 gemini-2.5-flash）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+        <div style="font-size:12px;color:#625d55;line-height:1.6">到 Google AI Studio（aistudio.google.com）按「Get API key」免費建立金鑰。自動辨識、翻譯與問答都會改用 Gemini。</div>
+      </sc-if>
       <div style="display:flex;gap:8px">
         <button sc-camel-on-click="{{ saveKey }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存</button>
         <button sc-camel-on-click="{{ clearKey }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">清除金鑰</button>
       </div>
-      <div style="font-size:12px;color:#625d55;line-height:1.6">在 Vercel 部署且已設定伺服器金鑰時，可以不填金鑰。GitHub Pages 沒有後端，必須填自己的金鑰。</div>
+      <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">Google 帳號</div>
+      <div style="font-size:12px;line-height:1.6;color:#2c2925;background:oklch(0.95 0.025 200);padding:8px 10px;border-radius:5px">{{ gStatus }}</div>
+      <input value="{{ clientDraft }}" sc-camel-on-change="{{ onClientDraft }}" placeholder="Google OAuth 用戶端 ID（….apps.googleusercontent.com）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+      <div style="display:flex;gap:8px">
+        <button sc-camel-on-click="{{ gSignIn }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">{{ gSignInLabel }}</button>
+        <sc-if value="{{ gSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ gSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">中斷連結</button></sc-if>
+      </div>
+      <div style="font-size:12px;color:#625d55;line-height:1.6">連結後可以：從 Google 雲端硬碟匯入 PDF、把論文與筆記匯出成 Google 文件、把閱讀計畫排入 Google 日曆，以及用雲端硬碟同步文獻庫。用戶端 ID 的建立步驟見 README 的「Google 整合」。</div>
       <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">文獻庫備份</div>
       <div style="font-size:12px;color:#625d55;line-height:1.6">匯出全部論文、筆記、串聯與對話成 JSON 檔，可在其他電腦匯入。匯入時會合併，同一篇論文以匯入檔為準。API 金鑰不會被匯出。</div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -368,12 +413,20 @@
         <label style="border:1px solid #d6d0c4;padding:6px 14px;border-radius:5px;background:#fff;font-size:12px">匯入 JSON<input type="file" accept="application/json,.json" sc-camel-on-change="{{ onImport }}" style="display:none"></label>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ stats }}</span>
       </div>
-      <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">雲端同步（GitHub Gist）</div>
-      <div style="font-size:12px;color:#625d55;line-height:1.6">把文獻庫存在你 GitHub 帳號的私人 Gist，多台裝置填同一組權杖與 Gist ID 即可同步。權杖到 GitHub → Settings → Developer settings → Personal access tokens 建立，只需要 Gists 讀寫權限。第一次上傳會自動建立 Gist。</div>
-      <input type="password" value="{{ tokenDraft }}" sc-camel-on-change="{{ onTokenDraft }}" placeholder="GitHub 權杖（github_pat_… 或 ghp_…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-      <input value="{{ gistDraft }}" sc-camel-on-change="{{ onGistDraft }}" placeholder="Gist ID（留空，第一次上傳時自動建立）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+      <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">雲端同步</div>
+      <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px;align-self:flex-start">
+        <sc-for list="{{ syncBtns }}" as="sb" hint-placeholder-count="2"><button sc-camel-on-click="{{ sb.onClick }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ sb.bg }}">{{ sb.label }}</button></sc-for>
+      </div>
+      <sc-if value="{{ syncDrive }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:12px;color:#625d55;line-height:1.6">文獻庫存在你雲端硬碟的「論憶」資料夾（lunyi-library.json）。其他裝置連結同一個 Google 帳號即可同步。需要先在上方連結 Google 帳號。</div>
+      </sc-if>
+      <sc-if value="{{ syncGist }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:12px;color:#625d55;line-height:1.6">把文獻庫存在你 GitHub 帳號的私人 Gist，多台裝置填同一組權杖與 Gist ID 即可同步。權杖到 GitHub → Settings → Developer settings → Personal access tokens 建立，只需要 Gists 讀寫權限。第一次上傳會自動建立 Gist。</div>
+        <input type="password" value="{{ tokenDraft }}" sc-camel-on-change="{{ onTokenDraft }}" placeholder="GitHub 權杖（github_pat_… 或 ghp_…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+        <input value="{{ gistDraft }}" sc-camel-on-change="{{ onGistDraft }}" placeholder="Gist ID（留空，第一次上傳時自動建立）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+        <button sc-camel-on-click="{{ saveSync }}" style="align-self:flex-start;border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存 Gist 設定</button>
+      </sc-if>
       <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-        <button sc-camel-on-click="{{ saveSync }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存同步設定</button>
         <button sc-camel-on-click="{{ pushCloud }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">上傳到雲端</button>
         <button sc-camel-on-click="{{ pullCloud }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">從雲端下載並合併</button>
         <button sc-camel-on-click="{{ toggleAuto }}" style="border:1px solid {{ autoLine }};padding:7px 14px;border-radius:5px;background:{{ autoBg }};color:{{ autoColor }};font-size:12px">{{ autoLabel }}</button>
@@ -384,19 +437,36 @@
 </sc-if>
 
 <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1d1b18;color:#faf9f6;font-size:13px;padding:10px 18px;border-radius:6px;z-index:20">{{ toast }}</div>
+  <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1d1b18;color:#faf9f6;font-size:13px;padding:10px 18px;border-radius:6px;z-index:20;max-width:calc(100vw - 32px)">{{ toast }}<sc-if value="{{ hasToastLink }}" hint-placeholder-val="{{ false }}"><a href="{{ toastLink }}" target="_blank" rel="noopener" style="color:oklch(0.85 0.08 200);margin-left:12px">開啟</a></sc-if></div>
 </sc-if>
 </x-dc>
 <script>
 (function(){
-  if (window.claude && typeof window.claude.complete === 'function') return;
+  var native = window.claude && typeof window.claude.complete === 'function' ? window.claude : null;
   var MODEL = 'claude-sonnet-5-5';
   function ls(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
   function need(msg){ try { window.dispatchEvent(new CustomEvent('lunyi-need-key',{detail:msg})); } catch(e){} var er=new Error(msg); er.code='NO_KEY'; return er; }
   function pick(j){ return (j && j.content || []).filter(function(c){return c.type==='text';}).map(function(c){return c.text;}).join(''); }
-  window.__lunyiShim = true;
+  async function gemini(req, key){
+    var model = ls('lunyi-gemini-model') || 'gemini-2.5-flash';
+    var body = { contents: req.messages.map(function(m){ return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }] }; }) };
+    if (req.system) body.systemInstruction = { parts: [{ text: req.system }] };
+    var r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', { method:'POST', headers:{ 'content-type':'application/json', 'x-goog-api-key':key }, body: JSON.stringify(body) });
+    if (r.status === 400 || r.status === 403) { var t = await r.text(); if (/api.?key/i.test(t)) throw need('Gemini 金鑰無效，請到「設定」重新輸入'); throw new Error('Gemini HTTP ' + r.status); }
+    if (r.status === 404) throw need('找不到 Gemini 模型「' + model + '」，請到「設定」修改');
+    if (!r.ok) throw new Error('Gemini HTTP ' + r.status);
+    var c = ((await r.json()).candidates || [])[0];
+    return (c && c.content && c.content.parts || []).filter(function(x){ return !x.thought; }).map(function(x){ return x.text || ''; }).join('');
+  }
+  window.__lunyiShim = !native;
   window.claude = { complete: async function(req){
     if (typeof req === 'string') req = { messages:[{role:'user',content:req}] };
+    if (ls('lunyi-ai') === 'gemini') {
+      var gk = ls('lunyi-gemini-key');
+      if (!gk) throw need('已選擇 Gemini，請到「設定」輸入 Gemini API 金鑰');
+      return gemini(req, gk);
+    }
+    if (native) return native.complete(req);
     var body = { model: MODEL, max_tokens: Math.min(req.max_tokens||1500, 4000), messages: req.messages };
     if (req.system) body.system = req.system;
     var key = ls('lunyi-apikey');
@@ -431,6 +501,16 @@ const TESS = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min
 const OCR_LANGS = 'eng+chi_tra';
 const OCR_MAX = 60;
 const GIST_FILE = 'lunyi-library.json';
+// 網站擁有者可在這裡填入預設的 Google OAuth 用戶端 ID，使用者就不必自己建立
+const GOOGLE_CLIENT_ID = '';
+const GSI = 'https://accounts.google.com/gsi/client';
+const GAPI = 'https://www.googleapis.com';
+const G_BASE = 'openid email profile https://www.googleapis.com/auth/drive.file';
+const G_DRIVE_RO = 'https://www.googleapis.com/auth/drive.readonly';
+const G_CAL = 'https://www.googleapis.com/auth/calendar.events';
+const pad2 = n => String(n).padStart(2, '0');
+const localDT = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const loadScript = src => new Promise((ok, fail) => {
   if (document.querySelector(`script[src="${src}"]`)) return ok();
   const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = fail; document.head.appendChild(el);
@@ -505,7 +585,8 @@ class Component extends DCLogic {
     return { papers: d.papers, links: d.links || [], notes: d.notes || [], qa: d.qa || [], gone: d.gone || [], sel: d.papers[0] && d.papers[0].id,
       layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '',
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
-      linkTarget: '', linkNote: '', toast: '', ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '' };
+      linkTarget: '', linkNote: '', toast: '', ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
+      gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '' };
   }
   componentDidMount() {
     this._ps = this.state;
@@ -517,6 +598,10 @@ class Component extends DCLogic {
       l.href = ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500', 'family=Noto+Sans+TC:wght@400;500;700', 'family=Noto+Serif+TC:wght@400;600', 'display=swap'].join('&');
       document.head.appendChild(l);
     }
+    let gUser = null;
+    try { gUser = JSON.parse(this.lsGet('lunyi-g-user') || 'null'); } catch (e) {}
+    this.setState({ gUser, syncTarget: this.cloudTarget() });
+    if (this.gClient()) loadScript(GSI).catch(() => {});
     if (this.syncOn()) this.pullCloud(true).then(() => { this._syncReady = true; });
     else this._syncReady = true;
   }
@@ -534,8 +619,12 @@ class Component extends DCLogic {
   componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); clearTimeout(this._push); }
   lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
   lsSet(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
-  openSettings() { this.setState({ showSet: true, keyDraft: this.lsGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.lsGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id') }); }
+  openSettings() {
+    this.setState({ showSet: true, keyDraft: this.lsGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.lsGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
+      aiDraft: this.lsGet('lunyi-ai') || 'claude', gemKeyDraft: this.lsGet('lunyi-gemini-key'), gemModelDraft: this.lsGet('lunyi-gemini-model'), clientDraft: this.gClient(), syncTarget: this.cloudTarget() });
+  }
   aiMode() {
+    if (this.lsGet('lunyi-ai') === 'gemini') return this.lsGet('lunyi-gemini-key') ? `Google Gemini（${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}）` : 'Google Gemini（尚未填金鑰）';
     if (!window.__lunyiShim) return '執行環境內建 AI';
     if (this.lsGet('lunyi-apikey')) return '使用你的 API 金鑰，直接呼叫 Anthropic';
     return '網站後端 /api/claude（只有 Vercel 部署可用）';
@@ -579,42 +668,190 @@ class Component extends DCLogic {
     });
     return inc.length;
   }
-  syncOn() { return this.lsGet('lunyi-sync-auto') === '1' && !!this.lsGet('lunyi-gh-token') && !!this.lsGet('lunyi-gist-id'); }
+  cloudTarget() { return this.lsGet('lunyi-sync-target') || (this.lsGet('lunyi-gist-id') ? 'gist' : 'drive'); }
+  syncOn() {
+    if (this.lsGet('lunyi-sync-auto') !== '1') return false;
+    return this.cloudTarget() === 'drive' ? !!this.gClient() : !!this.lsGet('lunyi-gh-token') && !!this.lsGet('lunyi-gist-id');
+  }
   ghHeaders(token) { return { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' }; }
   ghError(r) { return new Error(r.status === 401 ? '權杖無效或已過期' : r.status === 404 ? '找不到 Gist，或權杖沒有 Gists 權限' : r.status === 403 ? '權限不足或超過 API 用量' : 'HTTP ' + r.status); }
   stamp() { return new Date().toTimeString().slice(0, 5); }
-  async pushCloud(quiet) {
+  async gistPush(content) {
     const token = this.lsGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
-    if (!token) return quiet || this.toast('請先填入 GitHub 權杖並儲存');
+    if (!token) throw new Error('請先填入 GitHub 權杖並儲存');
+    const files = { [GIST_FILE]: { content } };
+    const r = await fetch('https://api.github.com/gists' + (id ? '/' + id : ''), { method: id ? 'PATCH' : 'POST', headers: this.ghHeaders(token),
+      body: JSON.stringify(id ? { files } : { description: '論憶文獻庫同步', public: false, files }) });
+    if (!r.ok) throw this.ghError(r);
+    const j = await r.json();
+    if (!id) { this.lsSet('lunyi-gist-id', j.id); this.setState({ gistDraft: j.id }); }
+    return id ? '已上傳到 Gist' : '已建立 Gist 並上傳';
+  }
+  async gistPull() {
+    const token = this.lsGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
+    if (!token || !id) throw new Error('請先填入 GitHub 權杖與 Gist ID 並儲存');
+    const r = await fetch('https://api.github.com/gists/' + id, { headers: this.ghHeaders(token), cache: 'no-store' });
+    if (!r.ok) throw this.ghError(r);
+    const f = (await r.json()).files[GIST_FILE];
+    if (!f) throw new Error('Gist 裡沒有 ' + GIST_FILE);
+    return f.truncated ? (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content;
+  }
+  async drivePush(content, ia) {
+    const id = await this.driveLibId(ia);
+    if (id) { await this.driveUpload({}, content, 'application/json', id, ia); return '已上傳到 Google 雲端硬碟'; }
+    await this.driveUpload({ name: GIST_FILE, parents: [await this.driveFolder(ia)], appProperties: { lunyi: 'library' } }, content, 'application/json', null, ia);
+    return '已在雲端硬碟「論憶」資料夾建立同步檔';
+  }
+  async drivePull(ia) {
+    const id = await this.driveLibId(ia);
+    if (!id) throw new Error('雲端硬碟裡還沒有論憶的資料，請先上傳');
+    return (await this.gFetch(`/drive/v3/files/${id}?alt=media`, { cache: 'no-store' }, null, ia)).text();
+  }
+  // quiet = 自動同步：不跳 toast，也不開 Google 登入視窗
+  async pushCloud(quiet) {
     this.setState({ syncStatus: '上傳中…' });
     try {
-      const files = { [GIST_FILE]: { content: JSON.stringify(this.payload()) } };
-      const r = await fetch('https://api.github.com/gists' + (id ? '/' + id : ''), { method: id ? 'PATCH' : 'POST', headers: this.ghHeaders(token),
-        body: JSON.stringify(id ? { files } : { description: '論憶文獻庫同步', public: false, files }) });
-      if (!r.ok) throw this.ghError(r);
-      const j = await r.json();
-      if (!id) { this.lsSet('lunyi-gist-id', j.id); this.setState({ gistDraft: j.id }); }
+      const content = JSON.stringify(this.payload());
+      const msg = this.cloudTarget() === 'drive' ? await this.drivePush(content, !quiet) : await this.gistPush(content);
       this.setState({ syncStatus: `最後上傳：${this.stamp()}` });
-      if (!quiet) this.toast(id ? '已上傳到雲端' : '已建立 Gist 並上傳');
+      if (!quiet) this.toast(msg);
     } catch (e) { this.setState({ syncStatus: '上傳失敗：' + e.message }); if (!quiet) this.toast('上傳失敗：' + e.message); }
   }
   async pullCloud(quiet) {
-    const token = this.lsGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
-    if (!token || !id) return quiet || this.toast('請先填入 GitHub 權杖與 Gist ID 並儲存');
     this.setState({ syncStatus: '下載中…' });
     try {
-      const r = await fetch('https://api.github.com/gists/' + id, { headers: this.ghHeaders(token), cache: 'no-store' });
-      if (!r.ok) throw this.ghError(r);
-      const f = (await r.json()).files[GIST_FILE];
-      if (!f) throw new Error('Gist 裡沒有 ' + GIST_FILE);
-      const d = J(f.truncated ? await (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content);
+      const d = J(this.cloudTarget() === 'drive' ? await this.drivePull(!quiet) : await this.gistPull());
       if (!d || !Array.isArray(d.papers)) throw new Error('雲端資料格式不符');
       const n = this.mergeData(d);
       this.setState({ syncStatus: `最後下載：${this.stamp()}` });
       if (!quiet) this.toast(`已從雲端合併 ${n} 篇論文`);
     } catch (e) { this.setState({ syncStatus: '下載失敗：' + e.message }); if (!quiet) this.toast('下載失敗：' + e.message); }
   }
-  toast(msg) { this.setState({ toast: msg }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
+
+  // ---- Google 帳號（Google Identity Services，只在瀏覽器取得短效存取權杖）----
+  gClient() { return this.lsGet('lunyi-g-client') || GOOGLE_CLIENT_ID; }
+  gCached(scope) {
+    try {
+      const t = JSON.parse(this.lsGet('lunyi-g-token') || 'null'), have = t ? t.scope.split(' ') : [];
+      if (t && t.exp > Date.now() + 60000 && scope.split(' ').filter(x => x.startsWith('https:')).every(x => have.includes(x))) return t.token;
+    } catch (e) {}
+    return null;
+  }
+  async gToken(extra, ia = true) {
+    const scope = [G_BASE, extra].filter(Boolean).join(' ');
+    const cached = this.gCached(scope);
+    if (cached) return cached;
+    if (!ia) throw new Error('Google 登入已過期，請到「設定」重新連結');
+    const id = this.gClient();
+    if (!id) { this.openSettings(); throw new Error('請先在「設定」填入 Google OAuth 用戶端 ID'); }
+    await loadScript(GSI);
+    const r = await new Promise((ok, fail) => {
+      window.google.accounts.oauth2.initTokenClient({ client_id: id, scope, include_granted_scopes: true, callback: ok,
+        error_callback: e => fail(new Error(e && e.type === 'popup_closed' ? '已取消 Google 登入' : e && e.type === 'popup_failed_to_open' ? '瀏覽器擋住了 Google 登入視窗，請允許彈出視窗' : 'Google 登入失敗')) }).requestAccessToken();
+    });
+    if (r.error) throw new Error(r.error === 'access_denied' ? '你拒絕了 Google 授權' : 'Google 授權失敗：' + r.error);
+    const t = { token: r.access_token, scope: r.scope || scope, exp: Date.now() + (Number(r.expires_in) || 3600) * 1000 };
+    this.lsSet('lunyi-g-token', JSON.stringify(t));
+    await this.gProfile(t.token);
+    return t.token;
+  }
+  async gProfile(token) {
+    try {
+      const r = await fetch(GAPI + '/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + token } });
+      if (!r.ok) return;
+      const u = await r.json(), gUser = { email: u.email || '', name: u.name || u.email || 'Google 帳號' };
+      this.lsSet('lunyi-g-user', JSON.stringify(gUser));
+      this.setState({ gUser });
+    } catch (e) {}
+  }
+  async gFetch(url, opts = {}, extra, ia = true) {
+    const token = await this.gToken(extra, ia);
+    const r = await fetch(url.startsWith('http') ? url : GAPI + url, { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + token } });
+    if (r.status === 401) { this.lsSet('lunyi-g-token', ''); throw new Error('Google 登入已過期，請重新連結'); }
+    if (r.status === 403) throw new Error('Google 拒絕存取，請確認 Google Cloud 已啟用對應的 API');
+    if (!r.ok) throw new Error('Google HTTP ' + r.status);
+    return r;
+  }
+  async gSignIn() {
+    if (this.state.showSet && this.state.clientDraft.trim()) this.lsSet('lunyi-g-client', this.state.clientDraft.trim());
+    try { this.lsSet('lunyi-g-token', ''); await this.gToken(); this.toast('已連結 Google 帳號'); } catch (e) { this.toast(e.message); }
+  }
+  gSignOut() {
+    const t = this.gCached(G_BASE);
+    if (t && window.google && window.google.accounts) window.google.accounts.oauth2.revoke(t, () => {});
+    this.lsSet('lunyi-g-token', ''); this.lsSet('lunyi-g-user', '');
+    this.setState({ gUser: null, driveFiles: [] });
+    this.toast('已中斷 Google 連結');
+  }
+
+  // ---- Google 雲端硬碟 ----
+  async driveFolder(ia = true) {
+    const q = encodeURIComponent("name='論憶' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+    const j = await (await this.gFetch(`/drive/v3/files?q=${q}&fields=files(id)&spaces=drive`, {}, null, ia)).json();
+    if (j.files && j.files[0]) return j.files[0].id;
+    const r = await this.gFetch('/drive/v3/files?fields=id', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '論憶', mimeType: 'application/vnd.google-apps.folder' }) }, null, ia);
+    return (await r.json()).id;
+  }
+  async driveLibId(ia = true) {
+    const q = encodeURIComponent("appProperties has { key='lunyi' and value='library' } and trashed=false");
+    const j = await (await this.gFetch(`/drive/v3/files?q=${q}&fields=files(id)&orderBy=modifiedTime desc`, { cache: 'no-store' }, null, ia)).json();
+    return j.files && j.files[0] && j.files[0].id;
+  }
+  async driveUpload(meta, body, type, id, ia = true) {
+    const b = 'lunyi' + Date.now().toString(36);
+    const data = `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${type}\r\n\r\n${body}\r\n--${b}--`;
+    const r = await this.gFetch(`/upload/drive/v3/files${id ? '/' + id : ''}?uploadType=multipart&fields=id,webViewLink`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + b }, body: data }, null, ia);
+    return r.json();
+  }
+  async driveSearch() {
+    this.setState({ driveMsg: '搜尋中…', driveFiles: [] });
+    try {
+      const name = this.state.driveQ.trim().replace(/['\\]/g, '\\$&');
+      const q = encodeURIComponent("mimeType='application/pdf' and trashed=false" + (name ? ` and name contains '${name}'` : ''));
+      const j = await (await this.gFetch(`/drive/v3/files?q=${q}&orderBy=modifiedTime desc&pageSize=25&fields=files(id,name,modifiedTime,size)`, {}, G_DRIVE_RO)).json();
+      const files = j.files || [];
+      this.setState({ driveFiles: files, driveMsg: files.length ? `找到 ${files.length} 個 PDF，點選即可匯入` : '找不到符合的 PDF' });
+    } catch (e) { this.setState({ driveMsg: e.message }); }
+  }
+  async drivePick(f) {
+    this.setState({ pdf: null, drivePicked: f.id, pdfStatus: `下載「${f.name}」…` });
+    try {
+      const blob = await (await this.gFetch(`/drive/v3/files/${f.id}?alt=media`, {}, G_DRIVE_RO)).blob();
+      await this.parsePdf(new File([blob], f.name, { type: 'application/pdf' }));
+    } catch (e) { this.setState({ pdfStatus: '下載失敗：' + e.message }); }
+  }
+
+  // ---- Google 文件與日曆 ----
+  async exportDoc(cur) {
+    this.toast('正在建立 Google 文件…');
+    try {
+      const notes = this.state.notes.filter(n => n.paperId === cur.id);
+      const HLC = { y: '#fbefb0', b: '#d3e8f5' };
+      const body = cur.paras.map((x, i) => {
+        const bg = x.hl ? ` style="background:${HLC[x.hl]}"` : '';
+        const ns = notes.filter(n => n.para === i).map(n => `<p style="color:#5a5a5a">✎ ${esc(n.text)}</p>`).join('');
+        return `<h3>第 ${i + 1} 段</h3>${x.zh ? `<p${bg}>${esc(x.zh)}</p>` : ''}<p style="color:#666666">${esc(x.en)}</p>${ns}`;
+      }).join('');
+      const whole = notes.filter(n => n.para == null).map(n => `<p>✎ ${esc(n.text)}</p>`).join('');
+      const html = `<html><head><meta charset="utf-8"></head><body><h1>${esc(cur.title)}</h1><p>${esc(cur.authors)} · ${esc(cur.journal)} ${esc(cur.year)}</p>`
+        + `<p>關鍵詞：${esc(cur.keywords.join(', '))}${(cur.tags || []).length ? '　標籤：' + esc(cur.tags.join('、')) : ''}</p><p>APA：${esc(this.apa(cur))}</p>${whole ? '<h2>整篇筆記</h2>' + whole : ''}<h2>內文</h2>${body}</body></html>`;
+      const j = await this.driveUpload({ name: `論憶｜${cur.title}`, mimeType: 'application/vnd.google-apps.document', parents: [await this.driveFolder()] }, html, 'text/html; charset=UTF-8');
+      this.toast('已匯出到 Google 文件', j.webViewLink || `https://docs.google.com/document/d/${j.id}/edit`);
+    } catch (e) { this.toast('匯出失敗：' + e.message); }
+  }
+  async planReading(cur) {
+    const m = String(this.state.planAt).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (!m) return this.toast('請選擇日期與時間');
+    const start = new Date(+m[1], m[2] - 1, +m[3], +m[4], +m[5]), end = new Date(start.getTime() + 3600000);
+    try {
+      const ev = { summary: `閱讀：${cur.title}`, description: `${cur.authors} · ${cur.journal} ${cur.year}\n\n在論憶開啟：${location.href.split('#')[0]}`,
+        start: { dateTime: start.toISOString() }, end: { dateTime: end.toISOString() }, reminders: { useDefault: true } };
+      const j = await (await this.gFetch('/calendar/v3/calendars/primary/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ev) }, G_CAL)).json();
+      this.setState({ planOpen: false });
+      this.toast('已排入 Google 日曆', j.htmlLink);
+    } catch (e) { this.toast('排程失敗：' + e.message); }
+  }
+  toast(msg, link) { this.setState({ toast: msg, toastLink: link || '' }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '', toastLink: '' }), link ? 9000 : 2600); }
   find(id) { return this.state.papers.find(p => p.id === id); }
   upd(id, fn) { this.setState(s => ({ papers: s.papers.map(p => p.id === id ? fn(p) : p) })); }
   open(id, layout) { this.setState(s => ({ sel: id, selPara: null, noteDraft: '', layout: layout || s.layout })); }
@@ -708,8 +945,8 @@ class Component extends DCLogic {
   async addPaper() {
     const s = this.state, f = s.form;
     let paras, full, refs = '';
-    if (s.addTab === 'pdf') {
-      if (!s.pdf) return this.toast('請先選擇 PDF 檔');
+    if (s.addTab !== 'text') {
+      if (!s.pdf) return this.toast(s.addTab === 'drive' ? '請先從雲端硬碟選擇 PDF' : '請先選擇 PDF 檔');
       ({ paras, full, refs } = s.pdf);
     } else {
       paras = f.text.split(/\n\s*\n/).map(t => t.replace(/\s+/g, ' ').trim()).filter(Boolean);
@@ -845,14 +1082,45 @@ class Component extends DCLogic {
       openSettings: () => this.openSettings(), closeSettings: () => this.setState({ showSet: false }), showSet: s.showSet,
       aiMode: this.aiMode(), keyDraft: s.keyDraft, codeDraft: s.codeDraft,
       onKeyDraft: e => this.setState({ keyDraft: e.target.value }), onCodeDraft: e => this.setState({ codeDraft: e.target.value }),
-      saveKey: () => { this.lsSet('lunyi-apikey', s.keyDraft.trim()); this.lsSet('lunyi-code', s.codeDraft.trim()); this.setState({ showSet: false }); this.toast('AI 設定已儲存'); },
-      clearKey: () => { this.lsSet('lunyi-apikey', ''); this.setState({ keyDraft: '' }); this.toast('已清除金鑰'); },
+      aiBtns: [['claude', 'Claude'], ['gemini', 'Google Gemini']].map(([k, label]) => ({ label, bg: s.aiDraft === k ? '#fff' : 'transparent', onClick: () => this.setState({ aiDraft: k }) })),
+      aiClaude: s.aiDraft !== 'gemini', aiGemini: s.aiDraft === 'gemini',
+      gemKeyDraft: s.gemKeyDraft, gemModelDraft: s.gemModelDraft,
+      onGemKeyDraft: e => this.setState({ gemKeyDraft: e.target.value }), onGemModelDraft: e => this.setState({ gemModelDraft: e.target.value }),
+      saveKey: () => {
+        this.lsSet('lunyi-ai', s.aiDraft === 'gemini' ? 'gemini' : '');
+        if (s.aiDraft === 'gemini') { this.lsSet('lunyi-gemini-key', s.gemKeyDraft.trim()); this.lsSet('lunyi-gemini-model', s.gemModelDraft.trim()); }
+        else { this.lsSet('lunyi-apikey', s.keyDraft.trim()); this.lsSet('lunyi-code', s.codeDraft.trim()); }
+        this.setState({ showSet: false }); this.toast(s.aiDraft === 'gemini' ? '已改用 Google Gemini' : 'AI 設定已儲存');
+      },
+      clearKey: () => {
+        if (s.aiDraft === 'gemini') { this.lsSet('lunyi-gemini-key', ''); this.setState({ gemKeyDraft: '' }); }
+        else { this.lsSet('lunyi-apikey', ''); this.setState({ keyDraft: '' }); }
+        this.toast('已清除金鑰');
+      },
+      gChip: () => s.gUser ? this.openSettings() : this.gSignIn(),
+      gChipLabel: s.gUser ? s.gUser.name : '連結 Google', gChipTitle: s.gUser ? s.gUser.email : '連結 Google 帳號',
+      gDot: s.gUser ? 'oklch(0.55 0.15 255)' : '#bdb6a9',
+      gStatus: s.gUser ? `已連結：${s.gUser.name}（${s.gUser.email}）` : this.gClient() ? '尚未連結 Google 帳號' : '尚未設定 Google OAuth 用戶端 ID',
+      clientDraft: s.clientDraft, onClientDraft: e => this.setState({ clientDraft: e.target.value }),
+      gSignIn: () => this.gSignIn(), gSignOut: () => this.gSignOut(), gSigned: !!s.gUser, gSignInLabel: s.gUser ? '重新連結' : '連結 Google 帳號',
+      syncBtns: [['drive', 'Google 雲端硬碟'], ['gist', 'GitHub Gist']].map(([k, label]) => ({ label, bg: s.syncTarget === k ? '#fff' : 'transparent', onClick: () => { this.lsSet('lunyi-sync-target', k); this.setState({ syncTarget: k, syncStatus: '' }); } })),
+      syncDrive: s.syncTarget === 'drive', syncGist: s.syncTarget === 'gist',
+      scholarUrl: cur ? 'https://scholar.google.com/scholar?q=' + encodeURIComponent(cur.title) : 'https://scholar.google.com/',
+      exportDoc: () => cur && this.exportDoc(cur),
+      planOpen: s.planOpen && !!cur, planAt: s.planAt, onPlanAt: e => this.setState({ planAt: e.target.value }),
+      togglePlan: () => this.setState(st => { const t = new Date(Date.now() + 86400000); t.setHours(20, 0, 0, 0); return { planOpen: !st.planOpen, planAt: st.planAt || localDT(t) }; }),
+      planReading: () => cur && this.planReading(cur),
+      driveQ: s.driveQ, onDriveQ: e => this.setState({ driveQ: e.target.value }),
+      onDriveKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.driveSearch(); } },
+      driveSearch: () => this.driveSearch(), driveMsg: s.driveMsg || (s.gUser ? '輸入檔名搜尋，或直接按「搜尋」列出最近的 PDF。' : '按「搜尋」會先請你連結 Google 帳號。'),
+      driveFiles: s.driveFiles.map(f => ({ name: f.name, meta: `${(f.modifiedTime || '').slice(0, 10)}${f.size ? ' · ' + Math.max(1, Math.round(f.size / 1024)) + ' KB' : ''}`, bg: s.drivePicked === f.id ? '#ece8e0' : 'transparent', onClick: () => this.drivePick(f) })),
+      addDrive: s.addTab === 'drive',
       tokenDraft: s.tokenDraft, gistDraft: s.gistDraft, syncStatus: s.syncStatus,
       onTokenDraft: e => this.setState({ tokenDraft: e.target.value }), onGistDraft: e => this.setState({ gistDraft: e.target.value }),
       saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); },
       pushCloud: () => this.pushCloud(), pullCloud: () => this.pullCloud(),
       ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1'; return { autoLabel: on ? '自動同步：開' : '自動同步：關', autoBg: on ? '#1d1b18' : '#fff', autoColor: on ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
-      toggleAuto: () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = true; this.setState({ syncStatus: s.syncStatus }); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : '已開啟，填好權杖與 Gist ID 後生效') : '已關閉自動同步'); },
+      toggleAuto: () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = true; this.setState({ syncStatus: s.syncStatus }); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並連結帳號後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
       openAdd: () => this.setState({ showAdd: true }), closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
       folders: [fBtn('全部', s.papers.length), ...folderNames.map(f => fBtn(f, s.papers.filter(p => (p.folder || '未分類') === f).length))],
@@ -897,14 +1165,14 @@ class Component extends DCLogic {
       onAskKey: e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); this.submitAsk(); } },
       submitAsk: () => this.submitAsk(),
       showAdd: s.showAdd,
-      addTabs: [['pdf', '上傳 PDF'], ['text', '貼上文字']].map(([k, label]) => ({ label, bg: s.addTab === k ? '#fff' : 'transparent', onClick: () => this.setState({ addTab: k }) })),
+      addTabs: [['pdf', '上傳 PDF'], ['drive', 'Google 雲端硬碟'], ['text', '貼上文字']].map(([k, label]) => ({ label, bg: s.addTab === k ? '#fff' : 'transparent', onClick: () => this.setState({ addTab: k }) })),
       addPdf: s.addTab === 'pdf', addText: s.addTab === 'text',
       pdfLabel: s.pdf ? s.pdf.name : '點此選擇 PDF 檔',
       pdfStatus: s.pdfStatus || '解析全文、自動分段，並擷取參考文獻比對引用關係',
       onFile: e => this.parsePdf(e.target.files && e.target.files[0]),
       form: s.form, onF: { title: setF('title'), authors: setF('authors'), journal: setF('journal'), year: setF('year'), folder: setF('folder'), text: setF('text') },
       importStatus: s.importStatus, addPaper: () => this.addPaper(),
-      hasToast: !!s.toast, toast: s.toast
+      hasToast: !!s.toast, toast: s.toast, hasToastLink: !!s.toastLink, toastLink: s.toastLink
     };
   }
 }

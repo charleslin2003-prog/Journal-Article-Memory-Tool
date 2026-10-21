@@ -20,7 +20,7 @@
 1. 開啟網站，內建 4 篇示範論文（Transformer、BERT、ResNet、GPT-3）。
 2. 按「＋ 新增論文」上傳 PDF 或貼上文字。
 3. AI 功能（自動辨識、翻譯、問答）需要連線設定，見下方。
-4. 資料存在瀏覽器裡。換電腦前用「設定與備份 → 匯出 JSON」，到新電腦再「匯入 JSON」；或設定「雲端同步」，用 GitHub 私人 Gist 自動同步。
+4. 資料存在瀏覽器裡。換電腦前用「設定與備份 → 匯出 JSON」，到新電腦再「匯入 JSON」；或設定「雲端同步」，用 Google 雲端硬碟或 GitHub 私人 Gist 自動同步。
 
 ## 修改網站
 
@@ -28,7 +28,10 @@
 
 ## AI 連線
 
-前端呼叫 AI 的順序：
+「設定與備份 → AI 連線」可選 **Claude** 或 **Google Gemini**。
+
+- **Gemini**：到 [Google AI Studio](https://aistudio.google.com) 按「Get API key」免費建立金鑰，填入即可。模型預設 `gemini-2.5-flash`，可改成其他 Gemini 模型名稱。
+- **Claude**：依下列順序：
 
 1. 執行環境本身有 AI（例如在 Claude 的編輯環境中開啟）→ 直接使用。
 2. 「設定與備份」裡填了 Anthropic API 金鑰 → 由瀏覽器直接呼叫 Anthropic。金鑰只存在該瀏覽器的 localStorage，不會被匯出。
@@ -46,6 +49,38 @@ GitHub Pages 是純靜態網站，沒有後端，因此在 Pages 上使用 AI �
 3. 重新部署（Redeploy）。
 
 後端程式在 [`api/claude.js`](api/claude.js)。
+
+## Google 整合
+
+連結 Google 帳號後可以：
+
+- 從 **Google 雲端硬碟** 搜尋並匯入 PDF（「新增論文 → Google 雲端硬碟」）
+- 把論文的翻譯、螢光與筆記匯出成 **Google 文件**（存在雲端硬碟「論憶」資料夾）
+- 把閱讀計畫排入 **Google 日曆**
+- 用 **Google 雲端硬碟** 同步文獻庫（「設定與備份 → 雲端同步」）
+- 每篇論文都有 **Google 學術搜尋** 連結（不需登入）
+
+登入用的是 Google 官方的 OAuth，網站只在瀏覽器取得 1 小時有效的存取權杖，沒有伺服器會碰到你的資料。第一次使用前要建立 OAuth 用戶端 ID（只要做一次）：
+
+1. 到 [Google Cloud Console](https://console.cloud.google.com) 建立專案。
+2. 「API 和服務 → 程式庫」啟用 **Google Drive API** 和 **Google Calendar API**。
+3. 「OAuth 同意畫面」：使用者類型選「外部」，填應用程式名稱與信箱；在「測試使用者」加入你自己的 Gmail。
+   範圍（scopes）可加入 `drive.file`、`drive.readonly`、`calendar.events`。
+4. 「憑證 → 建立憑證 → OAuth 用戶端 ID」：類型選「網頁應用程式」，「已授權的 JavaScript 來源」加入：
+   - `https://charleslin2003-prog.github.io`
+   - Vercel 網址（有部署的話），例如 `https://你的專案.vercel.app`
+5. 複製用戶端 ID（`….apps.googleusercontent.com`），貼到網站「設定與備份 → Google 帳號」，按「連結 Google 帳號」。
+
+想讓所有使用者都不必自己填，可把用戶端 ID 寫進 `src/app.html` 的 `GOOGLE_CLIENT_ID` 再重新打包。
+應用程式維持「測試」狀態時，只有加入測試使用者名單的帳號能登入，Google 也會顯示「未經驗證的應用程式」提示，這是正常的；要開放給所有人需送 Google 審查。
+
+各功能用到的權限（第一次使用該功能時才會請求）：
+
+| 功能 | 權限 |
+|---|---|
+| 登入、雲端硬碟同步、匯出 Google 文件 | `drive.file`（只能存取論憶自己建立的檔案） |
+| 從雲端硬碟匯入 PDF | `drive.readonly` |
+| 排入 Google 日曆 | `calendar.events` |
 
 ## 檔案
 
