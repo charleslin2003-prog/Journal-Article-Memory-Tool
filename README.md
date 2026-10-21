@@ -20,7 +20,11 @@
 1. 開啟網站，內建 4 篇示範論文（Transformer、BERT、ResNet、GPT-3）。
 2. 按「＋ 新增論文」上傳 PDF 或貼上文字。
 3. AI 功能（自動辨識、翻譯、問答）需要連線設定，見下方。
-4. 資料存在瀏覽器裡。換電腦前用「設定與備份 → 匯出 JSON」，到新電腦再「匯入 JSON」。
+4. 資料存在瀏覽器裡。換電腦前用「設定與備份 → 匯出 JSON」，到新電腦再「匯入 JSON」；或設定「雲端同步」，用 GitHub 私人 Gist 自動同步。
+
+## 修改網站
+
+編輯 `src/app.html` 後執行 `python3 tools/build.py`，會重新產生 `index.html`。
 
 ## AI 連線
 
@@ -46,7 +50,9 @@ GitHub Pages 是純靜態網站，沒有後端，因此在 Pages 上使用 AI �
 ## 檔案
 
 ```
-index.html          單一檔案網站（約 180 KB，含 React 與執行環境）
+index.html          單一檔案網站（約 190 KB，含 React 與執行環境），由 tools/build.py 產生
+src/app.html        網站原始碼（版面＋程式），要改網站就改這個
+tools/build.py      把 src/app.html 打包回 index.html
 api/claude.js       Vercel Serverless Function，代為呼叫 Anthropic API
 docs/screenshots/   功能截圖
 功能說明.md          完整功能說明
@@ -55,7 +61,6 @@ docs/screenshots/   功能截圖
 
 ## 使用限制
 
-- 掃描成影像的 PDF 無法擷取文字。
-- PDF 最多擷取前 150 頁、300 段。
-- 目前只針對桌面瀏覽器設計（寬度 1100px 以上）。
+- PDF 最多擷取前 150 頁、300 段；掃描版 PDF 的 OCR 最多 60 頁。
+- 寬度 900px 以下為單欄手機版面。
 - 瀏覽器 localStorage 約 5 MB，論文很多時請定期匯出備份。
