@@ -10,16 +10,19 @@
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>@media (max-width:1220px){.ly-head{gap:12px!important}.ly-sub{display:none}}@media (max-width:1100px){.ly-glabel{display:none}}
-html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Noto Sans TC',sans-serif}*{box-sizing:border-box}a{color:oklch(0.45 0.1 200)}a:hover{color:#1d1b18}input,textarea,select,button{font:inherit;color:inherit}button,label{cursor:pointer}
+<style>html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Noto Sans TC',sans-serif}*{box-sizing:border-box}a{color:oklch(0.45 0.1 200)}a:hover{color:#1d1b18}input,textarea,select,button{font:inherit;color:inherit}button,label{cursor:pointer}
+.ly-root[data-sb="false"] .ly-sb{visibility:hidden}
+.ly-sbrow{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;border-radius:6px;padding:5px 8px;font-size:14px;color:#37352f;text-align:left;min-height:30px}
+.ly-sbrow:hover{background:#e3ded5!important}
+.ly-search::placeholder{color:#625d55}
+.ly-sbrow:focus-visible,.ly-sb button:focus-visible{outline:2px solid oklch(0.45 0.1 200);outline-offset:-2px}
 @media (max-width:900px){
-.ly-root{height:auto!important;min-height:100vh;grid-template-rows:auto auto!important}
-.ly-head{flex-wrap:wrap;gap:10px!important;padding:10px 16px!important}
-.ly-head nav{order:3}.ly-spacer{display:none}
-.ly-search{order:4;width:100%!important;flex:1 1 100%}
+.ly-root{display:block!important;height:auto!important;min-height:100vh}
+.ly-sb{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);z-index:30;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,0.18)}
+.ly-root[data-sb="true"] .ly-sb{transform:none}
+.ly-mainwrap{min-height:100vh;grid-template-rows:44px auto!important}
+.ly-top{position:sticky;top:0;z-index:5}
 .ly-cols3,.ly-cols2{display:flex!important;flex-direction:column}
-.ly-list{border-right:0!important;border-bottom:1px solid #e2ddd3;max-height:260px;overflow:auto}
-.ly-chatlist{display:none!important}
 .ly-main,.ly-gmain{overflow:visible!important}
 .ly-side{border-left:0!important;border-top:1px solid #e2ddd3;overflow:visible!important}
 .ly-article{padding:20px 16px 48px!important}.ly-h1{font-size:23px!important}
@@ -34,58 +37,100 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
 .ly-prow{grid-template-columns:minmax(0,1fr) 128px!important}
 .ly-frow{grid-template-columns:minmax(0,1fr) 72px 84px!important}.ly-pextra{display:none!important}
 .ly-kwrow{grid-template-columns:minmax(118px,40%) minmax(0,1fr)!important}
+.ly-setbox{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr);height:calc(100vh - 24px)!important}
+.ly-setnav{flex-direction:row!important;overflow-x:auto;border-right:0!important;border-bottom:1px solid #e2ddd3;padding:8px!important}
+.ly-setnav .ly-sbrow{width:auto}.ly-setlabel{display:none}
 }</style>
 </helmet>
 
-<div class="ly-root" style="height:100vh;display:grid;grid-template-rows:56px minmax(0,1fr)">
-  <header class="ly-head" style="display:flex;align-items:center;gap:24px;padding:0 20px;border-bottom:1px solid #e2ddd3;background:#faf9f6">
-    <div style="display:flex;align-items:baseline;gap:10px;flex-shrink:0">
-      <span style="font-family:'Noto Serif TC',serif;font-size:21px;font-weight:600;letter-spacing:0.04em;white-space:nowrap">論憶</span>
-      <span class="ly-sub" style="font-size:12px;color:#625d55;white-space:nowrap">期刊論文記憶庫</span>
+<div class="ly-root" data-sb="{{ sbAttr }}" style="height:100vh;display:grid;grid-template-columns:{{ sbCols }};min-height:0">
+  <aside class="ly-sb" aria-label="側欄" style="background:#f1eee8;border-right:1px solid #e2ddd3;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden">
+    <div class="ly-acct" sc-camel-on-blur="{{ acctBlur }}" style="padding:8px 8px 4px;position:relative">
+      <button id="lunyi-acct-btn" class="ly-sbrow" sc-camel-on-click="{{ toggleAcct }}" aria-controls="lunyi-acct-menu" aria-expanded="{{ acctAttr }}" title="帳號與連線" style="gap:9px;padding:6px 8px">
+        <span style="width:28px;height:28px;border-radius:7px;background:{{ av.bg }};color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600;flex-shrink:0;overflow:hidden;position:relative">{{ av.initial }}<span aria-hidden="true" style="position:absolute;inset:0;background:{{ av.imgBg }}"></span></span>
+        <span style="min-width:0;flex:1;display:flex;flex-direction:column;line-height:1.3"><span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ av.name }}</span><span style="font-size:11px;color:#625d55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ av.sub }}</span></span>
+        <span aria-hidden="true" style="font-size:10px;color:#625d55">▾</span>
+      </button>
+      <sc-if value="{{ acctOpen }}" hint-placeholder-val="{{ false }}">
+        <div id="lunyi-acct-menu" aria-label="帳號選單" style="position:absolute;left:8px;right:8px;top:calc(100% - 2px);z-index:26;background:#fff;border:1px solid #e2ddd3;border-radius:8px;box-shadow:0 12px 32px rgba(0,0,0,0.16);padding:6px;display:flex;flex-direction:column;gap:1px">
+          <div style="padding:6px 8px 8px;margin-bottom:4px;border-bottom:1px solid #efebe4;font-size:12px;color:#625d55;line-height:1.6;white-space:pre-line">{{ av.detail }}</div>
+          <sc-for list="{{ acctItems }}" as="mi" hint-placeholder-count="3"><button class="ly-sbrow" sc-camel-on-click="{{ mi.onClick }}" style="font-size:13px;justify-content:space-between"><span>{{ mi.label }}</span><span style="font-size:11px;color:#625d55">{{ mi.note }}</span></button></sc-for>
+        </div>
+      </sc-if>
     </div>
-    <nav style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:7px;flex-shrink:0">
-      <sc-for list="{{ layoutTabs }}" as="t" hint-placeholder-count="3">
-        <button sc-camel-on-click="{{ t.onClick }}" aria-pressed="{{ t.pressed }}" style="border:0;padding:5px 12px;border-radius:5px;font-size:13px;background:{{ t.bg }};color:{{ t.color }};display:flex;gap:7px;align-items:baseline;white-space:nowrap"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px">{{ t.id }}</span>{{ t.label }}</button>
-      </sc-for>
+    <div style="padding:0 8px 6px;display:flex;flex-direction:column;gap:1px">
+      <label class="ly-sbrow" style="cursor:text"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">⌕</span><input class="ly-search" value="{{ q }}" sc-camel-on-change="{{ onQ }}" placeholder="搜尋論文" aria-label="搜尋標題、作者、關鍵詞、內文" style="flex:1;min-width:0;border:0;background:transparent;font-size:14px;outline:none;padding:0"></label>
+      <button class="ly-sbrow" sc-camel-on-click="{{ openSettings }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">⚙</span>設定與備份</button>
+      <button class="ly-sbrow" sc-camel-on-click="{{ openAdd }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">＋</span>新增論文</button>
+    </div>
+    <nav aria-label="工作區" style="padding:6px 8px;border-top:1px solid #e6e1d8;display:flex;flex-direction:column;gap:1px">
+      <sc-for list="{{ layoutTabs }}" as="t" hint-placeholder-count="4"><button class="ly-sbrow" sc-camel-on-click="{{ t.onClick }}" aria-current="{{ t.current }}" style="background:{{ t.bg }};font-weight:{{ t.weight }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">{{ t.icon }}</span><span style="flex:1">{{ t.label }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55">{{ t.id }}</span></button></sc-for>
     </nav>
-    <div class="ly-spacer" style="flex:1"></div>
-    <input class="ly-search" value="{{ q }}" sc-camel-on-change="{{ onQ }}" placeholder="搜尋標題、作者、關鍵詞、內文" style="flex:0 1 280px;min-width:120px;padding:8px 12px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-    <button sc-camel-on-click="{{ gChip }}" title="{{ gChipTitle }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:13px;display:flex;align-items:center;gap:7px;max-width:200px;min-width:0"><span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:{{ gDot }};color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center">G</span><span class="ly-glabel" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ gChipLabel }}</span></button>
-    <button sc-camel-on-click="{{ openSettings }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:transparent;font-size:13px;white-space:nowrap;flex-shrink:0">設定與備份</button>
-    <button sc-camel-on-click="{{ openAdd }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500;white-space:nowrap;flex-shrink:0">＋ 新增論文</button>
-  </header>
+    <div style="flex:1;min-height:0;overflow:auto;padding:8px 8px 10px;border-top:1px solid #e6e1d8">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px">
+        <span style="font-size:12px;font-weight:600;color:#625d55">專案</span>
+        <button id="lunyi-newproj-btn" sc-camel-on-click="{{ startNewProj }}" title="新增專案" aria-label="新增專案" style="border:0;background:transparent;border-radius:4px;width:24px;height:24px;font-size:15px;color:#625d55;line-height:1" style-hover="background:#e3ded5">＋</button>
+      </div>
+      <sc-if value="{{ newProjOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;gap:4px;padding:2px 4px 6px">
+          <input value="{{ newProj }}" sc-camel-on-change="{{ onNewProj }}" sc-camel-on-key-down="{{ onNewProjKey }}" placeholder="專案名稱" aria-label="新專案名稱" style="flex:1;min-width:0;padding:5px 8px;border:1px solid #d6d0c4;border-radius:5px;font-size:13px;background:#fff;outline:none">
+          <button sc-camel-on-click="{{ addProj }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:5px;padding:4px 10px;font-size:12px;white-space:nowrap">建立</button>
+        </div>
+      </sc-if>
+      <button class="ly-sbrow" sc-camel-on-click="{{ allProj.onClick }}" aria-pressed="{{ allProj.pressed }}" style="background:{{ allProj.bg }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">≡</span><span style="flex:1">全部論文</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ allProj.count }}</span></button>
+      <sc-for list="{{ projTree }}" as="pj" hint-placeholder-count="2">
+        <div>
+          <div style="display:flex;align-items:center;border-radius:6px;background:{{ pj.bg }}">
+            <button sc-camel-on-click="{{ pj.onToggle }}" aria-expanded="{{ pj.openAttr }}" aria-label="{{ pj.toggleLabel }}" style="border:0;background:transparent;width:26px;height:28px;flex-shrink:0;font-size:9px;color:#625d55;border-radius:4px" style-hover="background:#e3ded5"><span style="display:inline-block;transform:rotate({{ pj.rot }})">▶</span></button>
+            <button sc-camel-on-click="{{ pj.onSelect }}" aria-pressed="{{ pj.pressed }}" title="{{ pj.name }}" style="flex:1;min-width:0;border:0;background:transparent;display:flex;align-items:center;gap:7px;padding:5px 2px;text-align:left;font-size:14px;color:#37352f">
+              <span style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:{{ pj.swatch }};box-shadow:{{ pj.ring }}"></span>
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ pj.name }}</span>
+            </button>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;padding:0 2px">{{ pj.count }}</span>
+            <button sc-camel-on-click="{{ pj.onMenu }}" aria-label="{{ pj.menuLabel }}" aria-expanded="{{ pj.menuAttr }}" title="改名或刪除" style="border:0;background:transparent;width:24px;height:26px;flex-shrink:0;color:#625d55;font-size:14px;border-radius:4px" style-hover="background:#e3ded5">⋯</button>
+          </div>
+          <sc-if value="{{ pj.menuOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:4px;padding:4px 4px 6px 22px">
+              <input value="{{ renameDraft }}" sc-camel-on-change="{{ onRenameDraft }}" sc-camel-on-key-down="{{ pj.onRenameKey }}" aria-label="新的專案名稱" style="flex:1 1 100%;min-width:0;padding:5px 8px;border:1px solid #d6d0c4;border-radius:5px;font-size:13px;background:#fff;outline:none">
+              <button sc-camel-on-click="{{ pj.onRename }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:5px;padding:4px 10px;font-size:12px">改名</button>
+              <button sc-camel-on-click="{{ pj.onDelete }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:5px;padding:4px 10px;font-size:12px;color:oklch(0.5 0.15 25)">刪除專案</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ pj.open }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:1px;padding:1px 0 4px 22px">
+              <sc-for list="{{ pj.papers }}" as="pp" hint-placeholder-count="2"><button class="ly-sbrow" sc-camel-on-click="{{ pp.onClick }}" title="{{ pp.full }}" aria-current="{{ pp.current }}" style="background:{{ pp.bg }};font-size:13px;padding:4px 8px;min-height:26px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Noto Serif TC',serif">{{ pp.title }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;flex-shrink:0">{{ pp.prog }}</span></button></sc-for>
+              <sc-if value="{{ pj.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55;padding:4px 8px">{{ pj.emptyText }}</div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 8px 0"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;display:inline-flex;align-items:center;gap:6px">關鍵詞 <span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></div></sc-if>
+    </div>
+    <div style="border-top:1px solid #e2ddd3;padding:8px 10px 8px 14px;font-size:11px;color:#625d55;display:flex;align-items:center;gap:8px">
+      <span style="font-family:'IBM Plex Mono',monospace;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ stats }}</span>
+      <button sc-camel-on-click="{{ exportAllBib }}" style="border:0;background:none;font-size:11px;color:#625d55;text-decoration:underline;padding:0;white-space:nowrap">匯出 BibTeX</button>
+      <button sc-camel-on-click="{{ closeSb }}" title="收合側欄" aria-label="收合側欄" style="border:0;background:transparent;border-radius:4px;width:24px;height:24px;color:#625d55" style-hover="background:#e3ded5">«</button>
+    </div>
+  </aside>
+  <sc-if value="{{ sbScrim }}" hint-placeholder-val="{{ false }}"><div sc-camel-on-click="{{ closeSb }}" aria-hidden="true" style="position:fixed;inset:0;background:rgba(29,27,24,0.3);z-index:29"></div></sc-if>
+  <div class="ly-mainwrap" style="display:grid;grid-template-rows:44px minmax(0,1fr);min-height:0;min-width:0">
+    <header class="ly-top" style="display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid #e2ddd3;background:#faf9f6;min-width:0">
+      <sc-if value="{{ showSbBtn }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ openSb }}" aria-label="開啟側欄" title="開啟側欄" style="border:0;background:transparent;border-radius:5px;width:30px;height:30px;font-size:16px;flex-shrink:0" style-hover="background:#ece8e0">☰</button></sc-if>
+      <nav aria-label="目前位置" style="display:flex;align-items:center;gap:2px;min-width:0;font-size:13px;overflow:hidden">
+        <sc-for list="{{ crumbs }}" as="cb" hint-placeholder-count="2"><span aria-hidden="true" style="color:#bdb6a9;display:{{ cb.sepDisp }}">/</span><sc-if value="{{ cb.btn }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ cb.onClick }}" title="{{ cb.title }}" style="border:0;background:transparent;border-radius:4px;padding:3px 6px;color:{{ cb.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:{{ cb.max }}" style-hover="background:#ece8e0">{{ cb.label }}</button></sc-if><sc-if value="{{ cb.txt }}" hint-placeholder-val="{{ true }}"><span aria-current="{{ cb.cur }}" title="{{ cb.title }}" style="padding:3px 6px;color:{{ cb.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:{{ cb.max }}">{{ cb.label }}</span></sc-if></sc-for>
+      </nav>
+      <div style="flex:1"></div>
+      <button sc-camel-on-click="{{ openAiSettings }}" title="{{ aiChipTitle }}" style="border:1px solid #e2ddd3;background:#fff;border-radius:999px;padding:4px 11px;font-size:12px;display:flex;align-items:center;gap:7px;white-space:nowrap;min-width:0;max-width:320px;flex-shrink:1" style-hover="border-color:#bdb6a9"><span style="width:8px;height:8px;border-radius:50%;background:{{ aiDot }};flex-shrink:0"></span><span style="overflow:hidden;text-overflow:ellipsis">{{ aiChip }}</span></button>
+    </header>
 
   <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
-    <div class="ly-cols3" style="display:grid;grid-template-columns:268px minmax(0,1fr) 340px;min-height:0">
-      <aside class="ly-list" style="border-right:1px solid #e2ddd3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0">
-        <div style="padding:16px 14px 10px;display:flex;flex-wrap:wrap;gap:5px">
-          <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
-            <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;opacity:0.65">{{ f.count }}</span></button>
-          </sc-for>
-          <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
-        </div>
-        <div style="overflow:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:2px">
-          <sc-for list="{{ list }}" as="it" hint-placeholder-count="4">
-            <button sc-camel-on-click="{{ it.onClick }}" style="text-align:left;border:0;border-radius:6px;padding:11px 10px;background:{{ it.bg }};display:flex;flex-direction:column;gap:5px" style-hover="background:#fff">
-              <span style="font-family:'Noto Serif TC',serif;font-size:14px;line-height:1.4;font-weight:600;text-wrap:pretty">{{ it.title }}</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ it.meta }}</span>
-              <span style="display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#625d55"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.tagsText }}</span><span style="font-family:'IBM Plex Mono',monospace;flex-shrink:0;white-space:nowrap">{{ it.prog }}</span></span>
-            </button>
-          </sc-for>
-          <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:20px 10px;font-size:13px;color:#625d55">沒有符合的論文。</div></sc-if>
-        </div>
-        <div style="border-top:1px solid #e2ddd3;padding:12px 14px;font-size:11px;color:#625d55;display:flex;justify-content:space-between;align-items:center;gap:8px">
-          <span style="font-family:'IBM Plex Mono',monospace">{{ stats }}</span>
-          <button sc-camel-on-click="{{ exportAllBib }}" style="border:0;background:none;font-size:11px;color:#625d55;text-decoration:underline;padding:0">匯出全部 BibTeX</button>
-        </div>
-      </aside>
-
+    <div class="ly-cols2" style="display:grid;grid-template-columns:minmax(0,1fr) 340px;min-height:0">
       <main class="ly-main" style="min-height:0;overflow:auto;background:#faf9f6">
         <sc-if value="{{ hasPaper }}" hint-placeholder-val="{{ true }}">
           <article class="ly-article" style="max-width:1000px;margin:0 auto;padding:34px 44px 96px">
             <div style="display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#625d55;letter-spacing:0.03em">
               <span>{{ cur.journal }} · {{ cur.year }}</span><span>{{ curLang }}</span>
-              <sc-raw-select value="{{ cur.folder }}" sc-camel-on-change="{{ onFolder }}" style="border:1px solid #e2ddd3;background:transparent;border-radius:4px;font-size:11px;padding:2px 4px">
+              <sc-raw-select value="{{ cur.folder }}" sc-camel-on-change="{{ onFolder }}" title="所屬專案" aria-label="所屬專案" style="border:1px solid #e2ddd3;background:transparent;border-radius:4px;font-size:11px;padding:2px 4px">
                 <sc-for list="{{ folderNames }}" as="fn" hint-placeholder-count="0"><option value="{{ fn }}">{{ fn }}</option></sc-for>
               </sc-raw-select>
             </div>
@@ -129,8 +174,9 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
                       <sc-if value="{{ p.showZh }}" hint-placeholder-val="{{ true }}">
                         <div>
                           <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:15px;line-height:1.85;color:#2c2925;text-wrap:pretty">{{ p.zh }}</p></sc-if>
+                          <sc-if value="{{ p.byBuiltin }}" hint-placeholder-val="{{ false }}"><span title="這段由瀏覽器內建翻譯產生，點段落可用 AI 重新翻譯" style="display:inline-block;margin-top:6px;font-size:11px;color:#625d55;border:1px solid #e2ddd3;border-radius:4px;padding:1px 6px">內建翻譯</span></sc-if>
                           <sc-if value="{{ p.busy }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:oklch(0.45 0.1 200)">翻譯中…</span></sc-if>
-                          <sc-if value="{{ p.idle }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#8a8479">尚未翻譯</span></sc-if>
+                          <sc-if value="{{ p.idle }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#625d55">尚未翻譯</span></sc-if>
                         </div>
                       </sc-if>
                     </div>
@@ -150,7 +196,7 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
             </div>
           </article>
         </sc-if>
-        <sc-if value="{{ noPaper }}" hint-placeholder-val="{{ false }}"><div style="height:100%;display:grid;place-items:center;color:#625d55;font-size:14px">文獻庫是空的，按右上角「新增論文」開始。</div></sc-if>
+        <sc-if value="{{ noPaper }}" hint-placeholder-val="{{ false }}"><div style="height:100%;display:grid;place-items:center;color:#625d55;font-size:14px;text-align:center;padding:24px"><div style="display:flex;flex-direction:column;align-items:center;gap:12px">文獻庫是空的，從新增第一篇論文開始。<button sc-camel-on-click="{{ openAdd }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px">＋ 新增論文</button></div></div></sc-if>
       </main>
 
       <aside class="ly-side" style="border-left:1px solid #e2ddd3;display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0">
@@ -274,23 +320,15 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
   </sc-if>
 
   <sc-if value="{{ isC }}" hint-placeholder-val="{{ false }}">
-    <div class="ly-cols3 ly-chat" style="display:grid;grid-template-columns:248px minmax(0,1fr) 380px;min-height:0">
-      <aside class="ly-list ly-chatlist" style="border-right:1px solid #e2ddd3;overflow:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px">
-        <div style="font-size:12px;color:#625d55;padding:0 8px 8px">對話會參考整個文獻庫與你的筆記</div>
-        <sc-for list="{{ list }}" as="it" hint-placeholder-count="4">
-          <button sc-camel-on-click="{{ it.onClick }}" style="text-align:left;border:0;border-radius:6px;padding:9px 10px;background:{{ it.bg }};display:flex;flex-direction:column;gap:4px" style-hover="background:#fff">
-            <span style="font-family:'Noto Serif TC',serif;font-size:13px;line-height:1.4;font-weight:600">{{ it.title }}</span>
-            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55">{{ it.meta }}</span>
-          </button>
-        </sc-for>
-      </aside>
+    <div class="ly-cols2 ly-chat" style="display:grid;grid-template-columns:minmax(0,1fr) 380px;min-height:0">
       <main class="ly-main" style="display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0;background:#faf9f6">
         <div style="overflow:auto;padding:32px 0">
           <div class="ly-pad" style="max-width:720px;margin:0 auto;padding:0 32px;display:flex;flex-direction:column;gap:26px">
             <sc-if value="{{ qaEmpty }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;flex-direction:column;gap:14px;padding-top:40px">
                 <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">問你的文獻庫</h2>
-                <div style="font-size:14px;color:#625d55;line-height:1.7">跨論文比較、找出概念源頭、回想你讀過的重點。回答會標註出處，點選即可在右側查看原文。</div>
+                <div style="font-size:14px;color:#625d55;line-height:1.7">跨論文比較、找出概念源頭、回想你讀過的重點。回答會標註出處，點選即可在右側查看原文。對話會參考整個文獻庫與你的筆記。</div>
+                <sc-if value="{{ needCloud }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;line-height:1.6;background:oklch(0.95 0.025 200);padding:10px 12px;border-radius:8px">AI 問答需要連結雲端 AI，費用算在你自己的帳號。<button sc-camel-on-click="{{ openAiSettings }}" style="border:0;padding:6px 12px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">連結 AI</button></div></sc-if>
                 <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
                   <sc-for list="{{ suggestions }}" as="sg" hint-placeholder-count="3"><button sc-camel-on-click="{{ sg.onClick }}" style="text-align:left;border:1px solid #e2ddd3;background:#fff;border-radius:6px;padding:10px 12px;font-size:13px" style-hover="border-color:#1d1b18">{{ sg.label }}</button></sc-for>
                 </div>
@@ -360,7 +398,7 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
             {{ yearChart }}
           </section>
           <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
-            <div><div style="font-size:14px;font-weight:500">資料夾組成</div><div style="font-size:12px;color:#625d55;margin-top:2px">點色塊或圖例可篩選；同一資料夾在圖譜用同一顏色</div></div>
+            <div><div style="font-size:14px;font-weight:500">專案組成</div><div style="font-size:12px;color:#625d55;margin-top:2px">點色塊或列表可篩選；同一專案在圖譜和側欄用同一顏色</div></div>
             {{ folderChart }}
           </section>
           <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
@@ -389,11 +427,12 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
       </div>
     </main>
   </sc-if>
+  </div>
 </div>
 
 <sc-if value="{{ showAdd }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:10">
-    <div style="width:660px;max-width:calc(100vw - 40px);max-height:calc(100vh - 60px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
+  <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:45">
+    <div role="dialog" aria-modal="true" aria-label="新增論文" style="width:660px;max-width:calc(100vw - 40px);max-height:calc(100vh - 60px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">新增論文</h2>
         <button sc-camel-on-click="{{ closeAdd }}" style="border:0;background:none;font-size:13px;color:#625d55">取消</button>
@@ -426,13 +465,14 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
       <sc-if value="{{ addText }}" hint-placeholder-val="{{ false }}">
         <textarea value="{{ form.text }}" sc-camel-on-change="{{ onF.text }}" rows="9" placeholder="貼上摘要或段落（任何語言，以空行分段）…" style="padding:11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-family:'Noto Serif TC',Georgia,serif;font-size:13px;line-height:1.7;resize:vertical;outline:none"></textarea>
       </sc-if>
-      <div style="font-size:12px;color:#625d55;line-height:1.6">以下欄位可留空，會自動辨識。儲存後自動擷取關鍵詞、比對引用、與現有論文串聯並翻譯成繁中。</div>
+      <div style="font-size:12px;color:#625d55;line-height:1.6">{{ addHint }}</div>
       <input value="{{ form.title }}" sc-camel-on-change="{{ onF.title }}" placeholder="標題" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:14px;outline:none">
       <div class="ly-form4" style="display:grid;grid-template-columns:1.6fr 1.3fr 0.7fr 1fr;gap:8px">
         <input value="{{ form.authors }}" sc-camel-on-change="{{ onF.authors }}" placeholder="作者" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
         <input value="{{ form.journal }}" sc-camel-on-change="{{ onF.journal }}" placeholder="期刊 / 會議" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
         <input value="{{ form.year }}" sc-camel-on-change="{{ onF.year }}" placeholder="年份" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
-        <input value="{{ form.folder }}" sc-camel-on-change="{{ onF.folder }}" placeholder="資料夾" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
+        <input value="{{ form.folder }}" sc-camel-on-change="{{ onF.folder }}" list="lunyi-projects" placeholder="專案" aria-label="專案" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
+        <datalist id="lunyi-projects"><sc-for list="{{ folderNames }}" as="fn" hint-placeholder-count="0"><option value="{{ fn }}"></option></sc-for></datalist>
       </div>
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:12px">
         <span style="font-size:12px;color:oklch(0.42 0.1 200)">{{ importStatus }}</span>
@@ -443,116 +483,268 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
 </sc-if>
 
 <sc-if value="{{ showSet }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:10">
-    <div style="width:600px;max-width:calc(100vw - 32px);max-height:calc(100vh - 40px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:14px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">設定與備份</h2>
-        <button sc-camel-on-click="{{ closeSettings }}" style="border:0;background:none;font-size:13px;color:#625d55">關閉</button>
+  <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:50">
+    <div class="ly-setbox" role="dialog" aria-modal="true" aria-label="設定與備份" style="width:880px;max-width:calc(100vw - 32px);height:min(680px,calc(100vh - 40px));background:#faf9f6;border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,0.22);display:grid;grid-template-columns:200px minmax(0,1fr);overflow:hidden">
+      <nav class="ly-setnav" aria-label="設定分類" style="background:#f1eee8;border-right:1px solid #e2ddd3;padding:14px 8px;display:flex;flex-direction:column;gap:1px">
+        <div class="ly-setlabel" style="padding:2px 8px 10px;font-size:12px;font-weight:600;color:#625d55">設定</div>
+        <sc-for list="{{ setTabs }}" as="st" hint-placeholder-count="4"><button class="ly-sbrow" sc-camel-on-click="{{ st.onClick }}" aria-current="{{ st.current }}" style="background:{{ st.bg }};font-weight:{{ st.weight }};white-space:nowrap"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">{{ st.icon }}</span>{{ st.label }}</button></sc-for>
+      </nav>
+      <div style="position:relative;overflow:auto;padding:24px 30px 30px;display:flex;flex-direction:column;gap:14px;min-width:0">
+        <button sc-camel-on-click="{{ closeSettings }}" aria-label="關閉設定" style="position:absolute;top:12px;right:14px;border:0;background:transparent;border-radius:5px;width:30px;height:30px;font-size:16px;color:#625d55" style-hover="background:#ece8e0">✕</button>
+
+        <sc-if value="{{ setAccount }}" hint-placeholder-val="{{ true }}">
+          <h2 style="margin:0;font-size:20px;font-weight:600">我的帳號</h2>
+          <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
+            <span style="width:48px;height:48px;border-radius:10px;background:{{ av.bg }};color:#fff;display:grid;place-items:center;font-size:20px;font-weight:600;flex-shrink:0;overflow:hidden;position:relative">{{ av.initial }}<span aria-hidden="true" style="position:absolute;inset:0;background:{{ av.imgBg }}"></span></span>
+            <div style="min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:600">{{ av.name }}</span><span style="font-size:12px;color:#625d55;line-height:1.6;white-space:pre-line">{{ av.detail }}</span></div>
+          </div>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統。這裡的「帳號」是你連結的 Google 與 AI 服務：論文資料存在這台電腦的瀏覽器；連結 Google 後可以同步到你自己的雲端硬碟，連結 AI 帳號後，AI 費用算在你自己的帳號上。</div>
+          <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">Google 帳號</span><span style="font-size:12px;color:#625d55">{{ gStatus }}</span></div>
+              <div style="display:flex;gap:8px">
+                <button sc-camel-on-click="{{ gSignIn }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">{{ gSignInLabel }}</button>
+                <sc-if value="{{ gSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ gSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">中斷連結</button></sc-if>
+              </div>
+            </div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">用途：同步文獻庫到雲端硬碟、從雲端硬碟匯入 PDF、匯出 Google 文件、排入 Google 日曆。</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">AI 帳號（OpenRouter）</span><span style="font-size:12px;color:#625d55">{{ orStatus }}</span></div>
+              <div style="display:flex;gap:8px">
+                <sc-if value="{{ orNotSigned }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ orSignIn }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">用 OpenRouter 登入</button></sc-if>
+                <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ goAi }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">選擇模型</button><button sc-camel-on-click="{{ orSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">登出</button></sc-if>
+              </div>
+            </div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">用途：AI 問答、自動辨識論文資訊、高品質翻譯。可選 Claude、Gemini、GPT 等模型，費用從你的 OpenRouter 額度扣。</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ setAi }}" hint-placeholder-val="{{ false }}">
+          <h2 style="margin:0;font-size:20px;font-weight:600">AI 模型</h2>
+          <div style="font-size:12px;line-height:1.6;color:#2c2925;background:oklch(0.95 0.025 200);padding:8px 10px;border-radius:6px">目前：{{ aiMode }}</div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px">翻譯</div>
+          <div role="radiogroup" aria-label="翻譯方式" style="display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ trOpts }}" as="to" hint-placeholder-count="3"><label style="border:1px solid {{ to.line }};background:{{ to.bg }};border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start"><input type="radio" name="lunyi-tr" checked="{{ to.on }}" sc-camel-on-change="{{ to.onClick }}" style="margin:3px 0 0;accent-color:#1d1b18;flex-shrink:0"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:500">{{ to.label }}</span><span style="font-size:12px;color:#625d55;line-height:1.5">{{ to.desc }}</span></span></label></sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <span style="font-size:12px;color:#625d55">內建翻譯：{{ builtinStatus }}</span>
+            <sc-if value="{{ builtinCanEnable }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ enableBuiltin }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:12px">啟用離線翻譯</button></sc-if>
+          </div>
+          <div style="font-size:14px;font-weight:600;margin-top:10px">問答與自動辨識（雲端 AI）</div>
+          <div style="display:flex;flex-direction:column;gap:12px;padding:14px;background:#fff;border:1px solid {{ orLine }};border-radius:10px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1"><span style="font-size:15px;font-weight:600">OpenRouter</span><span style="font-size:12px;color:#625d55;line-height:1.6">用你自己的 OpenRouter 帳號登入，不必複製任何金鑰。可選 Claude、Gemini、GPT 等模型，費用從你的 OpenRouter 額度扣；沒儲值也能用免費模型。論文內容會經過 OpenRouter 再送到模型廠商。</span></div>
+              <sc-if value="{{ orNotSigned }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ orSignIn }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500;white-space:nowrap">用 OpenRouter 登入</button></sc-if>
+              <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ orSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px;white-space:nowrap">登出</button></sc-if>
+            </div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#2c2925"><input type="checkbox" checked="{{ remember }}" sc-camel-on-change="{{ onRemember }}"> 在這台電腦記住 AI 登入（取消勾選的話，關閉這個分頁或瀏覽器就要重新登入；不影響 Google 連結與同步權杖）</label>
+            <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#625d55;line-height:1.6">{{ orKeyInfo }}</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+                <span style="font-size:12px;color:#625d55">快速選擇</span>
+                <sc-for list="{{ orPicks }}" as="pk" hint-placeholder-count="3"><button sc-camel-on-click="{{ pk.onClick }}" aria-pressed="{{ pk.pressed }}" title="{{ pk.id }}" style="border:1px solid {{ pk.line }};background:{{ pk.bg }};color:{{ pk.color }};border-radius:999px;padding:4px 11px;font-size:12px">{{ pk.label }}</button></sc-for>
+              </div>
+              <input value="{{ orModelQ }}" sc-camel-on-change="{{ onOrModelQ }}" placeholder="搜尋模型，例如 claude、gemini、gpt、free" aria-label="搜尋模型" style="padding:8px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+              <div role="listbox" aria-label="模型清單（方向鍵移動，Enter 選擇）" sc-camel-on-key-down="{{ orListKey }}" style="display:flex;flex-direction:column;max-height:240px;overflow:auto;border:1px solid #efebe4;border-radius:6px">
+                <sc-for list="{{ orModelList }}" as="om" hint-placeholder-count="4"><button role="option" aria-selected="{{ om.selected }}" sc-camel-tab-index="{{ om.tab }}" sc-camel-on-click="{{ om.onClick }}" style="text-align:left;border:0;border-bottom:1px solid #f4f2ed;background:{{ om.bg }};padding:7px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline" style-hover="background:#f4f2ed"><span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ om.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;white-space:nowrap">{{ om.price }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ om.id }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;white-space:nowrap">{{ om.ctx }}</span></button></sc-for>
+                
+              </div>
+              <sc-if value="{{ orModelEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12px;color:#625d55">{{ orModelMsg }}</div></sc-if>
+              <div style="font-size:12px;color:#625d55">使用中的模型：<span style="font-family:'IBM Plex Mono',monospace;color:#1d1b18">{{ orModel }}</span>（價格為每百萬 token 的美元，輸入／輸出，以 OpenRouter 清單為準）</div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ hasOtherAi }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#625d55">也可以改用你在「進階」設定的金鑰：</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ aiOpts }}" as="ao" hint-placeholder-count="2"><button sc-camel-on-click="{{ ao.onClick }}" aria-pressed="{{ ao.pressed }}" style="border:1px solid {{ ao.line }};background:{{ ao.bg }};color:{{ ao.color }};border-radius:6px;padding:6px 12px;font-size:12px">{{ ao.label }}</button></sc-for>
+            </div>
+          </sc-if>
+          <div style="font-size:12px;color:#625d55;line-height:1.6">想直接用自己的 Gemini 或 Claude API 金鑰？到 <button sc-camel-on-click="{{ goAdv }}" style="border:0;background:none;padding:0;color:oklch(0.42 0.1 200);text-decoration:underline;font-size:12px">進階</button> 設定。</div>
+        </sc-if>
+
+        <sc-if value="{{ setSync }}" hint-placeholder-val="{{ false }}">
+          <h2 style="margin:0;font-size:20px;font-weight:600">同步與備份</h2>
+          <div style="font-size:14px;font-weight:600">文獻庫備份</div>
+          <div style="font-size:12px;color:#625d55;line-height:1.6">匯出全部論文、筆記、串聯、專案與對話成 JSON 檔，可在其他電腦匯入。匯入時會合併，同一篇論文以匯入檔為準。API 金鑰與登入資訊不會被匯出。</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button sc-camel-on-click="{{ exportJson }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">匯出 JSON</button>
+            <label style="border:1px solid #d6d0c4;padding:6px 14px;border-radius:6px;background:#fff;font-size:12px">匯入 JSON<input type="file" accept="application/json,.json" sc-camel-on-change="{{ onImport }}" style="display:none"></label>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ stats }}</span>
+          </div>
+          <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:14px;font-weight:600">雲端同步</div>
+          <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px;align-self:flex-start">
+            <sc-for list="{{ syncBtns }}" as="sb" hint-placeholder-count="2"><button sc-camel-on-click="{{ sb.onClick }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ sb.bg }}">{{ sb.label }}</button></sc-for>
+          </div>
+          <sc-if value="{{ syncDrive }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:12px;color:#625d55;line-height:1.6">文獻庫存在你雲端硬碟的「論憶」資料夾（lunyi-library.json）。其他電腦連結同一個 Google 帳號即可同步。需要先在「我的帳號」連結 Google。</div>
+          </sc-if>
+          <sc-if value="{{ syncGist }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#625d55;line-height:1.6">把文獻庫存在你 GitHub 帳號的私人 Gist，多台電腦填同一組權杖與 Gist ID 即可同步。權杖到 GitHub → Settings → Developer settings → Personal access tokens 建立，只需要 Gists 讀寫權限。第一次上傳會自動建立 Gist。</div>
+            <input type="password" value="{{ tokenDraft }}" sc-camel-on-change="{{ onTokenDraft }}" placeholder="GitHub 權杖（github_pat_… 或 ghp_…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <input value="{{ gistDraft }}" sc-camel-on-change="{{ onGistDraft }}" placeholder="Gist ID（留空，第一次上傳時自動建立）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <button sc-camel-on-click="{{ saveSync }}" style="align-self:flex-start;border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存 Gist 設定</button>
+          </sc-if>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+            <button sc-camel-on-click="{{ pushCloud }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">上傳到雲端</button>
+            <button sc-camel-on-click="{{ pullCloud }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">從雲端下載並合併</button>
+            <button sc-camel-on-click="{{ toggleAuto }}" style="border:1px solid {{ autoLine }};padding:7px 14px;border-radius:6px;background:{{ autoBg }};color:{{ autoColor }};font-size:12px">{{ autoLabel }}</button>
+          </div>
+          <div style="font-size:12px;color:#625d55;line-height:1.6">自動同步開啟時，開啟網站會先下載合併，之後每次變更約 3 秒後自動上傳。{{ syncStatus }}</div>
+        </sc-if>
+
+        <sc-if value="{{ setAdv }}" hint-placeholder-val="{{ false }}">
+          <h2 style="margin:0;font-size:20px;font-weight:600">進階</h2>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">給熟悉 API 的使用者：直接使用你自己的 API 金鑰，費用算在金鑰所屬的帳號。金鑰只存在這台瀏覽器（依「AI 模型」分頁裡「在這台電腦記住 AI 登入」的設定），不會被匯出或同步。</div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">Google Gemini 金鑰</span><button sc-camel-on-click="{{ openAiStudio }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:12px">用 Google 帳號免費取得金鑰 ↗</button></div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">在 Google AI Studio 按「Create API key」，複製後貼回這裡。免費層的內容可能被 Google 用來改進產品，處理未發表的稿件時請留意。</div>
+            <input type="password" value="{{ gemKeyDraft }}" sc-camel-on-change="{{ onGemKeyDraft }}" placeholder="Gemini API 金鑰" aria-label="Gemini API 金鑰" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <input value="{{ gemModelDraft }}" sc-camel-on-change="{{ onGemModelDraft }}" placeholder="模型名稱（預設 gemini-2.5-flash）" aria-label="Gemini 模型名稱" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button sc-camel-on-click="{{ saveGem }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存並使用 Gemini</button><button sc-camel-on-click="{{ clearGem }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">清除</button><span style="font-size:12px;color:#625d55">{{ gemMsg }}</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">Anthropic Claude 金鑰</span><button sc-camel-on-click="{{ openClaudeConsole }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:12px">建立 Claude 金鑰 ↗</button></div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">在 Claude Console 建立 sk-ant- 開頭的金鑰。Claude.ai 的訂閱帳號不能用來登入第三方網站，必須使用 API 金鑰。</div>
+            <input type="password" value="{{ keyDraft }}" sc-camel-on-change="{{ onKeyDraft }}" placeholder="Anthropic API 金鑰（sk-ant-…）" aria-label="Anthropic API 金鑰" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <input value="{{ claudeModelDraft }}" sc-camel-on-change="{{ onClaudeModelDraft }}" placeholder="模型名稱（預設 claude-sonnet-5-5）" aria-label="Claude 模型名稱" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <input value="{{ codeDraft }}" sc-camel-on-change="{{ onCodeDraft }}" placeholder="網站存取碼（只有部署在 Vercel 且設定了存取碼時才需要）" aria-label="網站存取碼" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button sc-camel-on-click="{{ saveClaude }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存並使用 Claude</button><button sc-camel-on-click="{{ clearClaude }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">清除</button><span style="font-size:12px;color:#625d55">{{ claudeMsg }}</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
+            <span style="font-size:14px;font-weight:600">Google OAuth 用戶端 ID</span>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">連結 Google 帳號需要的設定。網站管理者在 src/app.html 填入 GOOGLE_CLIENT_ID 後，一般使用者就不必填；建立步驟見 README 的「Google 整合」。</div>
+            <input value="{{ clientDraft }}" sc-camel-on-change="{{ onClientDraft }}" placeholder="….apps.googleusercontent.com" aria-label="Google OAuth 用戶端 ID" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <button sc-camel-on-click="{{ saveClient }}" style="align-self:flex-start;border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存</button>
+          </div>
+        </sc-if>
       </div>
-      <div style="font-size:12px;font-weight:500">AI 連線</div>
-      <div style="font-size:12px;line-height:1.6;color:#2c2925;background:oklch(0.95 0.025 200);padding:8px 10px;border-radius:5px">目前：{{ aiMode }}</div>
-      <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px;align-self:flex-start">
-        <sc-for list="{{ aiBtns }}" as="ab" hint-placeholder-count="2"><button sc-camel-on-click="{{ ab.onClick }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ ab.bg }}">{{ ab.label }}</button></sc-for>
-      </div>
-      <sc-if value="{{ aiClaude }}" hint-placeholder-val="{{ true }}">
-        <input type="password" value="{{ keyDraft }}" sc-camel-on-change="{{ onKeyDraft }}" placeholder="Anthropic API 金鑰（sk-ant-…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-        <input value="{{ codeDraft }}" sc-camel-on-change="{{ onCodeDraft }}" placeholder="網站存取碼（Vercel 後端有設定時才需要）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-        <div style="font-size:12px;color:#625d55;line-height:1.6">在 Vercel 部署且已設定伺服器金鑰時，可以不填金鑰。GitHub Pages 沒有後端，必須填自己的金鑰。</div>
-      </sc-if>
-      <sc-if value="{{ aiGemini }}" hint-placeholder-val="{{ false }}">
-        <input type="password" value="{{ gemKeyDraft }}" sc-camel-on-change="{{ onGemKeyDraft }}" placeholder="Gemini API 金鑰（AIza…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-        <input value="{{ gemModelDraft }}" sc-camel-on-change="{{ onGemModelDraft }}" placeholder="模型名稱（預設 gemini-2.5-flash）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-        <div style="font-size:12px;color:#625d55;line-height:1.6">到 Google AI Studio（aistudio.google.com）按「Get API key」免費建立金鑰。自動辨識、翻譯與問答都會改用 Gemini。</div>
-      </sc-if>
-      <div style="display:flex;gap:8px">
-        <button sc-camel-on-click="{{ saveKey }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存</button>
-        <button sc-camel-on-click="{{ clearKey }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">清除金鑰</button>
-      </div>
-      <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">Google 帳號</div>
-      <div style="font-size:12px;line-height:1.6;color:#2c2925;background:oklch(0.95 0.025 200);padding:8px 10px;border-radius:5px">{{ gStatus }}</div>
-      <input value="{{ clientDraft }}" sc-camel-on-change="{{ onClientDraft }}" placeholder="Google OAuth 用戶端 ID（….apps.googleusercontent.com）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-      <div style="display:flex;gap:8px">
-        <button sc-camel-on-click="{{ gSignIn }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">{{ gSignInLabel }}</button>
-        <sc-if value="{{ gSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ gSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">中斷連結</button></sc-if>
-      </div>
-      <div style="font-size:12px;color:#625d55;line-height:1.6">連結後可以：從 Google 雲端硬碟匯入 PDF、把論文與筆記匯出成 Google 文件、把閱讀計畫排入 Google 日曆，以及用雲端硬碟同步文獻庫。用戶端 ID 的建立步驟見 README 的「Google 整合」。</div>
-      <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">文獻庫備份</div>
-      <div style="font-size:12px;color:#625d55;line-height:1.6">匯出全部論文、筆記、串聯與對話成 JSON 檔，可在其他電腦匯入。匯入時會合併，同一篇論文以匯入檔為準。API 金鑰不會被匯出。</div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button sc-camel-on-click="{{ exportJson }}" style="border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">匯出 JSON</button>
-        <label style="border:1px solid #d6d0c4;padding:6px 14px;border-radius:5px;background:#fff;font-size:12px">匯入 JSON<input type="file" accept="application/json,.json" sc-camel-on-change="{{ onImport }}" style="display:none"></label>
-        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ stats }}</span>
-      </div>
-      <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">雲端同步</div>
-      <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px;align-self:flex-start">
-        <sc-for list="{{ syncBtns }}" as="sb" hint-placeholder-count="2"><button sc-camel-on-click="{{ sb.onClick }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ sb.bg }}">{{ sb.label }}</button></sc-for>
-      </div>
-      <sc-if value="{{ syncDrive }}" hint-placeholder-val="{{ true }}">
-        <div style="font-size:12px;color:#625d55;line-height:1.6">文獻庫存在你雲端硬碟的「論憶」資料夾（lunyi-library.json）。其他裝置連結同一個 Google 帳號即可同步。需要先在上方連結 Google 帳號。</div>
-      </sc-if>
-      <sc-if value="{{ syncGist }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:12px;color:#625d55;line-height:1.6">把文獻庫存在你 GitHub 帳號的私人 Gist，多台裝置填同一組權杖與 Gist ID 即可同步。權杖到 GitHub → Settings → Developer settings → Personal access tokens 建立，只需要 Gists 讀寫權限。第一次上傳會自動建立 Gist。</div>
-        <input type="password" value="{{ tokenDraft }}" sc-camel-on-change="{{ onTokenDraft }}" placeholder="GitHub 權杖（github_pat_… 或 ghp_…），只存在這台瀏覽器" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-        <input value="{{ gistDraft }}" sc-camel-on-change="{{ onGistDraft }}" placeholder="Gist ID（留空，第一次上傳時自動建立）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-        <button sc-camel-on-click="{{ saveSync }}" style="align-self:flex-start;border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存 Gist 設定</button>
-      </sc-if>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-        <button sc-camel-on-click="{{ pushCloud }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">上傳到雲端</button>
-        <button sc-camel-on-click="{{ pullCloud }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:5px;background:#fff;font-size:12px">從雲端下載並合併</button>
-        <button sc-camel-on-click="{{ toggleAuto }}" style="border:1px solid {{ autoLine }};padding:7px 14px;border-radius:5px;background:{{ autoBg }};color:{{ autoColor }};font-size:12px">{{ autoLabel }}</button>
-      </div>
-      <div style="font-size:12px;color:#625d55;line-height:1.6">自動同步開啟時，開啟網站會先下載合併，之後每次變更約 3 秒後自動上傳。{{ syncStatus }}</div>
     </div>
   </div>
 </sc-if>
 
 <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
-  <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1d1b18;color:#faf9f6;font-size:13px;padding:10px 18px;border-radius:6px;z-index:20;max-width:calc(100vw - 32px)">{{ toast }}<sc-if value="{{ hasToastLink }}" hint-placeholder-val="{{ false }}"><a href="{{ toastLink }}" target="_blank" rel="noopener" style="color:oklch(0.85 0.08 200);margin-left:12px">開啟</a></sc-if></div>
+  <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1d1b18;color:#faf9f6;font-size:13px;padding:10px 18px;border-radius:6px;z-index:60;max-width:calc(100vw - 32px)">{{ toast }}<sc-if value="{{ hasToastLink }}" hint-placeholder-val="{{ false }}"><a href="{{ toastLink }}" target="_blank" rel="noopener" style="color:oklch(0.85 0.08 200);margin-left:12px">開啟</a></sc-if></div>
 </sc-if>
 </x-dc>
 <script>
 (function(){
   var native = window.claude && typeof window.claude.complete === 'function' ? window.claude : null;
-  var MODEL = 'claude-sonnet-5-5';
+  var CLAUDE_MODEL = 'claude-sonnet-5-5';
+  var SITE = location.origin + location.pathname;
   function ls(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
-  function need(msg){ try { window.dispatchEvent(new CustomEvent('lunyi-need-key',{detail:msg})); } catch(e){} var er=new Error(msg); er.code='NO_KEY'; return er; }
-  function pick(j){ return (j && j.content || []).filter(function(c){return c.type==='text';}).map(function(c){return c.text;}).join(''); }
-  async function gemini(req, key){
+  // 金鑰：勾選「在這台電腦記住 AI 登入」時存在 localStorage，否則只存在這次工作階段（sessionStorage）
+  function sec(k){ try { return sessionStorage.getItem(k) || localStorage.getItem(k) || ''; } catch(e){ return ''; } }
+  function drop(k){ try { sessionStorage.removeItem(k); localStorage.removeItem(k); } catch(e){} }
+  // 需要使用者處理（登入、換金鑰）的錯誤：通知介面打開設定的對應分頁
+  function need(msg, tab){ try { window.dispatchEvent(new CustomEvent('lunyi-need-key',{detail:{msg:msg, tab:tab||'ai'}})); } catch(e){} var er=new Error(msg); er.code='NO_KEY'; return er; }
+  function fail(msg){ return new Error(msg); }
+  async function body(r){ try { return await r.json(); } catch(e){ return null; } }
+  function errMsg(j, r){ return (j && j.error && (j.error.message || j.error.status)) || ('HTTP ' + r.status); }
+
+  async function openrouter(req){
+    var key = sec('lunyi-or-key');
+    if (!key) throw need('請先在「設定 → AI 模型」用 OpenRouter 帳號登入', 'ai');
+    var msgs = (req.system ? [{ role:'system', content:req.system }] : []).concat(req.messages);
+    var r;
+    try {
+      r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method:'POST', headers:{ 'Authorization':'Bearer ' + key, 'Content-Type':'application/json', 'HTTP-Referer':SITE, 'X-Title':'Lunyi' },
+        // 推理模型的思考也算在 max_tokens 裡，上限太小會只回空白；只依實際用量計費
+        body: JSON.stringify({ model: ls('lunyi-or-model') || 'openrouter/free', max_tokens: Math.max(req.max_tokens || 1500, 4000), messages: msgs }) });
+    } catch(e) { throw fail('連不到 OpenRouter，請檢查網路'); }
+    var j = await body(r);
+    if (r.status === 401) { drop('lunyi-or-key'); throw need('OpenRouter 授權已失效，請重新登入', 'ai'); }
+    if (r.status === 402) {
+      var md = (j && j.error && j.error.metadata) || {};
+      if (md.reason === 'weight_exceeds_budget') throw fail('這次請求超過你目前額度能一次處理的量：請改選較便宜的模型，或到 openrouter.ai 儲值');
+      if (md.reason === 'in_flight_budget_exhausted') throw fail('OpenRouter 額度暫時被進行中的請求占滿，請稍後再試');
+      throw fail(md.limit_source === 'openrouter_key_limit' ? '這次授權設定的花費上限已用完，請到 OpenRouter 調高上限或重新登入' : 'OpenRouter 額度不足：請到 openrouter.ai 儲值，或在設定改選免費模型');
+    }
+    if (r.status === 429) throw fail('OpenRouter 請求太頻繁（免費模型每分鐘與每天都有次數上限），請稍後再試');
+    if (!r.ok) throw fail('OpenRouter：' + errMsg(j, r));
+    var c = j && j.choices && j.choices[0];
+    if (!c || !c.message) throw fail('OpenRouter 沒有回傳內容，請換一個模型再試');
+    if (!c.message.content && c.finish_reason === 'length') throw fail('回應在產生內容前就達到長度上限，請換一個模型或縮短內容');
+    return c.message.content || '';
+  }
+
+  async function gemini(req){
+    var key = sec('lunyi-gemini-key');
+    if (!key) throw need('已選擇 Gemini，請到「設定 → 進階」貼上 Gemini 金鑰', 'adv');
     var model = ls('lunyi-gemini-model') || 'gemini-2.5-flash';
-    var body = { contents: req.messages.map(function(m){ return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }] }; }) };
-    if (req.system) body.systemInstruction = { parts: [{ text: req.system }] };
-    var r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', { method:'POST', headers:{ 'content-type':'application/json', 'x-goog-api-key':key }, body: JSON.stringify(body) });
-    if (r.status === 400 || r.status === 403) { var t = await r.text(); if (/api.?key/i.test(t)) throw need('Gemini 金鑰無效，請到「設定」重新輸入'); throw new Error('Gemini HTTP ' + r.status); }
-    if (r.status === 404) throw need('找不到 Gemini 模型「' + model + '」，請到「設定」修改');
-    if (!r.ok) throw new Error('Gemini HTTP ' + r.status);
-    var c = ((await r.json()).candidates || [])[0];
-    return (c && c.content && c.content.parts || []).filter(function(x){ return !x.thought; }).map(function(x){ return x.text || ''; }).join('');
+    var payload = { contents: req.messages.map(function(m){ return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }] }; }) };
+    if (req.system) payload.systemInstruction = { parts: [{ text: req.system }] };
+    var r;
+    try { r = await fetch('https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(model) + ':generateContent', { method:'POST', headers:{ 'content-type':'application/json', 'x-goog-api-key':key }, body: JSON.stringify(payload) }); }
+    catch(e) { throw fail('連不到 Gemini，請檢查網路'); }
+    var j = await body(r);
+    if (r.status === 400 && /API_KEY_INVALID|api.?key/i.test(JSON.stringify(j || ''))) throw need('Gemini 金鑰無效，請到「設定 → 進階」重新貼上', 'adv');
+    if (r.status === 403) throw need('Gemini 拒絕這把金鑰（可能被封鎖或缺少限制），請到 AI Studio 重新建立', 'adv');
+    if (r.status === 404) throw need('找不到 Gemini 模型「' + model + '」，請到「設定 → 進階」修改', 'adv');
+    if (r.status === 429) throw fail('Gemini 免費額度暫時用完，請稍後再試');
+    if (!r.ok) throw fail('Gemini：' + errMsg(j, r));
+    var c = (j && j.candidates || [])[0];
+    if (!c && j && j.promptFeedback && j.promptFeedback.blockReason) throw fail('Gemini 擋下了這次請求（' + j.promptFeedback.blockReason + '）');
+    var text = (c && c.content && c.content.parts || []).filter(function(x){ return !x.thought; }).map(function(x){ return x.text || ''; }).join('');
+    if (!text && c && (c.finishReason === 'MAX_TOKENS' || c.finishReason === 'CONTINUATION')) throw fail('Gemini 的回應被截斷，請換一個模型或縮短內容');
+    return text;
+  }
+
+  async function claudeKey(req, key){
+    // Claude 5.x 預設會先思考，思考也算在 max_tokens 裡；上限放寬，只依實際用量計費
+    var b = { model: ls('lunyi-claude-model') || CLAUDE_MODEL, max_tokens: Math.max(req.max_tokens || 1500, 8000), messages: req.messages };
+    if (req.system) b.system = req.system;
+    var r;
+    try { r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{ 'content-type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' }, body: JSON.stringify(b) }); }
+    catch(e) { throw fail('連不到 Anthropic，請檢查網路'); }
+    var j = await body(r);
+    if (r.status === 401) throw need('Claude 金鑰無效或已過期，請到「設定 → 進階」重新輸入', 'adv');
+    if (r.status === 404) throw need('找不到 Claude 模型，請到「設定 → 進階」修改模型名稱', 'adv');
+    if (r.status === 429 || r.status === 529) throw fail('Claude 目前忙碌，請稍後再試');
+    if (!r.ok) throw fail('Claude：' + errMsg(j, r));
+    var out = (j && j.content || []).filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('');
+    if (!out && j && j.stop_reason === 'max_tokens') throw fail('Claude 的回應被截斷，請縮短內容或換模型');
+    return out;
+  }
+
+  async function backend(req){
+    var b = { model: CLAUDE_MODEL, max_tokens: Math.min(req.max_tokens || 1500, 4000), messages: req.messages };
+    if (req.system) b.system = req.system;
+    var r;
+    try { r = await fetch('api/claude', { method:'POST', headers:{ 'content-type':'application/json', 'x-lunyi-code': ls('lunyi-code') }, body: JSON.stringify(b) }); }
+    catch(e) { throw need('還沒連結雲端 AI：請在「設定 → AI 模型」用 OpenRouter 登入', 'ai'); }
+    if (r.status === 404 || r.status === 405 || r.status === 501) throw need('還沒連結雲端 AI：請在「設定 → AI 模型」用 OpenRouter 登入', 'ai');
+    if (r.status === 401) throw need('網站存取碼錯誤，請到「設定 → 進階」輸入', 'adv');
+    var j = await body(r);
+    if (!r.ok) throw fail('HTTP ' + r.status);
+    return (j && j.content || []).filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('');
+  }
+
+  // 目前用哪一個雲端 AI：使用者選的優先；沒選過時依序看 OpenRouter 登入、Claude 金鑰、Gemini 金鑰
+  // 使用者選定的服務沒有憑證時不默默改用另一把付費金鑰，只退回執行環境內建 AI 或「未連結」
+  function provider(){
+    var p = ls('lunyi-ai');
+    var has = { openrouter: sec('lunyi-or-key'), gemini: sec('lunyi-gemini-key'), claude: sec('lunyi-apikey') };
+    if (p && p !== 'native') return has[p] ? p : (native ? 'native' : '');
+    if (native) return 'native';
+    if (sec('lunyi-or-key')) return 'openrouter';
+    if (sec('lunyi-apikey')) return 'claude';
+    if (sec('lunyi-gemini-key')) return 'gemini';
+    return '';
   }
   window.__lunyiShim = !native;
+  window.__lunyiAi = { provider: provider, sec: sec, drop: drop, hasNative: !!native };
   window.claude = { complete: async function(req){
-    if (typeof req === 'string') req = { messages:[{role:'user',content:req}] };
-    if (ls('lunyi-ai') === 'gemini') {
-      var gk = ls('lunyi-gemini-key');
-      if (!gk) throw need('已選擇 Gemini，請到「設定」輸入 Gemini API 金鑰');
-      return gemini(req, gk);
-    }
-    if (native) return native.complete(req);
-    var body = { model: MODEL, max_tokens: Math.min(req.max_tokens||1500, 4000), messages: req.messages };
-    if (req.system) body.system = req.system;
-    var key = ls('lunyi-apikey');
-    if (key) {
-      var r = await fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers:{ 'content-type':'application/json', 'x-api-key':key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' }, body: JSON.stringify(body) });
-      if (r.status === 401) throw need('API 金鑰無效，請到「設定」重新輸入');
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return pick(await r.json());
-    }
-    var res;
-    try { res = await fetch('api/claude', { method:'POST', headers:{ 'content-type':'application/json', 'x-lunyi-code': ls('lunyi-code') }, body: JSON.stringify(body) }); }
-    catch(e) { throw need('無法連到 AI，請到「設定」輸入 API 金鑰'); }
-    if (res.status === 404 || res.status === 405 || res.status === 501) throw need('這個網址沒有 AI 後端，請到「設定」輸入 API 金鑰');
-    if (res.status === 401) throw need('網站存取碼錯誤，請到「設定」輸入');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return pick(await res.json());
+    if (typeof req === 'string') req = { messages:[{ role:'user', content:req }] };
+    var p = provider();
+    if (p === 'openrouter') return openrouter(req);
+    if (p === 'gemini') return gemini(req);
+    if (p === 'native' && native) return native.complete(req);
+    var key = sec('lunyi-apikey');
+    if (p === 'claude' && key) return claudeKey(req, key);
+    if (p === 'claude' && native) return native.complete(req);
+    return backend(req);
   } };
 })();
 </script>
@@ -560,25 +752,58 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
 const KEY = 'lunyi-v2';
 const ACC = 'oklch(0.45 0.1 200)';
 const HL = { y: 'oklch(0.94 0.07 95)', b: 'oklch(0.93 0.045 220)' };
-// 資料夾類別色：dataviz 參考色盤前 3 色。圖譜節點四散，任兩色都可能相鄰，validate_palette.js --pairs all
-// 只有前 3 色通過（色盲 ΔE 9.2、一般視覺 24.0）。色槽存在 fslots，第一次出現時分配，之後改資料夾、刪除或同步都不變；
-// 沒有色槽的資料夾一律算「其他」灰色。綠松對比不足 3:1，所以資料夾名稱一定跟著色塊顯示。
+// 專案類別色：dataviz 參考色盤前 3 色。圖譜節點四散，任兩色都可能相鄰，validate_palette.js --pairs all
+// 只有前 3 色通過（色盲 ΔE 9.2、一般視覺 24.0）。色槽存在 fslots，第一次出現時分配，之後改名、刪除或同步都不變；
+// 沒有色槽的專案一律算「其他」灰色。綠松對比不足 3:1，所以專案名稱一定跟著色塊顯示。
 const CAT = ['#2a78d6', '#eb6834', '#1baf7a'];
 const CAT_OTHER = '#a8a196';
-// 依現有資料夾補齊色槽：保留舊的對應；新資料夾優先用從沒用過的色槽，再用已不存在的資料夾留下的色槽
-function slotMap(papers, fslots) {
-  const map = { ...(fslots || {}) }, live = [...new Set(papers.map(p => p.folder || '未分類'))];
+// 依現有專案補齊色槽：保留舊的對應；新專案優先用從沒用過的色槽，再用已不存在的專案留下的色槽
+function slotMap(names, fslots) {
+  const map = { ...(fslots || {}) }, live = [...new Set(names)];
   const has = f => Object.prototype.hasOwnProperty.call(map, f);
   let changed = false;
+  // 舊資料可能有兩個存活的專案占同一色槽：依 names 順序（有論文的在前）保留第一個
+  const used = new Set();
+  live.forEach(f => { if (!has(f)) return; if (used.has(map[f])) { delete map[f]; changed = true; } else used.add(map[f]); });
   live.forEach(f => {
     if (has(f)) return;
     const held = new Set(live.filter(has).map(x => map[x])), ever = new Set(Object.values(map));
     const free = CAT.map((_, i) => i).filter(i => !held.has(i));
     const slot = free.find(i => !ever.has(i)) ?? free[0];
     if (slot === undefined) return;
+    // 已不存在的舊名稱如果占著這個色槽就清掉，之後重建同名專案才不會撞色
+    Object.keys(map).forEach(x => { if (x !== f && map[x] === slot && !live.includes(x)) delete map[x]; });
     map[f] = slot; changed = true;
   });
   return { map, changed };
+}
+// OpenRouter 的快速選擇（只顯示模型清單裡實際存在的；價格與可用性以 OpenRouter 清單為準）
+const OR_PICKS = [['免費', 'openrouter/free'], ['平衡', 'google/gemini-3.8-flash'], ['品質', 'anthropic/claude-sonnet-5.5'], ['省錢', 'anthropic/claude-haiku-5.5']];
+// 會被「在這台電腦記住 AI 登入」影響存放位置的機密資料
+const SECRETS = ['lunyi-or-key', 'lunyi-apikey', 'lunyi-gemini-key'];
+// 瀏覽器內建翻譯（Translator API，桌面版 Chrome 138 起）：免費、在使用者電腦上執行，只能翻譯
+const HAS_TR = typeof self !== 'undefined' && 'Translator' in self;
+const trCache = new Map();
+const LANG_CODE = { 英文: 'en', 德文: 'de', 法文: 'fr', 日文: 'ja', 韓文: 'ko', 西班牙文: 'es', 義大利文: 'it', 葡萄牙文: 'pt', 俄文: 'ru', 簡體中文: 'zh', 中文: 'zh' };
+// 判斷原文語言：有假名是日文、有諺文是韓文、以漢字為主是中文；其餘看論文的語言欄位，預設英文
+function guessLang(p, text) {
+  if (/[぀-ヿ]/.test(text)) return 'ja';
+  if (/[가-힯]/.test(text)) return 'ko';
+  if ((text.match(/[一-鿿]/g) || []).length > text.length * 0.3) return 'zh';
+  return LANG_CODE[p.lang] || 'en';
+}
+// 第一次使用某個語言要下載語言包，必須在使用者點擊後的短時間內建立
+async function getTranslator(src, onPct) {
+  if (trCache.has(src)) return trCache.get(src);
+  const opts = { sourceLanguage: src, targetLanguage: 'zh-Hant' };
+  const a = await self.Translator.availability(opts);
+  if (a === 'unavailable') { const e = new Error(`內建翻譯不支援這個語言（${src}）`); e.code = 'TR_UNSUPPORTED'; throw e; }
+  if (a !== 'available' && !(navigator.userActivation && navigator.userActivation.isActive)) {
+    const e = new Error('第一次使用內建翻譯要先下載語言包：請按「翻譯其餘段落」，或到「設定 → AI 模型」按「啟用離線翻譯」'); e.code = 'NEED_GESTURE'; throw e;
+  }
+  const t = await self.Translator.create({ ...opts, monitor(m) { m.addEventListener('downloadprogress', ev => onPct && onPct(Math.round((ev.loaded || 0) / (ev.total || 1) * 100))); } });
+  trCache.set(src, t);
+  return t;
 }
 const MUTE = '#cdc7bb';
 const ACC_DARK = 'oklch(0.36 0.09 200)';
@@ -692,13 +917,27 @@ class Component extends DCLogic {
       layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '',
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
       linkTarget: '', linkNote: '', toast: '', ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
-      gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {} };
+      gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
+      projects: Array.isArray(d.projects) ? d.projects : [], projAt: d.projAt || {}, projDel: d.projDel || {}, orKeyErr: '', projOpen: d.papers[0] ? { [d.papers[0].folder || '未分類']: true } : {}, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
+      sbOpen: window.innerWidth >= 1100, narrow: window.innerWidth <= 900, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
+      orModels: null, orModelErr: '', orModelQ: '', orModelPick: '', orKey: null, remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '' };
   }
   componentDidMount() {
     this._ps = this.state;
     this.ensureSlots();
-    this._needKey = e => { this.toast(e.detail || '需要設定 AI 金鑰'); this.openSettings(); };
+    this._needKey = e => { const d = e.detail || {}; this.toast((typeof d === 'string' ? d : d.msg) || '需要連結 AI'); this.openSettings(d.tab || 'ai'); };
     window.addEventListener('lunyi-need-key', this._needKey);
+    // 視窗變窄時側欄改成浮動抽屜
+    this._rs = () => { const n = window.innerWidth <= 900; if (n !== this.state.narrow) this.setState({ narrow: n, sbOpen: !n }); };
+    window.addEventListener('resize', this._rs);
+    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.narrow && s.sbOpen) this.setState({ sbOpen: false }); };
+    window.addEventListener('keydown', this._esc);
+    this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); };
+    window.addEventListener('pointerdown', this._down);
+    try { const t = sessionStorage.getItem('lunyi-gh-token'); if (t && !localStorage.getItem('lunyi-gh-token')) { localStorage.setItem('lunyi-gh-token', t); sessionStorage.removeItem('lunyi-gh-token'); } } catch (e) {}
+    this.orCallback();
+    // 沒選雲端 AI 時，看看同站有沒有 Vercel 後端（GitHub Pages 回 404，後端對 GET 回 405）
+    if (!this.provider() && window.__lunyiShim && !/github\.io$/.test(location.hostname) && location.protocol !== 'file:') fetch('api/claude').then(r => { if (r.status === 405) { this._backend = true; this.forceUpdate(); } }).catch(() => {});
     if (!document.getElementById('lunyi-fonts')) {
       const l = document.createElement('link');
       l.id = 'lunyi-fonts'; l.rel = 'stylesheet';
@@ -718,35 +957,39 @@ class Component extends DCLogic {
     this._ps = s;
     if (pp.layout !== this.props.layout && this.props.layout) this.setState({ layout: this.props.layout });
     if (pp.defaultMode !== this.props.defaultMode && this.props.defaultMode) this.setState({ mode: this.props.defaultMode });
-    const libChanged = ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone;
+    const libChanged = ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone || ps.projects !== s.projects || ps.projDel !== s.projDel;
     if (libChanged || ps.fslots !== s.fslots) {
-      try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone, fslots: s.fslots })); } catch (e) { this.toast('儲存空間已滿，請刪除部分論文'); }
+      try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone, fslots: s.fslots, projects: s.projects, projAt: s.projAt, projDel: s.projDel })); } catch (e) { this.toast('儲存空間已滿，請刪除部分論文'); }
     }
     if (libChanged && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => this.pushCloud(true), 3000); }
-    if (ps.papers !== s.papers) this.ensureSlots();
+    if (ps.papers !== s.papers || ps.projects !== s.projects || ps.projDel !== s.projDel) this.ensureSlots();
+    this.syncFocus(ps, s);
     // 離開總覽時元素直接卸載，收不到 mouseleave／blur，要自己清掉提示框
     if (ps.layout !== s.layout && s.hov) this.setState({ hov: null });
   }
   ensureSlots() {
-    const { map, changed } = slotMap(this.state.papers, this.state.fslots);
+    const { map, changed } = slotMap(this.slotNames(), this.state.fslots);
     if (changed) this.setState({ fslots: map });
   }
-  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); clearTimeout(this._push); }
+  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); clearTimeout(this._push); }
   lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
   lsSet(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
-  openSettings() {
-    this.setState({ showSet: true, keyDraft: this.lsGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.lsGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
-      aiDraft: this.lsGet('lunyi-ai') || 'claude', gemKeyDraft: this.lsGet('lunyi-gemini-key'), gemModelDraft: this.lsGet('lunyi-gemini-model'), clientDraft: this.gClient(), syncTarget: this.cloudTarget() });
+  openSettings(tab) {
+    if (!this.state.showSet && !this.state.showAdd) this._retFocus = document.activeElement;
+    const t = tab || this.state.setTab || 'account';
+    this.setState({ showSet: true, setTab: t, acctOpen: false, keyDraft: this.secGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.secGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
+      gemKeyDraft: this.secGet('lunyi-gemini-key'), gemModelDraft: this.lsGet('lunyi-gemini-model'), claudeModelDraft: this.lsGet('lunyi-claude-model'), clientDraft: this.gClient(), syncTarget: this.cloudTarget(), gemMsg: '', claudeMsg: '' });
+    if (t === 'ai') this.loadAiInfo();
   }
   aiMode() {
-    if (this.lsGet('lunyi-ai') === 'gemini') return this.lsGet('lunyi-gemini-key') ? `Google Gemini（${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}）` : 'Google Gemini（尚未填金鑰）';
-    if (!window.__lunyiShim) return '執行環境內建 AI';
-    if (this.lsGet('lunyi-apikey')) return '使用你的 API 金鑰，直接呼叫 Anthropic';
-    return '網站後端 /api/claude（只有 Vercel 部署可用）';
+    const p = this.provider(), tr = this.useBuiltin() ? '翻譯用瀏覽器內建' : '';
+    const ai = p === 'openrouter' ? `OpenRouter（${this.lsGet('lunyi-or-model') || 'openrouter/free'}）` : p === 'gemini' ? `Google Gemini 金鑰（${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}）`
+      : p === 'claude' ? `Claude 金鑰（${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}）` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '尚未連結雲端 AI';
+    return [ai, tr].filter(Boolean).join('；');
   }
   payload() {
     const s = this.state;
-    return { app: 'lunyi', version: 2, exportedAt: new Date().toISOString(), papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone };
+    return { app: 'lunyi', version: 2, exportedAt: new Date().toISOString(), papers: s.papers, links: s.links, notes: s.notes, qa: s.qa.filter(x => !x.error), gone: s.gone, projects: s.projects, projAt: s.projAt, projDel: s.projDel };
   }
   exportJson() {
     const s = this.state, data = this.payload();
@@ -767,7 +1010,7 @@ class Component extends DCLogic {
   // 合併外部資料：同一篇以外部為準；gone 記錄已刪除的論文與筆記 id，避免同步時被別台裝置加回來。
   mergeData(d) {
     const ok = p => p && p.id && p.title && Array.isArray(p.paras);
-    const inc = d.papers.filter(ok).map(p => ({ ...p, keywords: Array.isArray(p.keywords) ? p.keywords : [], cites: Array.isArray(p.cites) ? p.cites : [] }));
+    const inc = d.papers.filter(ok).map(p => ({ ...p, folder: p.folder === '全部' ? '未分類' : p.folder, keywords: Array.isArray(p.keywords) ? p.keywords : [], cites: Array.isArray(p.cites) ? p.cites : [] }));
     this.setState(st => {
       const gone = new Set([...(st.gone || []), ...(Array.isArray(d.gone) ? d.gone : [])]);
       const ids = new Set(inc.map(p => p.id));
@@ -779,20 +1022,24 @@ class Component extends DCLogic {
       const notes = [...st.notes, ...(d.notes || []).filter(n => n && n.id && !nid.has(n.id))].filter(n => !gone.has(n.id) && !gone.has(n.paperId));
       const qa = [...st.qa, ...(d.qa || []).filter(x => x && x.q && !st.qa.some(y => y.q === x.q && y.a === x.a))];
       const sel = papers.some(p => p.id === st.sel) ? st.sel : (papers[0] && papers[0].id);
-      return { papers, links: links.filter(l => !gone.has(l.a) && !gone.has(l.b)), notes, qa, gone: [...gone], sel };
+      // 專案的建立／刪除時間都取兩邊較新的，刪除時間晚於建立時間的專案不會被同步加回來
+      const maxMerge = (a, b) => { const o = { ...(a || {}) }; Object.entries(b && typeof b === 'object' ? b : {}).forEach(([k, v]) => { if (typeof v === 'number' && !(o[k] >= v)) o[k] = v; }); return o; };
+      const projAt = maxMerge(st.projAt, d.projAt), projDel = maxMerge(st.projDel, d.projDel);
+      const projects = [...new Set([...(st.projects || []), ...(Array.isArray(d.projects) ? d.projects.filter(x => typeof x === 'string' && x && x !== '全部') : [])])].filter(x => !((projDel[x] || 0) > (projAt[x] || 0)));
+      return { papers, links: links.filter(l => !gone.has(l.a) && !gone.has(l.b)), notes, qa, gone: [...gone], sel, projects, projAt, projDel };
     });
     return inc.length;
   }
   cloudTarget() { return this.lsGet('lunyi-sync-target') || (this.lsGet('lunyi-gist-id') ? 'gist' : 'drive'); }
   syncOn() {
     if (this.lsGet('lunyi-sync-auto') !== '1') return false;
-    return this.cloudTarget() === 'drive' ? !!this.gClient() : !!this.lsGet('lunyi-gh-token') && !!this.lsGet('lunyi-gist-id');
+    return this.cloudTarget() === 'drive' ? !!this.gClient() : !!this.secGet('lunyi-gh-token') && !!this.lsGet('lunyi-gist-id');
   }
   ghHeaders(token) { return { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' }; }
   ghError(r) { return new Error(r.status === 401 ? '權杖無效或已過期' : r.status === 404 ? '找不到 Gist，或權杖沒有 Gists 權限' : r.status === 403 ? '權限不足或超過 API 用量' : 'HTTP ' + r.status); }
   stamp() { return new Date().toTimeString().slice(0, 5); }
   async gistPush(content) {
-    const token = this.lsGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
+    const token = this.secGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
     if (!token) throw new Error('請先填入 GitHub 權杖並儲存');
     const files = { [GIST_FILE]: { content } };
     const r = await fetch('https://api.github.com/gists' + (id ? '/' + id : ''), { method: id ? 'PATCH' : 'POST', headers: this.ghHeaders(token),
@@ -803,7 +1050,7 @@ class Component extends DCLogic {
     return id ? '已上傳到 Gist' : '已建立 Gist 並上傳';
   }
   async gistPull() {
-    const token = this.lsGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
+    const token = this.secGet('lunyi-gh-token'), id = this.lsGet('lunyi-gist-id');
     if (!token || !id) throw new Error('請先填入 GitHub 權杖與 Gist ID 並儲存');
     const r = await fetch('https://api.github.com/gists/' + id, { headers: this.ghHeaders(token), cache: 'no-store' });
     if (!r.ok) throw this.ghError(r);
@@ -830,7 +1077,8 @@ class Component extends DCLogic {
       const msg = this.cloudTarget() === 'drive' ? await this.drivePush(content, !quiet) : await this.gistPush(content);
       this.setState({ syncStatus: `最後上傳：${this.stamp()}` });
       if (!quiet) this.toast(msg);
-    } catch (e) { this.setState({ syncStatus: '上傳失敗：' + e.message }); if (!quiet) this.toast('上傳失敗：' + e.message); }
+      return true;
+    } catch (e) { this.setState({ syncStatus: '上傳失敗：' + e.message }); if (!quiet) this.toast('上傳失敗：' + e.message); return false; }
   }
   async pullCloud(quiet) {
     this.setState({ syncStatus: '下載中…' });
@@ -858,7 +1106,7 @@ class Component extends DCLogic {
     if (cached) return cached;
     if (!ia) throw new Error('Google 登入已過期，請到「設定」重新連結');
     const id = this.gClient();
-    if (!id) { this.openSettings(); throw new Error('請先在「設定」填入 Google OAuth 用戶端 ID'); }
+    if (!id) { this.openSettings('adv'); throw new Error('請先在「設定 → 進階」填入 Google OAuth 用戶端 ID'); }
     await loadScript(GSI);
     const r = await new Promise((ok, fail) => {
       window.google.accounts.oauth2.initTokenClient({ client_id: id, scope, include_granted_scopes: true, callback: ok,
@@ -874,7 +1122,7 @@ class Component extends DCLogic {
     try {
       const r = await fetch(GAPI + '/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + token } });
       if (!r.ok) return;
-      const u = await r.json(), gUser = { email: u.email || '', name: u.name || u.email || 'Google 帳號' };
+      const u = await r.json(), gUser = { email: u.email || '', name: u.name || u.email || 'Google 帳號', picture: u.picture || '' };
       this.lsSet('lunyi-g-user', JSON.stringify(gUser));
       this.setState({ gUser });
     } catch (e) {}
@@ -889,6 +1137,7 @@ class Component extends DCLogic {
   }
   async gSignIn() {
     if (this.state.showSet && this.state.clientDraft.trim()) this.lsSet('lunyi-g-client', this.state.clientDraft.trim());
+    if (!this.gClient()) { this.openSettings('adv'); return this.toast('網站尚未設定 Google 登入：請先填入 OAuth 用戶端 ID'); }
     try { this.lsSet('lunyi-g-token', ''); await this.gToken(); this.toast('已連結 Google 帳號'); } catch (e) { this.toast(e.message); }
   }
   gSignOut() {
@@ -980,9 +1229,10 @@ class Component extends DCLogic {
     return `@article{${key},\n  title   = {${p.title}},\n  author  = {${(p.authors || '').replace(/\s*等$/, ' and others')}},\n  journal = {${p.journal}},\n  year    = {${p.year}}\n}`;
   }
 
-  async translateIdx(pid, idxs) {
+  async translateIdx(pid, idxs, force) {
     const p = this.find(pid);
     if (!p || !idxs.length) return false;
+    if (this.useBuiltin(force)) return this.translateBuiltin(pid, idxs);
     const keys = idxs.map(i => pid + ':' + i);
     this.setState(s => { const b = { ...s.busy }; keys.forEach(k => b[k] = true); return { busy: b }; });
     let ok = false;
@@ -991,9 +1241,9 @@ class Component extends DCLogic {
       const arr = J(r);
       if (Array.isArray(arr) && arr.length) {
         ok = true;
-        this.upd(pid, pp => ({ ...pp, paras: pp.paras.map((x, i) => { const j = idxs.indexOf(i); return j >= 0 && arr[j] ? { ...x, zh: String(arr[j]) } : x; }) }));
-      } else throw new Error('bad');
-    } catch (e) { if (e && e.code !== 'NO_KEY') this.toast('翻譯失敗，請稍後再試'); }
+        this.upd(pid, pp => ({ ...pp, paras: pp.paras.map((x, i) => { const j = idxs.indexOf(i); return j >= 0 && arr[j] ? { ...x, zh: String(arr[j]), zhBy: undefined } : x; }) }));
+      } else throw new Error(r ? 'AI 回傳的格式不對（可能被截斷），請換一個模型再試' : 'AI 沒有回傳內容');
+    } catch (e) { if (e && e.code !== 'NO_KEY') this.toast('翻譯失敗：' + (e && e.message || '請稍後再試')); }
     this.setState(s => { const b = { ...s.busy }; keys.forEach(k => delete b[k]); return { busy: b }; });
     return ok;
   }
@@ -1068,19 +1318,21 @@ class Component extends DCLogic {
       if (!paras.length) return this.toast('請貼上內文');
       full = paras.join('\n\n');
     }
-    this.setState({ importStatus: 'AI 正在辨識標題、關鍵詞…' });
     let meta = {};
-    try { meta = J(await window.claude.complete({ system: SYS_META, messages: [{ role: 'user', content: full.slice(0, 6000) }], max_tokens: 800 })) || {}; } catch (e) {}
+    if (this.hasCloud()) {
+      this.setState({ importStatus: 'AI 正在辨識標題、關鍵詞…' });
+      try { meta = J(await window.claude.complete({ system: SYS_META, messages: [{ role: 'user', content: full.slice(0, 6000) }], max_tokens: 800 })) || {}; } catch (e) {}
+    }
     const id = 'p' + Date.now().toString(36);
     const paper = { id, title: f.title || meta.title || (s.pdf && s.pdf.name.replace(/\.pdf$/i, '')) || '未命名論文', authors: f.authors || meta.authors || '', journal: f.journal || meta.journal || '', year: f.year || String(meta.year || ''),
-      folder: f.folder.trim() || '未分類', lang: meta.language || '', tags: Array.isArray(meta.tags) ? meta.tags.slice(0, 3) : [], keywords: Array.isArray(meta.keywords) ? meta.keywords.map(norm).slice(0, 8) : [],
+      folder: (f.folder.trim() !== '全部' && f.folder.trim()) || (s.folder !== '全部' ? s.folder : '未分類'), lang: meta.language || '', tags: Array.isArray(meta.tags) ? meta.tags.slice(0, 3) : [], keywords: Array.isArray(meta.keywords) ? meta.keywords.map(norm).slice(0, 8) : [],
       paras: paras.map(en => ({ en, zh: '' })), cites: [], refText: (refs || '').slice(0, 20000) };
     const low = (full + ' ' + refs).toLowerCase(), tkey = paper.title.toLowerCase().slice(0, 50);
     paper.cites = s.papers.filter(o => o.title.length > 12 && low.includes(o.title.toLowerCase().slice(0, 50))).map(o => o.id);
     const citedBy = tkey.length > 12 ? s.papers.filter(o => o.refText && o.refText.toLowerCase().includes(tkey)).map(o => o.id) : [];
-    this.setState(st => ({ papers: [...st.papers.map(o => citedBy.includes(o.id) ? { ...o, cites: [...(o.cites || []), id] } : o), paper], sel: id, selPara: null, showAdd: false, form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '', folder: '全部' }));
+    this.setState(st => ({ papers: [...st.papers.map(o => citedBy.includes(o.id) ? { ...o, cites: [...(o.cites || []), id] } : o), paper], sel: id, selPara: null, showAdd: false, form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '', layout: 'reader', folder: st.folder === '全部' || st.folder === paper.folder ? st.folder : '全部', projOpen: { ...st.projOpen, [paper.folder]: true } }));
     const rel = paper.keywords.length ? s.papers.filter(o => o.keywords.some(k => paper.keywords.includes(norm(k)))).length : 0;
-    this.toast(`已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用`);
+    this.toast(this.hasCloud() ? `已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用` : '已儲存。連結雲端 AI 後可自動辨識標題與關鍵詞、串聯相關論文');
     if (this.props.autoTranslate !== false) setTimeout(() => this.translateAll(id), 50);
   }
 
@@ -1094,11 +1346,15 @@ class Component extends DCLogic {
       return `[${p.id}] ${p.title}（${p.authors}, ${p.journal} ${p.year}）\n關鍵詞：${p.keywords.join(', ')}\n引用：${(p.cites || []).join(', ') || '無'}\n內容：${p.paras.slice(0, 8).map(x => x.zh || x.en).join(' ').slice(0, 1400)}${hl ? '\n螢光重點：' + hl : ''}${nts ? '\n我的筆記：' + nts : ''}`;
     }).join('\n\n');
     const links = s.links.map(l => `${l.a}↔${l.b}：${l.note}`).join('\n');
-    const hist = s.qa.slice(-3).flatMap(x => [{ role: 'user', content: x.q }, { role: 'assistant', content: x.a }]);
+    const hist = s.qa.filter(x => !x.error && x.a !== '（連線失敗，請稍後再試）').slice(-3).flatMap(x => [{ role: 'user', content: x.q }, { role: 'assistant', content: x.a }]);
     let a;
     try {
       a = await window.claude.complete({ system: SYS_ASK, max_tokens: 1500, messages: [{ role: 'user', content: `以下是我的文獻庫：\n\n${ctx}\n\n我手動建立的串聯：\n${links || '無'}` }, { role: 'assistant', content: '了解，我會只根據這些內容回答並標註出處。' }, ...hist, { role: 'user', content: q }] });
-    } catch (e) { a = '（連線失敗，請稍後再試）'; }
+    } catch (e) {
+      this.setState({ asking: false, ask: q });
+      if (!e || e.code !== 'NO_KEY') this.toast('問答失敗：' + (e && e.message || '請稍後再試'));
+      return;
+    }
     this.setState(st => ({ asking: false, qa: [...st.qa, { q, a }] }));
   }
 
@@ -1114,6 +1370,326 @@ class Component extends DCLogic {
     }
     out.push({ text: a.slice(last), isRef: false });
     return out;
+  }
+
+  // ---- 金鑰：勾選「在這台電腦記住 AI 登入」時存 localStorage，否則只存在這次工作階段 ----
+  secGet(k) { try { return sessionStorage.getItem(k) || localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  secSet(k, v) { try { sessionStorage.removeItem(k); localStorage.removeItem(k); if (v) (this.state.remember ? localStorage : sessionStorage).setItem(k, v); } catch (e) {} }
+  setRemember(on) {
+    const vals = SECRETS.map(k => [k, this.secGet(k)]);
+    this.lsSet('lunyi-remember', on ? '' : '0');
+    this.setState({ remember: on }, () => vals.forEach(([k, v]) => this.secSet(k, v)));
+  }
+  provider() { return window.__lunyiAi ? window.__lunyiAi.provider() : ''; }
+  hasCloud() { return !!this.provider() || !!this._backend; }
+  goTab(k) { this.setState({ setTab: k }); if (k === 'ai') this.loadAiInfo(); }
+  loadAiInfo() { if (this.secGet('lunyi-or-key')) { this.loadOrModels(); this.loadOrKeyInfo(); } }
+
+  // ---- 專案（側欄的分群；論文的 folder 欄位就是所屬專案）----
+  // 側欄顯示順序：使用者建立的專案在前；色槽分配則讓「有論文的專案」優先
+  liveProjects() { const s = this.state; return (s.projects || []).filter(x => !((s.projDel[x] || 0) > (s.projAt[x] || 0))); }
+  projectNames() { return [...new Set([...this.liveProjects(), ...this.state.papers.map(p => p.folder || '未分類')])]; }
+  slotNames() { return [...new Set([...this.state.papers.map(p => p.folder || '未分類'), ...this.liveProjects()])]; }
+  focusSoon(sel) { setTimeout(() => { const el = typeof sel === 'function' ? sel() : document.querySelector(sel); if (el && el.focus) el.focus(); }, 30); }
+  projBtn(name) { return [...document.querySelectorAll('aside.ly-sb button[aria-pressed]')].find(b => b.title === name); }
+  // 在 AI 對話分頁點論文時留在對話（右側顯示原文），其他分頁切到閱讀器
+  openPaper(id) { this.setState(s => ({ sel: id, selPara: null, noteDraft: '', layout: s.layout === 'chat' ? 'chat' : 'reader', hov: null, sbOpen: s.narrow ? false : s.sbOpen })); }
+  checkProjName(n) {
+    if (!n) return '請輸入專案名稱';
+    if (n === '全部') return '「全部」保留給全部論文，請換一個名稱';
+    if (this.projectNames().includes(n)) return '已經有同名的專案';
+    return '';
+  }
+  addProj() {
+    const n = this.state.newProj.trim(), bad = this.checkProjName(n);
+    if (bad) return this.toast(bad);
+    this.setState(st => ({ projects: [...st.projects, n], projAt: { ...st.projAt, [n]: Date.now() }, newProj: '', newProjOpen: false, projOpen: { ...st.projOpen, [n]: true }, folder: n }), () => this.focusSoon(() => this.projBtn(n)));
+    this.toast(`已建立專案「${n}」`);
+  }
+  renameProj(old) {
+    const n = this.state.renameDraft.trim();
+    if (n === old) return this.setState({ projMenu: null });
+    const bad = this.checkProjName(n);
+    if (bad) return this.toast(bad);
+    this.setState(st => {
+      // 顏色跟著專案走：色槽一起改名
+      const fslots = { ...st.fslots };
+      if (Object.prototype.hasOwnProperty.call(fslots, old)) { fslots[n] = fslots[old]; delete fslots[old]; }
+      const projects = st.projects.includes(old) ? st.projects.map(x => x === old ? n : x) : [...st.projects, n];
+      const now = Date.now();
+      return { projects, fslots, projAt: { ...st.projAt, [n]: now }, projDel: { ...st.projDel, [old]: now }, papers: st.papers.map(p => (p.folder || '未分類') === old ? { ...p, folder: n } : p), folder: st.folder === old ? n : st.folder, projMenu: null, projOpen: { ...st.projOpen, [n]: !!st.projOpen[old] } };
+    }, () => this.focusSoon(() => this.projBtn(n)));
+    this.toast(`已改名為「${n}」`);
+  }
+  deleteProj(name) {
+    const k = this.state.papers.filter(p => (p.folder || '未分類') === name).length;
+    if (name === '未分類' && k) return this.toast('「未分類」裡還有論文，不能刪除；可以改名，或把論文移到其他專案');
+    if (!window.confirm(k ? `刪除專案「${name}」？裡面的 ${k} 篇論文會移到「未分類」，論文本身不會被刪除。` : `刪除專案「${name}」？`)) return;
+    this.setState(st => ({ projects: st.projects.filter(x => x !== name), projDel: { ...st.projDel, [name]: Date.now() }, papers: st.papers.map(p => (p.folder || '未分類') === name ? { ...p, folder: '未分類' } : p), folder: st.folder === name ? '全部' : st.folder, projMenu: null }), () => this.focusSoon('#lunyi-newproj-btn'));
+    this.toast(`已刪除專案「${name}」`);
+  }
+
+  // ---- 瀏覽器內建翻譯 ----
+  trMode() { return this.lsGet('lunyi-tr-engine') || 'auto'; }
+  useBuiltin(force) {
+    if (force === 'ai' || !HAS_TR) return false;
+    const m = this.trMode();
+    return m === 'builtin' || (m === 'auto' && !this.hasCloud());
+  }
+  async translateBuiltin(pid, idxs) {
+    const keys = idxs.map(i => pid + ':' + i);
+    this.setState(s => { const b = { ...s.busy }; keys.forEach(k => b[k] = true); return { busy: b }; });
+    let ok = false;
+    try {
+      // 官方說明翻譯會依序處理，所以一段一段翻，每段翻完就更新畫面
+      for (const i of idxs) {
+        const p = this.find(pid);
+        if (!p || !p.paras[i]) continue;
+        const text = p.paras[i].en, t = await getTranslator(guessLang(p, text), pct => this.setState({ builtinState: `下載語言包 ${pct}%` }));
+        let zh;
+        try { zh = await t.translate(text); }
+        catch (e) {
+          if (!e || e.name !== 'QuotaExceededError') throw e;
+          zh = '';
+          for (const part of text.match(/[^.!?。！？]+[.!?。！？]*\s*/g) || [text]) zh += await t.translate(part);
+        }
+        this.upd(pid, pp => ({ ...pp, paras: pp.paras.map((x, j) => j === i ? { ...x, zh, zhBy: 'builtin' } : x) }));
+        this.setState(s => { const b = { ...s.busy }; delete b[pid + ':' + i]; return { busy: b, builtinState: '' }; });
+        ok = true;
+      }
+    } catch (e) { this.toast(e && e.message ? e.message : '內建翻譯失敗'); this.setState({ builtinState: '' }); ok = false; }
+    this.setState(s => { const b = { ...s.busy }; keys.forEach(k => delete b[k]); return { busy: b }; });
+    return ok;
+  }
+  async enableBuiltin() {
+    if (!HAS_TR) return this.toast('這個瀏覽器沒有內建翻譯（需要桌面版 Chrome 138 以上）');
+    this.setState({ builtinState: '準備中…' });
+    try { await getTranslator('en', pct => this.setState({ builtinState: `下載語言包 ${pct}%` })); this.setState({ builtinState: '' }); this.toast('離線翻譯已啟用'); }
+    catch (e) { this.setState({ builtinState: '' }); this.toast(e.message || '無法啟用內建翻譯'); }
+  }
+
+  // ---- OpenRouter 登入（OAuth PKCE，純前端，不需要後端或 client_id）----
+  async orSignIn() {
+    if (this.state.tAll) return this.toast('翻譯進行中，完成後再登入');
+    if (location.protocol === 'file:' || !window.isSecureContext || !(window.crypto && crypto.subtle)) return this.toast('請用 https 網址（例如 GitHub Pages 上的論憶）開啟，才能登入 OpenRouter');
+    try { await this.orRedirect(); } catch (e) { this.toast('無法開始登入：' + (e && e.message || e)); }
+  }
+  async orRedirect() {
+    if (this._push && this.syncOn()) {
+      clearTimeout(this._push); this._push = null;
+      if (!(await this.pushCloud(true)) && !window.confirm('最近的修改還沒上傳到雲端，現在登入可能讓這些修改被雲端的舊版本蓋掉。仍要繼續嗎？')) return;
+    }
+    const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const verifier = b64u(crypto.getRandomValues(new Uint8Array(32)));
+    const challenge = b64u(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
+    const st = b64u(crypto.getRandomValues(new Uint8Array(16)));
+    try { sessionStorage.setItem('lunyi-or-pkce', JSON.stringify({ verifier, state: st })); } catch (e) {}
+    location.href = 'https://openrouter.ai/auth?' + new URLSearchParams({ callback_url: location.origin + location.pathname, code_challenge: challenge, code_challenge_method: 'S256', key_label: 'Lunyi 論憶', state: st });
+  }
+  async orCallback() {
+    const q = new URLSearchParams(location.search), code = q.get('code');
+    if (!code) return;
+    let pk = null;
+    try { pk = JSON.parse(sessionStorage.getItem('lunyi-or-pkce') || 'null'); sessionStorage.removeItem('lunyi-or-pkce'); } catch (e) {}
+    history.replaceState(null, '', location.pathname + location.hash);
+    if (!pk) return this.toast('登入流程中斷了（可能是在另一個分頁完成授權），請再按一次「用 OpenRouter 登入」');
+    if (q.get('state') && q.get('state') !== pk.state) return this.toast('登入驗證失敗，請重新登入');
+    this.toast('正在完成 OpenRouter 登入…');
+    try {
+      const r = await fetch('https://openrouter.ai/api/v1/auth/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, code_verifier: pk.verifier, code_challenge_method: 'S256' }) });
+      let j = null;
+      try { j = await r.json(); } catch (e) {}
+      if (!r.ok || !j || typeof j.key !== 'string') throw new Error((j && j.error && j.error.message) || 'HTTP ' + r.status);
+      this.secSet('lunyi-or-key', j.key);
+      this.lsSet('lunyi-ai', 'openrouter');
+      this.toast('已用 OpenRouter 登入，請選擇要用的模型');
+      this.openSettings('ai');
+    } catch (e) { this.toast('OpenRouter 登入失敗（' + e.message + '），請再試一次'); }
+  }
+  orSignOut() {
+    this.secSet('lunyi-or-key', '');
+    if (this.lsGet('lunyi-ai') === 'openrouter') this.lsSet('lunyi-ai', '');
+    this.setState({ orKey: null, orKeyErr: '' });
+    this.toast('已登出 OpenRouter。若要撤銷授權，請到 OpenRouter 的 Keys 頁面刪除「Lunyi 論憶」', 'https://openrouter.ai/settings/keys');
+  }
+  pickOrModel(id) { this.lsSet('lunyi-or-model', id); this.lsSet('lunyi-ai', 'openrouter'); this.setState({ orModelPick: id }); this.toast(`已改用 ${id}`); }
+  async loadOrModels() {
+    if (this._orLoading || (this.state.orModels && this.state.orModels.length)) return;
+    this._orLoading = true;
+    try {
+      let list = null;
+      try { const c = JSON.parse(sessionStorage.getItem('lunyi-or-models') || 'null'); if (c && Date.now() - c.t < 864e5) list = c.list; } catch (e) {}
+      if (!list) {
+        const r = await fetch('https://openrouter.ai/api/v1/models');
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const j = await r.json();
+        list = (j.data || []).filter(m => m && m.id && !/:batch$/.test(m.id)).map(m => ({ id: m.id, name: m.name || m.id, ctx: m.context_length || 0, inP: Number(m.pricing && m.pricing.prompt) || 0, outP: Number(m.pricing && m.pricing.completion) || 0 }));
+        try { sessionStorage.setItem('lunyi-or-models', JSON.stringify({ t: Date.now(), list })); } catch (e) {}
+      }
+      this.setState({ orModels: list, orModelErr: '' });
+    } catch (e) { this.setState({ orModels: [], orModelErr: '無法載入模型清單（' + e.message + '），稍後再開一次設定' }); }
+    this._orLoading = false;
+  }
+  async loadOrKeyInfo() {
+    const key = this.secGet('lunyi-or-key');
+    if (!key) return;
+    this.setState({ orKeyErr: '' });
+    try {
+      const r = await fetch('https://openrouter.ai/api/v1/key', { headers: { Authorization: 'Bearer ' + key } });
+      if (r.status === 401) { this.secSet('lunyi-or-key', ''); this.setState({ orKey: null }); return this.toast('OpenRouter 授權已失效，請重新登入'); }
+      if (!r.ok) return this.setState({ orKeyErr: `無法取得帳戶資訊（HTTP ${r.status}），稍後再試` });
+      const d = (await r.json()).data || null;
+      this.setState({ orKey: d, orKeyErr: '' });
+      if (d && d.is_free_tier && !this.lsGet('lunyi-or-model')) this.lsSet('lunyi-or-model', 'openrouter/free');
+    } catch (e) { this.setState({ orKeyErr: '無法取得帳戶資訊（網路錯誤），稍後再試' }); }
+  }
+
+  // ---- 進階：自備 API 金鑰（存檔前先驗證）----
+  async saveGem() {
+    const key = this.state.gemKeyDraft.trim(), model = this.state.gemModelDraft.trim();
+    if (!key) return this.setState({ gemMsg: '請先貼上金鑰' });
+    this.setState({ gemMsg: '驗證中…' });
+    try {
+      const r = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=1', { headers: { 'x-goog-api-key': key } });
+      if (!r.ok) { let j = null; try { j = await r.json(); } catch (e) {} throw new Error(r.status === 400 || r.status === 403 ? '金鑰無效或被拒，請到 AI Studio 重新建立' : (j && j.error && j.error.message) || 'HTTP ' + r.status); }
+      this.secSet('lunyi-gemini-key', key); this.lsSet('lunyi-gemini-model', model); this.lsSet('lunyi-ai', 'gemini');
+      this.setState({ gemMsg: '已驗證，AI 改用 Gemini' });
+    } catch (e) { this.setState({ gemMsg: '驗證失敗：' + e.message }); }
+  }
+  clearGem() { this.secSet('lunyi-gemini-key', ''); if (this.lsGet('lunyi-ai') === 'gemini') this.lsSet('lunyi-ai', ''); this.setState({ gemKeyDraft: '', gemMsg: '已清除' }); }
+  async saveClaude() {
+    const key = this.state.keyDraft.trim(), model = this.state.claudeModelDraft.trim(), code = this.state.codeDraft.trim();
+    this.lsSet('lunyi-code', code);
+    if (!key) { this.secSet('lunyi-apikey', ''); if (this.lsGet('lunyi-ai') === 'claude') this.lsSet('lunyi-ai', ''); return this.setState({ claudeMsg: code ? '已儲存存取碼（使用網站後端）' : '請先貼上金鑰' }); }
+    this.setState({ claudeMsg: '驗證中…' });
+    try {
+      const r = await fetch('https://api.anthropic.com/v1/models?limit=1', { headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' } });
+      if (!r.ok) {
+        let j = null; try { j = await r.json(); } catch (e) {}
+        const m = (j && j.error && j.error.message) || '';
+        throw new Error(r.status === 401 ? '金鑰無效或已過期' : /workspace/i.test(m) ? '這把金鑰沒有綁定 workspace，請在 Claude Console 重新建立時選擇 workspace' : m || 'HTTP ' + r.status);
+      }
+      this.secSet('lunyi-apikey', key); this.lsSet('lunyi-claude-model', model); this.lsSet('lunyi-ai', 'claude');
+      this.setState({ claudeMsg: '已驗證，AI 改用 Claude' });
+    } catch (e) { this.setState({ claudeMsg: '驗證失敗：' + e.message }); }
+  }
+  clearClaude() { this.secSet('lunyi-apikey', ''); if (this.lsGet('lunyi-ai') === 'claude') this.lsSet('lunyi-ai', ''); this.setState({ keyDraft: '', claudeMsg: '已清除' }); }
+
+  syncFocus(ps, s) {
+    const root = document.querySelector('.ly-root'), main = document.querySelector('.ly-mainwrap');
+    const modal = s.showSet || s.showAdd, wasModal = ps.showSet || ps.showAdd;
+    if (root) root.inert = !!modal;
+    if (main) main.inert = !modal && s.narrow && s.sbOpen;
+    if (modal && !wasModal) {
+      this._retFocus = this._retFocus || document.activeElement;
+      this.focusSoon(() => { const d = document.querySelector('[role=dialog]'); return d && (d.querySelector('[aria-current=page]') || d.querySelector('button, input, textarea, select')); });
+    } else if (!modal && wasModal) {
+      const el = this._retFocus; this._retFocus = null;
+      this.focusSoon(() => el && el.isConnected && el.offsetParent !== null ? el : document.querySelector(s.sbOpen && !s.narrow ? '#lunyi-acct-btn' : 'button[aria-label="開啟側欄"]') || document.querySelector('#lunyi-acct-btn'));
+    }
+    if (s.narrow && s.sbOpen && !ps.sbOpen && !modal) this.focusSoon('#lunyi-acct-btn');
+  }
+
+  // ---- 側欄、帳號選單與設定視窗要用的值 ----
+  shellVals(s, L, cur, qAll, fSlot, fColor, ql) {
+    const p = this.provider(), or = !!this.secGet('lunyi-or-key'), g = s.gUser;
+    const orModel = this.lsGet('lunyi-or-model') || 'openrouter/free';
+    const aiShort = p === 'openrouter' ? `OpenRouter · ${orModel}` : p === 'gemini' ? `Gemini 金鑰 · ${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}` : p === 'claude' ? `Claude 金鑰 · ${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '';
+    // 頭像：連結 Google 時用 Google 名稱與照片，否則顯示訪客；顏色由名稱決定
+    const name = g ? g.name : or ? '論憶使用者' : '訪客';
+    const hue = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
+    // 頭像照片用 CSS 背景顯示：範本初次渲染時才不會先送出網址是 {{ … }} 的圖片請求
+    const pic = g && /^https:\/\//.test(g.picture || '') ? g.picture.replace(/["'()\\]/g, encodeURIComponent) : '';
+    const av = { name, initial: [...name][0] || '訪', bg: `oklch(0.5 0.09 ${hue})`, imgBg: pic ? `center / cover no-repeat url("${pic}")` : 'transparent',
+      sub: g ? g.email : or ? 'AI 帳號已連結' : '尚未連結帳號', detail: `Google：${g ? g.email : '未連結'}\nAI：${aiShort || '未連結'}` };
+    const closeMenu = fn => () => { this.setState({ acctOpen: false }); fn(); };
+    const acctItems = [
+      g ? { label: '中斷 Google 連結', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '連結 Google 帳號', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
+      or ? { label: '登出 OpenRouter', note: 'AI 帳號', onClick: closeMenu(() => this.orSignOut()) } : { label: '用 OpenRouter 登入', note: 'AI 帳號', onClick: closeMenu(() => this.orSignIn()) },
+      { label: '設定與備份', note: '', onClick: closeMenu(() => this.openSettings('account')) }
+    ];
+    const navTo = k => () => this.setState(st => ({ layout: k, hov: null, sbOpen: st.narrow ? false : st.sbOpen }));
+    const layoutTabs = [['1a', '閱讀器', 'reader', '▤'], ['1b', '關聯圖譜', 'graph', '◎'], ['1c', 'AI 對話', 'chat', '✦'], ['1d', '文獻庫總覽', 'dash', '▦']]
+      .map(([id, label, k, icon]) => ({ id, label, icon, current: L === k ? 'page' : 'false', bg: L === k ? '#e2ddd3' : 'transparent', weight: L === k ? 600 : 400, onClick: navTo(k) }));
+    const qIds = new Set(qAll.map(x => x.id)), searching = !!(ql || s.kw);
+    const projTree = this.projectNames().map(nm => {
+      const inProj = s.papers.filter(x => (x.folder || '未分類') === nm), vis = inProj.filter(x => qIds.has(x.id));
+      const open = searching ? s.projOpen[nm] !== false && vis.length > 0 : !!s.projOpen[nm], sel = s.folder === nm, has = fSlot(nm) >= 0;
+      return { name: nm, count: String(searching ? vis.length : inProj.length), open, openAttr: String(open), rot: open ? '90deg' : '0deg', toggleLabel: `${open ? '收合' : '展開'}「${nm}」`,
+        pressed: String(sel), bg: sel ? '#e2ddd3' : 'transparent', swatch: has ? fColor(nm) : 'transparent', ring: has ? 'none' : 'inset 0 0 0 1px #bdb6a9',
+        onToggle: () => this.setState(st => ({ projOpen: { ...st.projOpen, [nm]: !open } })),
+        onSelect: () => this.setState(st => ({ folder: st.folder === nm ? '全部' : nm, projOpen: { ...st.projOpen, [nm]: true } })),
+        menuOpen: s.projMenu === nm, menuAttr: String(s.projMenu === nm), menuLabel: `「${nm}」的選項`,
+        onMenu: () => this.setState(st => ({ projMenu: st.projMenu === nm ? null : nm, renameDraft: nm })),
+        onRename: () => this.renameProj(nm), onDelete: () => this.deleteProj(nm),
+        onRenameKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.renameProj(nm); } else if (e.key === 'Escape') { e.stopPropagation(); this.setState({ projMenu: null }, () => this.focusSoon(() => { const b = this.projBtn(nm); return b && b.parentElement.querySelector('button[aria-label$="的選項"]'); })); } },
+        papers: vis.map(x => { const on = !!cur && cur.id === x.id; return { title: x.title, full: `${x.title}（${shortName(x)}）`, prog: `${x.paras.filter(y => y.zh).length}/${x.paras.length}`, current: on ? 'page' : 'false', bg: on && (L === 'reader' || L === 'chat') ? '#e2ddd3' : 'transparent', onClick: () => this.openPaper(x.id) }; }),
+        empty: !vis.length, emptyText: inProj.length ? '沒有符合搜尋的論文' : '還沒有論文' };
+    });
+    const viewName = { reader: '閱讀器', graph: '關聯圖譜', chat: 'AI 對話', dash: '文獻庫總覽' }[L];
+    const crumbs = (L === 'reader' && cur
+      ? [[cur.folder || '未分類', () => this.setState({ folder: cur.folder || '未分類', layout: 'dash' }), '220px'], [cur.title, () => {}, '560px']]
+      : [[viewName, () => {}, '200px'], ...(s.folder !== '全部' ? [[s.folder, () => {}, '240px']] : [])])
+      .map(([label, onClick, max], i, a) => { const last = i === a.length - 1, btn = L === 'reader' && !!cur && i === 0; return { label, title: label, onClick, max, btn, txt: !btn, cur: last ? 'page' : 'false', sepDisp: i ? 'inline' : 'none', color: last ? '#1d1b18' : '#625d55' }; });
+    // 設定視窗
+    const setTabs = [['account', '我的帳號', '◉'], ['ai', 'AI 模型', '✦'], ['sync', '同步與備份', '⇅'], ['adv', '進階', '⌘']]
+      .map(([k, label, icon]) => ({ label, icon, current: s.setTab === k ? 'page' : 'false', bg: s.setTab === k ? '#e2ddd3' : 'transparent', weight: s.setTab === k ? 600 : 400, onClick: () => this.goTab(k) }));
+    const tm = this.trMode();
+    const trOpts = [['auto', '自動（建議）', '有連結雲端 AI 時用 AI 翻譯；沒有時改用瀏覽器內建翻譯，免登入也能翻。'],
+      ['builtin', '瀏覽器內建翻譯', HAS_TR ? '免費、免登入，在你的電腦上執行；只能翻譯，不會保留專有名詞原文，也不會刻意使用台灣學術用語。' : '這個瀏覽器不支援（需要桌面版 Chrome 138 以上）。'],
+      ['ai', '雲端 AI 翻譯', '用下方連結的 AI 翻譯：品質較好，使用台灣學術用語，專有名詞會保留原文。']]
+      .map(([k, label, desc]) => { const on = tm === k; return { label, desc, on, checked: String(on), line: on ? '#1d1b18' : '#e2ddd3', bg: on ? '#fff' : 'transparent', dot: on ? '#1d1b18' : '#fff', dotLine: on ? '#1d1b18' : '#bdb6a9', onClick: () => { this.lsSet('lunyi-tr-engine', k === 'auto' ? '' : k); this.setState({ trEngine: k }); } }; });
+    const builtinStatus = !HAS_TR ? '這個瀏覽器不支援（需要桌面版 Chrome 138 以上）' : s.builtinState || (trCache.size ? '已啟用，可離線使用' : '尚未啟用：第一次使用要下載語言包，只需要一次');
+    const k = s.orKey;
+    const orKeyInfo = k ? [`已用 $${Number(k.usage || 0).toFixed(2)}`, k.limit != null ? `這次授權的上限 $${k.limit}` : '這次授權沒有設花費上限', k.is_free_tier ? '尚未儲值，只能用免費模型' : '', k.free_model_daily_requests && k.free_model_daily_requests.remaining != null ? `今天免費模型還能用 ${k.free_model_daily_requests.remaining} 次` : ''].filter(Boolean).join('・') : s.orKeyErr || '帳戶資訊載入中…';
+    const models = s.orModels || [], hasModel = id => !s.orModels || !s.orModels.length || models.some(m => m.id === id);
+    const pill = on => ({ bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : '#1d1b18', line: on ? '#1d1b18' : '#d6d0c4' });
+    const orPicks = OR_PICKS.filter(([, id]) => hasModel(id)).map(([label, id]) => ({ label, id, pressed: String(orModel === id), ...pill(orModel === id), onClick: () => this.pickOrModel(id) }));
+    const mq = s.orModelQ.trim().toLowerCase();
+    const price = m => m.inP < 0 || m.outP < 0 ? '依路由計價' : !m.inP && !m.outP ? '免費' : `$${(m.inP * 1e6).toFixed(2)}／$${(m.outP * 1e6).toFixed(2)}`;
+    const ctxText = c => !c ? '' : c >= 1e6 ? `${+(c / 1e6).toFixed(1)}M context` : `${Math.round(c / 1000)}K context`;
+    const orModelList = models.filter(m => !mq || (m.id + ' ' + m.name).toLowerCase().includes(mq)).slice(0, 80)
+      .map(m => ({ id: m.id, name: m.name, price: price(m), ctx: ctxText(m.ctx), selected: String(m.id === orModel), bg: m.id === orModel ? 'oklch(0.95 0.025 200)' : 'transparent', onClick: () => this.pickOrModel(m.id) }));
+    const selIdx = Math.max(0, orModelList.findIndex(m => m.selected === 'true'));
+    orModelList.forEach((m, i) => { m.tab = i === selIdx ? 0 : -1; });
+    const native = !!(window.__lunyiAi && window.__lunyiAi.hasNative);
+    const aiOpts = [or && ['openrouter', 'OpenRouter'], this.secGet('lunyi-gemini-key') && ['gemini', 'Gemini 金鑰'], (this.secGet('lunyi-apikey') || native) && ['claude', native && !this.secGet('lunyi-apikey') ? '執行環境內建 AI' : 'Claude 金鑰']]
+      .filter(Boolean).map(([kk, label]) => { const on = p === kk || (kk === 'claude' && p === 'native'); return { label, pressed: String(on), ...pill(on), onClick: () => { this.lsSet('lunyi-ai', kk); this.toast(`已改用 ${label}`); this.forceUpdate(); } }; });
+    const trName = { auto: '自動', builtin: '瀏覽器內建', ai: '雲端 AI' }[tm];
+    return {
+      av, acctItems, acctOpen: s.acctOpen, acctAttr: String(s.acctOpen), toggleAcct: () => this.setState(st => ({ acctOpen: !st.acctOpen })),
+      acctBlur: e => { const box = e.currentTarget; if (!box.contains(e.relatedTarget)) this.setState({ acctOpen: false }); },
+      orListKey: e => { const opts = [...e.currentTarget.querySelectorAll('[role=option]')], i = opts.indexOf(document.activeElement); const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: opts.length - 1 }[e.key]; if (to == null || !opts.length) return; e.preventDefault(); const t = opts[Math.max(0, Math.min(opts.length - 1, to))]; opts.forEach(o => o.tabIndex = -1); t.tabIndex = 0; t.focus(); },
+      addHint: this.hasCloud() ? '以下欄位可留空，會由 AI 自動辨識。儲存後自動擷取關鍵詞、比對引用、與現有論文串聯並翻譯成繁中。' : '目前沒有連結雲端 AI：請自行填寫標題等欄位（留空會用檔名）。儲存後會用瀏覽器內建翻譯翻成繁中；連結 AI 後可自動辨識標題與關鍵詞、串聯相關論文。',
+      layoutTabs, projTree, crumbs,
+      allProj: { count: String(qAll.length), pressed: String(s.folder === '全部'), bg: s.folder === '全部' ? '#e2ddd3' : 'transparent', onClick: () => this.setState({ folder: '全部' }) },
+      sbAttr: String(s.sbOpen), sbCols: s.narrow ? 'minmax(0,1fr)' : s.sbOpen ? '256px minmax(0,1fr)' : '0px minmax(0,1fr)',
+      sbScrim: s.narrow && s.sbOpen, showSbBtn: s.narrow || !s.sbOpen,
+      openSb: () => this.setState({ sbOpen: true }, () => this.focusSoon('#lunyi-acct-btn')), closeSb: () => this.setState({ sbOpen: false, acctOpen: false }, () => this.focusSoon('button[aria-label="開啟側欄"]')),
+      startNewProj: () => this.setState(st => ({ newProjOpen: !st.newProjOpen, newProj: '' })), newProjOpen: s.newProjOpen, newProj: s.newProj,
+      onNewProj: e => this.setState({ newProj: e.target.value }), addProj: () => this.addProj(),
+      onNewProjKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.addProj(); } else if (e.key === 'Escape') { e.stopPropagation(); this.setState({ newProjOpen: false }, () => this.focusSoon('#lunyi-newproj-btn')); } },
+      renameDraft: s.renameDraft, onRenameDraft: e => this.setState({ renameDraft: e.target.value }),
+      aiChip: aiShort ? `AI：${aiShort}` : HAS_TR ? '內建翻譯・按此連結 AI' : '連結 AI', aiDot: aiShort ? ACC : '#bdb6a9',
+      aiChipTitle: `翻譯：${trName}；問答與自動辨識：${aiShort || '尚未連結'}`, openAiSettings: () => this.openSettings('ai'), needCloud: !aiShort,
+      openSettings: () => this.openSettings('account'), setTabs,
+      setAccount: s.setTab === 'account', setAi: s.setTab === 'ai', setSync: s.setTab === 'sync', setAdv: s.setTab === 'adv',
+      goAi: () => this.goTab('ai'), goAdv: () => this.goTab('adv'),
+      gStatus: g ? `已連結：${g.name}（${g.email}）` : this.gClient() ? '尚未連結 Google 帳號' : '網站尚未設定 Google 登入：管理者要先在「進階」或程式中填入 OAuth 用戶端 ID',
+      orSigned: or, orNotSigned: !or, orStatus: or ? `已連結・使用 ${orModel}` : '尚未登入', orLine: or ? ACC : '#e2ddd3',
+      orSignIn: () => this.orSignIn(), orSignOut: () => this.orSignOut(), orKeyInfo, orPicks, orModel,
+      orModelQ: s.orModelQ, onOrModelQ: e => this.setState({ orModelQ: e.target.value }),
+      orModelList, orModelEmpty: !orModelList.length, orModelMsg: s.orModels == null ? '載入模型清單中…' : s.orModelErr || '沒有符合的模型',
+      remember: s.remember, onRemember: e => this.setRemember(!!e.target.checked),
+      trOpts, builtinStatus, builtinCanEnable: HAS_TR && !trCache.size, enableBuiltin: () => this.enableBuiltin(),
+      aiOpts, hasOtherAi: aiOpts.length > (or ? 1 : 0),
+      openAiStudio: () => window.open('https://aistudio.google.com/apikey', '_blank', 'noopener'),
+      openClaudeConsole: () => window.open('https://platform.claude.com/settings/keys', '_blank', 'noopener'),
+      saveGem: () => this.saveGem(), clearGem: () => this.clearGem(), gemMsg: s.gemMsg,
+      saveClaude: () => this.saveClaude(), clearClaude: () => this.clearClaude(), claudeMsg: s.claudeMsg,
+      claudeModelDraft: s.claudeModelDraft, onClaudeModelDraft: e => this.setState({ claudeModelDraft: e.target.value }),
+      saveClient: () => { this.lsSet('lunyi-g-client', s.clientDraft.trim()); if (s.clientDraft.trim()) loadScript(GSI).catch(() => {}); this.toast(s.clientDraft.trim() ? '已儲存 Google 用戶端 ID' : '已清除 Google 用戶端 ID'); }
+    };
   }
 
   // ---- 1d 總覽的圖表：和圖譜的 SVG 一樣直接產生 React 元素放進模板 ----
@@ -1191,7 +1767,7 @@ class Component extends DCLogic {
     // 色段依色槽順序排列，相鄰的一定是驗證過的色對；沒有色槽的資料夾合併成一段灰色「其他」
     const colored = groups.filter(g => fSlot(g.f) >= 0).sort((a, b) => fSlot(a.f) - fSlot(b.f)), rest = groups.filter(g => fSlot(g.f) < 0);
     const segs = colored.map(g => ({ key: g.f, label: g.f, n: g.n, done: g.done, tot: g.tot, color: fColor(g.f), on: sel === '全部' || sel === g.f, pick: g.f }));
-    if (rest.length) segs.push({ key: '其他', label: `其他（${rest.length} 個資料夾）`, n: rest.reduce((a, g) => a + g.n, 0), done: rest.reduce((a, g) => a + g.done, 0), tot: rest.reduce((a, g) => a + g.tot, 0), color: CAT_OTHER, on: sel === '全部' || rest.some(g => g.f === sel), pick: rest.length === 1 ? rest[0].f : null, members: rest.slice().sort((x, y) => y.n - x.n) });
+    if (rest.length) segs.push({ key: '其他', label: `其他（${rest.length} 個專案）`, n: rest.reduce((a, g) => a + g.n, 0), done: rest.reduce((a, g) => a + g.done, 0), tot: rest.reduce((a, g) => a + g.tot, 0), color: CAT_OTHER, on: sel === '全部' || rest.some(g => g.f === sel), pick: rest.length === 1 ? rest[0].f : null, members: rest.slice().sort((x, y) => y.n - x.n) });
     const pick = f => f && this.setState(st => ({ folder: st.folder === f ? '全部' : f }));
     let acc = 0, tipAt = null, tipSeg = null;
     const bars = segs.map((g, i) => {
@@ -1223,10 +1799,10 @@ class Component extends DCLogic {
         tipSeg ? chartTip(share(tipSeg.n), tipSeg.label, [`已譯 ${tipSeg.done} / ${tipSeg.tot} 段`, ...(tipSeg.members || []).slice(0, 4).map(g => `${g.f} · ${g.n} 篇`), ...((tipSeg.members || []).length > 4 ? [`…另 ${tipSeg.members.length - 4} 個資料夾`] : [])], tipAt) : null),
       ce('div', { style: { display: 'flex', flexDirection: 'column' } },
         ce('div', { className: 'ly-frow', style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 92px 120px', gap: 10, padding: '0 4px 5px', borderBottom: '1px solid #e2ddd3', fontSize: 11, color: '#625d55' } },
-          ce('span', null, '資料夾'), ce('span', { style: { textAlign: 'right' } }, '篇數'), ce('span', null, '翻譯進度')),
+          ce('span', null, '專案'), ce('span', { style: { textAlign: 'right' } }, '篇數'), ce('span', null, '翻譯進度')),
         rows),
-      rest.length ? ce('div', { style: { fontSize: 11, color: '#625d55' } }, `前 ${CAT.length} 個資料夾各有固定顏色，其餘歸為灰色「其他」。`) : null,
-      sel !== '全部' ? ce('button', { onClick: () => this.setState({ folder: '全部' }, () => { const b = document.querySelector('[data-lunyi-fseg]'); b && b.focus(); }), style: { alignSelf: 'flex-start', border: 0, background: 'none', padding: 0, fontSize: 12, color: '#625d55', textDecoration: 'underline' } }, '顯示全部資料夾') : null);
+      rest.length ? ce('div', { style: { fontSize: 11, color: '#625d55' } }, `前 ${CAT.length} 個專案各有固定顏色，其餘歸為灰色「其他」。`) : null,
+      sel !== '全部' ? ce('button', { onClick: () => this.setState({ folder: '全部' }, () => { const b = document.querySelector('[data-lunyi-fseg]'); b && b.focus(); }), style: { alignSelf: 'flex-start', border: 0, background: 'none', padding: 0, fontSize: 12, color: '#625d55', textDecoration: 'underline' } }, '顯示全部專案') : null);
   }
   kwChart(papers, cur) {
     if (!papers.length) return chartEmpty('沒有符合的論文');
@@ -1264,9 +1840,9 @@ class Component extends DCLogic {
     const match = p => (!s.kw || p.keywords.some(k => norm(k) === s.kw)) && (!ql || [p.title, p.authors, p.journal, ...(p.tags || []), ...p.keywords, ...p.paras.map(x => x.en + x.zh)].join(' ').toLowerCase().includes(ql));
     const qAll = s.papers.filter(match);
     const filtered = s.folder === '全部' ? qAll : qAll.filter(p => (p.folder || '未分類') === s.folder);
-    const folderNames = [...new Set(s.papers.map(p => p.folder || '未分類'))];
+    const folderNames = this.projectNames();
     // 顏色跟著資料夾走：查 fslots 色槽表，改資料夾、刪除、同步或篩選都不會讓既有資料夾換色
-    const fmap = slotMap(s.papers, s.fslots).map;
+    const fmap = slotMap(this.slotNames(), s.fslots).map;
     const fSlot = f => Object.prototype.hasOwnProperty.call(fmap, f) ? fmap[f] : -1;
     const fColor = f => fSlot(f) >= 0 ? CAT[fSlot(f)] : CAT_OTHER;
     const fBtn = (label, count) => { const on = s.folder === label, sw = label !== '全部' && fSlot(label) >= 0; return { label, count, onClick: () => this.setState({ folder: label }), bg: on ? '#1d1b18' : 'transparent', color: on ? '#faf9f6' : '#1d1b18', line: on ? '#1d1b18' : '#d6d0c4', swatch: sw ? fColor(label) : 'transparent', swDisp: sw ? 'inline-block' : 'none', pressed: String(on) }; };
@@ -1300,7 +1876,8 @@ class Component extends DCLogic {
         onClick: () => this.setState({ selPara: s.selPara === i ? null : i, noteDraft: '' }),
         onHlY: setHl('y'), onHlB: setHl('b'), onHlClear: setHl(null),
         onNote: stop(() => this.setState({ tab: 'note', selPara: i })),
-        trLabel: x.zh ? '重新翻譯' : '翻譯此段', onTranslate: stop(() => this.translateIdx(cur.id, [i])) };
+        byBuiltin: x.zhBy === 'builtin', trLabel: !x.zh ? '翻譯此段' : x.zhBy === 'builtin' && this.hasCloud() ? '用 AI 重新翻譯' : '重新翻譯',
+        onTranslate: stop(() => this.translateIdx(cur.id, [i], x.zhBy === 'builtin' && this.hasCloud() ? 'ai' : undefined)) };
     }) : [];
     const missing = cur ? cur.paras.filter(x => !x.zh).length : 0;
     const doneN = cur ? cur.paras.length - missing : 0;
@@ -1347,7 +1924,7 @@ class Component extends DCLogic {
     // 無條件捨去：只有全部譯完才會顯示 100%
     const tPct = pTot ? Math.floor(pDone / pTot * 100) : 0;
     const kpis = [
-      { label: '論文', value: `${filtered.length} 篇`, sub: `${new Set(filtered.map(p => p.folder || '未分類')).size} 個資料夾` },
+      { label: '論文', value: `${filtered.length} 篇`, sub: `${new Set(filtered.map(p => p.folder || '未分類')).size} 個專案` },
       { label: '翻譯進度', value: `${tPct}%`, sub: `已譯 ${pDone} / ${pTot} 段`, hasMeter: true, pct: tPct + '%' },
       { label: '螢光標記', value: `${hlY + hlB} 段`, sub: `黃色 ${hlY} · 藍色 ${hlB}` },
       { label: '筆記', value: `${dNotes.length} 則`, sub: `${new Set(dNotes.map(x => x.paperId)).size} 篇有筆記` },
@@ -1366,9 +1943,8 @@ class Component extends DCLogic {
     const sugg = ['這些論文之間的傳承關係是什麼？', 'Transformer 和 ResNet 有什麼共通設計？', '整理我目前筆記與螢光標記的重點'];
 
     return {
-      layoutTabs: [['1a', '閱讀器', 'reader'], ['1b', '圖譜', 'graph'], ['1c', '對話', 'chat'], ['1d', '總覽', 'dash']].map(([id, label, k]) => ({ id, label, bg: L === k ? '#fff' : 'transparent', color: L === k ? '#1d1b18' : '#625d55', pressed: String(L === k), onClick: () => this.setState({ layout: k, hov: null }) })),
       isA: L === 'reader', isB: L === 'graph', isC: L === 'chat', isD: L === 'dash',
-      dashScope: `範圍：${s.folder === '全部' ? '全部資料夾' : s.folder}${s.kw ? `，關鍵詞「${s.kw}」` : ''}${ql ? `，搜尋「${s.q.trim()}」` : ''} · ${filtered.length} 篇`,
+      dashScope: `範圍：${s.folder === '全部' ? '全部專案' : s.folder}${s.kw ? `，關鍵詞「${s.kw}」` : ''}${ql ? `，搜尋「${s.q.trim()}」` : ''} · ${filtered.length} 篇`,
       hasKw: !!s.kw, kwLabel: s.kw, clearKw: () => this.setState({ kw: '' }),
       kpis, dashRows, dashEmpty: !filtered.length,
       yearChart: L === 'dash' ? this.yearChart(filtered) : null,
@@ -1376,28 +1952,11 @@ class Component extends DCLogic {
       kwChart: L === 'dash' ? this.kwChart(filtered, cur) : null,
       kwSub: '收錄篇數最多的 10 個關鍵詞，點選即可在閱讀器只看含這個關鍵詞的論文',
       q: s.q, onQ: e => this.setState({ q: e.target.value }),
-      openSettings: () => this.openSettings(), closeSettings: () => this.setState({ showSet: false }), showSet: s.showSet,
+      closeSettings: () => this.setState({ showSet: false }), showSet: s.showSet,
       aiMode: this.aiMode(), keyDraft: s.keyDraft, codeDraft: s.codeDraft,
       onKeyDraft: e => this.setState({ keyDraft: e.target.value }), onCodeDraft: e => this.setState({ codeDraft: e.target.value }),
-      aiBtns: [['claude', 'Claude'], ['gemini', 'Google Gemini']].map(([k, label]) => ({ label, bg: s.aiDraft === k ? '#fff' : 'transparent', onClick: () => this.setState({ aiDraft: k }) })),
-      aiClaude: s.aiDraft !== 'gemini', aiGemini: s.aiDraft === 'gemini',
       gemKeyDraft: s.gemKeyDraft, gemModelDraft: s.gemModelDraft,
       onGemKeyDraft: e => this.setState({ gemKeyDraft: e.target.value }), onGemModelDraft: e => this.setState({ gemModelDraft: e.target.value }),
-      saveKey: () => {
-        this.lsSet('lunyi-ai', s.aiDraft === 'gemini' ? 'gemini' : '');
-        if (s.aiDraft === 'gemini') { this.lsSet('lunyi-gemini-key', s.gemKeyDraft.trim()); this.lsSet('lunyi-gemini-model', s.gemModelDraft.trim()); }
-        else { this.lsSet('lunyi-apikey', s.keyDraft.trim()); this.lsSet('lunyi-code', s.codeDraft.trim()); }
-        this.setState({ showSet: false }); this.toast(s.aiDraft === 'gemini' ? '已改用 Google Gemini' : 'AI 設定已儲存');
-      },
-      clearKey: () => {
-        if (s.aiDraft === 'gemini') { this.lsSet('lunyi-gemini-key', ''); this.setState({ gemKeyDraft: '' }); }
-        else { this.lsSet('lunyi-apikey', ''); this.setState({ keyDraft: '' }); }
-        this.toast('已清除金鑰');
-      },
-      gChip: () => s.gUser ? this.openSettings() : this.gSignIn(),
-      gChipLabel: s.gUser ? s.gUser.name : '連結 Google', gChipTitle: s.gUser ? s.gUser.email : '連結 Google 帳號',
-      gDot: s.gUser ? 'oklch(0.55 0.15 255)' : '#bdb6a9',
-      gStatus: s.gUser ? `已連結：${s.gUser.name}（${s.gUser.email}）` : this.gClient() ? '尚未連結 Google 帳號' : '尚未設定 Google OAuth 用戶端 ID',
       clientDraft: s.clientDraft, onClientDraft: e => this.setState({ clientDraft: e.target.value }),
       gSignIn: () => this.gSignIn(), gSignOut: () => this.gSignOut(), gSigned: !!s.gUser, gSignInLabel: s.gUser ? '重新連結' : '連結 Google 帳號',
       syncBtns: [['drive', 'Google 雲端硬碟'], ['gist', 'GitHub Gist']].map(([k, label]) => ({ label, bg: s.syncTarget === k ? '#fff' : 'transparent', onClick: () => { this.lsSet('lunyi-sync-target', k); this.setState({ syncTarget: k, syncStatus: '' }); } })),
@@ -1414,12 +1973,12 @@ class Component extends DCLogic {
       addDrive: s.addTab === 'drive',
       tokenDraft: s.tokenDraft, gistDraft: s.gistDraft, syncStatus: s.syncStatus,
       onTokenDraft: e => this.setState({ tokenDraft: e.target.value }), onGistDraft: e => this.setState({ gistDraft: e.target.value }),
-      saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); },
+      saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); try { sessionStorage.removeItem('lunyi-gh-token'); } catch (e) {} this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); if (this.syncOn() && s.gistDraft.trim()) { this._syncReady = false; this.pullCloud(true).then(() => { this._syncReady = true; }); } },
       pushCloud: () => this.pushCloud(), pullCloud: () => this.pullCloud(),
-      ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1'; return { autoLabel: on ? '自動同步：開' : '自動同步：關', autoBg: on ? '#1d1b18' : '#fff', autoColor: on ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
+      ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
       toggleAuto: () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = true; this.setState({ syncStatus: s.syncStatus }); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並連結帳號後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
-      openAdd: () => this.setState({ showAdd: true }), closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
+      openAdd: () => { if (!s.showSet && !s.showAdd) this._retFocus = document.activeElement; this.setState(st => ({ showAdd: true, acctOpen: false, sbOpen: st.narrow ? false : st.sbOpen, form: { ...st.form, folder: st.form.folder || (st.folder !== '全部' ? st.folder : '') } })); }, closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
       folders: [fBtn('全部', qAll.length), ...folderNames.map(f => fBtn(f, qAll.filter(p => (p.folder || '未分類') === f).length))],
       folderNames, onFolder: e => cur && this.upd(cur.id, p => ({ ...p, folder: e.target.value })),
       list: filtered.map(p => ({ title: p.title, meta: meta(p), tagsText: (p.tags || []).join(' · '), prog: `譯 ${p.paras.filter(x => x.zh).length}/${p.paras.length}`, bg: cur && p.id === cur.id ? '#fff' : 'transparent', onClick: () => this.open(p.id) })),
@@ -1469,7 +2028,8 @@ class Component extends DCLogic {
       onFile: e => this.parsePdf(e.target.files && e.target.files[0]),
       form: s.form, onF: { title: setF('title'), authors: setF('authors'), journal: setF('journal'), year: setF('year'), folder: setF('folder'), text: setF('text') },
       importStatus: s.importStatus, addPaper: () => this.addPaper(),
-      hasToast: !!s.toast, toast: s.toast, hasToastLink: !!s.toastLink, toastLink: s.toastLink
+      hasToast: !!s.toast, toast: s.toast, hasToastLink: !!s.toastLink, toastLink: s.toastLink,
+      ...this.shellVals(s, L, cur, qAll, fSlot, fColor, ql)
     };
   }
 }

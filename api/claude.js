@@ -4,12 +4,13 @@
 //   LUNYI_ACCESS_CODE  選填，設定後前端必須在「設定」輸入相同的存取碼才能使用
 //   LUNYI_MODEL        選填，預設 claude-sonnet-5-5
 module.exports = async (req, res) => {
+  // 先檢查金鑰：沒設定時任何方法都回 404，前端偵測 GET 回 405 才會當成有後端
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) return res.status(404).json({ error: 'AI backend not configured' });
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return res.status(405).json({ error: 'POST only' });
   }
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return res.status(404).json({ error: 'AI backend not configured' });
 
   const code = process.env.LUNYI_ACCESS_CODE;
   if (code && req.headers['x-lunyi-code'] !== code) {
