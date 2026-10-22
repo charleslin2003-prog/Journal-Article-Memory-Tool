@@ -237,7 +237,7 @@ html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Not
             <div style="position:absolute;left:{{ el.x }};top:{{ el.y }};transform:translate(-50%,-50%);font-size:10px;line-height:1.4;color:{{ el.color }};background:#faf9f6;padding:1px 6px;border-radius:3px;max-width:170px;text-align:center">{{ el.text }}</div>
           </sc-for>
           <sc-for list="{{ nodes }}" as="nd" hint-placeholder-count="0">
-            <button sc-camel-on-click="{{ nd.onClick }}" class="ly-node" style="position:absolute;left:{{ nd.x }};top:{{ nd.y }};transform:translate(-50%,-50%);width:196px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid #d6d0c4;border-left:4px solid {{ nd.swatch }};background:{{ nd.bg }};color:{{ nd.color }};opacity:{{ nd.op }};display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+            <button sc-camel-on-click="{{ nd.onClick }}" class="ly-node" style="position:absolute;left:{{ nd.x }};top:{{ nd.y }};transform:translate(-50%,-50%);width:196px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid {{ nd.line }};border-left:4px solid {{ nd.swatch }};background:{{ nd.bg }};color:{{ nd.color }};display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
               <span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.35">{{ nd.title }}</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:0.75;overflow-wrap:anywhere">{{ nd.meta }}</span>
             </button>
@@ -1234,7 +1234,7 @@ class Component extends DCLogic {
     papers.forEach(p => new Set((p.keywords || []).map(norm)).forEach(k => { if (!cnt.has(k)) cnt.set(k, []); cnt.get(k).push(p); }));
     const top = [...cnt.keys()].sort((a, b) => cnt.get(b).length - cnt.get(a).length || a.localeCompare(b)).slice(0, 10);
     if (!top.length) return chartEmpty('還沒有關鍵詞（新增論文時會由 AI 自動產生）');
-    // 強調只在使用者按下「標出」後才出現：這篇有的關鍵詞用青色，其他灰色
+    // 強調只在使用者按下「標示」後才出現：這篇有的關鍵詞用青色，其他灰色
     const can = !!cur && papers.includes(cur), mine = new Set(can ? cur.keywords.map(norm) : []);
     const emphasis = can && this.state.kwFocus && top.some(k => mine.has(k)), max = cnt.get(top[0]).length, hov = this.state.hov;
     const rows = top.map(k => {
@@ -1252,7 +1252,7 @@ class Component extends DCLogic {
     return ce('div', { style: { display: 'flex', flexDirection: 'column', gap: 2 } }, rows,
       ce('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, marginTop: 8, fontSize: 12, color: '#625d55' } },
         emphasis ? key(ACC, `「${name}」有的關鍵詞`) : null, emphasis ? key(MUTE, `「${name}」沒有的關鍵詞`) : null,
-        can ? ce('button', { onClick: () => this.setState(st => ({ kwFocus: !st.kwFocus })), style: { border: '1px solid #d6d0c4', background: '#fff', borderRadius: 5, padding: '3px 10px', fontSize: 12, color: '#1d1b18' } }, this.state.kwFocus ? '取消標示' : `標出「${name}」的關鍵詞`) : null));
+        can ? ce('button', { onClick: () => this.setState(st => ({ kwFocus: !st.kwFocus })), style: { border: '1px solid #d6d0c4', background: '#fff', borderRadius: 5, padding: '3px 10px', fontSize: 12, color: '#1d1b18' } }, this.state.kwFocus ? '取消標示' : `標示「${name}」的關鍵詞`) : null));
   }
 
   renderVals() {
@@ -1318,9 +1318,13 @@ class Component extends DCLogic {
       const ab = (A.cites || []).includes(B.id), ba = (B.cites || []).includes(A.id);
       const parts = [];
       let color = '#625d55';
-      if (s.ef.kw && shared.length) { edges.push({ x1, y1, x2, y2, stroke: '#bdb6a9', w: 1 + shared.length * 1.5 }); parts.push(shared.join(', ')); }
-      if (s.ef.cite && (ab || ba)) { edges.push({ x1, y1, x2, y2, stroke: '#1d1b18', w: 1.2, dash: '1 4' }); parts.unshift(ab ? `${surname(A)} → ${surname(B)} 引用` : `${surname(B)} → ${surname(A)} 引用`); }
-      if (s.ef.man && man) { edges.push({ x1, y1, x2, y2, stroke: ACC, w: 2, dash: '6 4' }); parts.push(man.note); color = 'oklch(0.36 0.09 200)'; }
+      const ls = [];
+      if (s.ef.kw && shared.length) { ls.push({ stroke: '#bdb6a9', w: 1 + shared.length * 1.5 }); parts.push(shared.join(', ')); }
+      if (s.ef.cite && (ab || ba)) { ls.push({ stroke: '#1d1b18', w: 1.2, dash: '1 4' }); parts.unshift(ab ? `${surname(A)} → ${surname(B)} 引用` : `${surname(B)} → ${surname(A)} 引用`); }
+      if (s.ef.man && man) { ls.push({ stroke: ACC, w: 2, dash: '6 4' }); parts.push(man.note); color = 'oklch(0.36 0.09 200)'; }
+      // 同一對論文有兩三種關係時，沿垂直方向平行錯開，不然三種線型疊在一起分不出來
+      const len = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / len, ny = (x2 - x1) / len;
+      ls.forEach((e, k) => { const o = (k - (ls.length - 1) / 2) * 1.6; edges.push({ ...e, x1: x1 + nx * o, y1: y1 + ny * o, x2: x2 + nx * o, y2: y2 + ny * o }); });
       if (parts.length) {
         const touches = cur && (A.id === cur.id || B.id === cur.id);
         if (touches) { nbr.add(A.id); nbr.add(B.id); }
@@ -1332,7 +1336,7 @@ class Component extends DCLogic {
     const visCited = citedIn(vis);
     const nodes = vis.map(p => { const on = cur && p.id === cur.id; const dim = cur && !on && nbr.size && !nbr.has(p.id), cn = visCited(p.id);
       // 「被引 n」用 word joiner 與不換行空白黏在一起，換行時整組移到下一行
-      return { x: pos[p.id][0] + '%', y: pos[p.id][1] + '%', title: p.title.length > 58 ? p.title.slice(0, 58) + '…' : p.title, meta: `${shortName(p)} · ${p.folder || '未分類'}${cn ? ` · 被\u2060引\u00a0${cn}` : ''}`, swatch: fColor(p.folder || '未分類'), bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : '#1d1b18', op: dim ? 0.45 : 1, onClick: () => this.open(p.id) }; });
+      return { x: pos[p.id][0] + '%', y: pos[p.id][1] + '%', title: p.title.length > 58 ? p.title.slice(0, 58) + '…' : p.title, meta: `${shortName(p)} · ${p.folder || '未分類'}${cn ? ` · 被\u2060引\u00a0${cn}` : ''}`, swatch: dim ? '#d6d0c4' : fColor(p.folder || '未分類'), bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : dim ? '#8a8479' : '#1d1b18', line: dim ? '#e2ddd3' : '#d6d0c4', onClick: () => this.open(p.id) }; });
 
     // 1d 總覽：所有數字都以目前的資料夾與搜尋範圍計算，彼此一致
     const ids = new Set(filtered.map(p => p.id));
