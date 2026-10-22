@@ -26,11 +26,16 @@
 
 主要給桌面版 Chrome／Edge 使用（手機也能開，側欄會變成抽屜）。
 
-1. 開啟網站，內建 4 篇示範論文（Transformer、BERT、ResNet、GPT-3）。
+1. 開啟網站，內建 4 篇示範論文（Transformer、BERT、ResNet、GPT-3）。第一次使用會跳出「登入論憶」視窗，只有登入方式可選、不用輸入帳號密碼：
+   - **繼續使用 Google**：跳出 Google 的帳號選擇視窗，點自己的帳號即可（瀏覽器已登入 Google 時不必再打密碼）。登入後可以同步到雲端硬碟、匯入 PDF、匯出 Google 文件。
+   - **用 OpenRouter 登入**：AI 帳號，見下方「AI 連線」。
+   - **先不登入，直接使用**：所有資料仍存在這台電腦。之後按左上角的頭像可以再打開登入視窗。
 2. 左側欄的「＋ 新增論文」上傳 PDF 或貼上文字；「專案」可以把論文分群，按 ＋ 新增專案，按 ⋯ 改名或刪除。
 3. 不登入也能翻譯：沒有連結雲端 AI 時，會用瀏覽器內建的翻譯（免費、在你的電腦上執行）。
-4. 要用 AI 問答、自動辨識論文資訊、高品質翻譯：左上角頭像 →「用 OpenRouter 登入」，見下方「AI 連線」。
+4. 要用 AI 問答、自動辨識論文資訊、高品質翻譯：左上角頭像 → 登入視窗 →「用 OpenRouter 登入」，見下方「AI 連線」。
 5. 資料存在瀏覽器裡。換電腦前用「設定與備份 → 同步與備份 → 匯出 JSON」，到新電腦再「匯入 JSON」；或設定「雲端同步」，用 Google 雲端硬碟或 GitHub 私人 Gist 自動同步。
+
+<img src="docs/screenshots/login.png" alt="登入論憶視窗：繼續使用 Google、用 OpenRouter 登入、先不登入直接使用" width="640">
 
 ## 修改網站
 
@@ -48,7 +53,7 @@
 
 - **翻譯模式**（設定 → AI 模型）：自動（有雲端 AI 用 AI，沒有用內建）、一律內建、一律雲端 AI。內建翻譯的段落會標「內建翻譯」，點段落可以「用 AI 重新翻譯」。
 - **OpenRouter 登入**採用 OAuth PKCE：網站拿到的是一把只屬於這個使用者、可在 OpenRouter「Keys」頁面刪除的金鑰；網站不經手使用者密碼。登出時網站會刪除本機的金鑰。
-- **登入資訊存在哪裡**：預設勾選「在這台電腦記住 AI 登入」，存在瀏覽器的 localStorage；取消勾選則只存在這次工作階段，關閉這個分頁或瀏覽器就清除。這個選項只管 OpenRouter 登入與進階金鑰，不影響 Google 連結與 Gist 同步權杖。金鑰不會被匯出或同步。
+- **登入資訊存在哪裡**：預設勾選「在這台電腦記住 AI 登入」，存在瀏覽器的 localStorage；取消勾選則只存在這次工作階段，關閉這個分頁或瀏覽器就清除。這個選項只管 OpenRouter 登入與進階金鑰，不影響 Google 登入與 Gist 同步權杖。金鑰不會被匯出或同步。
 - **做不到的事**：Claude.ai、ChatGPT 的訂閱帳號不能用來登入第三方網站（Anthropic 明文禁止；OpenAI 只開放給受邀合作夥伴），所以用 Claude 或 GPT 要透過 OpenRouter，或在「進階」貼 API 金鑰。用 Google 帳號直接付 Gemini 費用目前也沒有給一般網站的公開機制。
 - **內建翻譯的限制**：需要桌面版 Chrome 138 以上（或支援的 Edge）。它是一般機器翻譯，不會在專有名詞後附原文，也不會刻意使用台灣學術用語。
 - 在 Claude 的編輯環境中開啟時，會直接使用該環境內建的 AI。部署在 Vercel 時，也可以由網站代付（見下一節）。
@@ -66,7 +71,7 @@
 
 ## Google 整合
 
-連結 Google 帳號後可以：
+用 Google 登入後可以：
 
 - 從 **Google 雲端硬碟** 搜尋並匯入 PDF（「新增論文 → Google 雲端硬碟」）
 - 把論文的翻譯、螢光與筆記匯出成 **Google 文件**（存在雲端硬碟「論憶」資料夾）
@@ -74,18 +79,23 @@
 - 用 **Google 雲端硬碟** 同步文獻庫（「設定 → 同步與備份」）
 - 每篇論文都有 **Google 學術搜尋** 連結（不需登入）
 
-登入用的是 Google 官方的 OAuth，網站只在瀏覽器取得 1 小時有效的存取權杖，沒有伺服器會碰到你的資料。第一次使用前要建立 OAuth 用戶端 ID（只要做一次）：
+使用者在登入視窗按「繼續使用 Google」，就會跳出 Google 的帳號選擇視窗。登入用的是 Google 官方的 OAuth（Google Identity Services），網站只在瀏覽器取得 1 小時有效的存取權杖，沒有伺服器會碰到你的資料。
+
+**網站管理者要先建立一次 OAuth 用戶端 ID**，沒有它 Google 不會跳出登入視窗（登入視窗裡的 Google 按鈕會是灰的，顯示「Google 登入暫時還沒開放」）：
 
 1. 到 [Google Cloud Console](https://console.cloud.google.com) 建立專案。
 2. 「API 和服務 → 程式庫」啟用 **Google Drive API** 和 **Google Calendar API**。
-3. 「OAuth 同意畫面」：使用者類型選「外部」，填應用程式名稱與信箱；在「測試使用者」加入你自己的 Gmail。
+3. 「OAuth 同意畫面」（新版介面叫「Google Auth Platform」）：使用者類型選「外部」，填應用程式名稱「論憶」與信箱。
    範圍（scopes）可加入 `drive.file`、`drive.readonly`、`calendar.events`。
+   還在「測試」狀態時，只有「測試使用者」名單裡的帳號能登入，記得把自己和要展示的帳號加進去。
 4. 「憑證 → 建立憑證 → OAuth 用戶端 ID」：類型選「網頁應用程式」，「已授權的 JavaScript 來源」加入：
    - `https://charleslin2003-prog.github.io`
    - Vercel 網址（有部署的話），例如 `https://你的專案.vercel.app`
-5. 複製用戶端 ID（`….apps.googleusercontent.com`），貼到網站「設定 → 進階 → Google OAuth 用戶端 ID」，再到「我的帳號」按「連結 Google 帳號」。
+   - 本機測試用（選填）：`http://localhost:8765`
+5. 複製用戶端 ID（`….apps.googleusercontent.com`），寫進 `src/app.html` 的 `GOOGLE_CLIENT_ID`，執行 `python3 tools/build.py` 再 push。所有使用者的登入視窗就會出現可用的「繼續使用 Google」。
+   只想自己先試的話，也可以貼到網站「設定 → 進階 → Google OAuth 用戶端 ID」（只對這台瀏覽器有效）。
 
-想讓所有使用者都不必自己填，可把用戶端 ID 寫進 `src/app.html` 的 `GOOGLE_CLIENT_ID` 再重新打包。
+用戶端 ID 本來就會出現在網頁裡，可以公開，不是密碼；Google 只接受從上面登記的網址發出的登入。
 應用程式維持「測試」狀態時，只有加入測試使用者名單的帳號能登入，Google 也會顯示「未經驗證的應用程式」提示，這是正常的；要開放給所有人需送 Google 審查。
 
 各功能用到的權限（第一次使用該功能時才會請求）：

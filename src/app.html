@@ -16,6 +16,7 @@
 .ly-sbrow:hover{background:#e3ded5!important}
 .ly-search::placeholder{color:#625d55}
 .ly-sbrow:focus-visible,.ly-sb button:focus-visible{outline:2px solid oklch(0.45 0.1 200);outline-offset:-2px}
+.ly-loginbtn:focus-visible,.ly-login button:focus-visible{outline:2px solid oklch(0.45 0.1 200);outline-offset:2px}
 @media (max-width:900px){
 .ly-root{display:block!important;height:auto!important;min-height:100vh}
 .ly-sb{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);z-index:30;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,0.18)}
@@ -40,13 +41,14 @@
 .ly-setbox{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr);height:calc(100vh - 24px)!important}
 .ly-setnav{flex-direction:row!important;overflow-x:auto;border-right:0!important;border-bottom:1px solid #e2ddd3;padding:8px!important}
 .ly-setnav .ly-sbrow{width:auto}.ly-setlabel{display:none}
+.ly-login{padding:30px 20px 20px!important}
 }</style>
 </helmet>
 
 <div class="ly-root" data-sb="{{ sbAttr }}" style="height:100vh;display:grid;grid-template-columns:{{ sbCols }};min-height:0">
   <aside class="ly-sb" aria-label="側欄" style="background:#f1eee8;border-right:1px solid #e2ddd3;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden">
     <div class="ly-acct" sc-camel-on-blur="{{ acctBlur }}" style="padding:8px 8px 4px;position:relative">
-      <button id="lunyi-acct-btn" class="ly-sbrow" sc-camel-on-click="{{ toggleAcct }}" aria-controls="lunyi-acct-menu" aria-expanded="{{ acctAttr }}" title="帳號與連線" style="gap:9px;padding:6px 8px">
+      <button id="lunyi-acct-btn" class="ly-sbrow" sc-camel-on-click="{{ toggleAcct }}" aria-controls="lunyi-acct-menu" aria-haspopup="{{ acctPopup }}" aria-expanded="{{ acctAttr }}" title="{{ acctTitle }}" style="gap:9px;padding:6px 8px">
         <span style="width:28px;height:28px;border-radius:7px;background:{{ av.bg }};color:#fff;display:grid;place-items:center;font-size:13px;font-weight:600;flex-shrink:0;overflow:hidden;position:relative">{{ av.initial }}<span aria-hidden="true" style="position:absolute;inset:0;background:{{ av.imgBg }}"></span></span>
         <span style="min-width:0;flex:1;display:flex;flex-direction:column;line-height:1.3"><span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ av.name }}</span><span style="font-size:11px;color:#625d55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ av.sub }}</span></span>
         <span aria-hidden="true" style="font-size:10px;color:#625d55">▾</span>
@@ -430,9 +432,38 @@
   </div>
 </div>
 
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:52;padding:16px">
+    <div id="lunyi-login" class="ly-login" role="dialog" aria-modal="true" aria-labelledby="lunyi-login-title" aria-describedby="lunyi-login-desc" style="position:relative;width:420px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,0.22);padding:38px 36px 26px;display:flex;flex-direction:column;gap:12px">
+      <button sc-camel-on-click="{{ closeLogin }}" aria-label="關閉登入視窗" style="position:absolute;top:12px;right:12px;border:0;background:transparent;border-radius:6px;width:32px;height:32px;font-size:16px;color:#625d55" style-hover="background:#f1eee8">✕</button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-bottom:8px">
+        <span aria-hidden="true" style="width:46px;height:46px;border-radius:11px;background:#1d1b18;color:#faf9f6;display:grid;place-items:center;font-family:'Noto Serif TC',serif;font-size:25px">論</span>
+        <h2 id="lunyi-login-title" style="margin:0;font-size:22px;font-weight:600">登入論憶</h2>
+        <p id="lunyi-login-desc" style="margin:0;font-size:13px;color:#625d55;line-height:1.6">選一個帳號登入就好，不用註冊，也不用另外設定密碼。</p>
+      </div>
+      <button class="ly-loginbtn ly-autofocus" sc-camel-on-click="{{ loginGoogle }}" aria-disabled="{{ gOff }}" aria-describedby="lunyi-login-gnote" style="position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:10px 48px;border:1px solid #747775;border-radius:999px;background:#fff;color:#1f1f1f;font-size:15px;font-weight:500;opacity:{{ gOpacity }}" style-hover="background:#f6f7f8">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z'/%3E%3Cpath fill='%23FBBC05' d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E" width="20" height="20" alt="" style="position:absolute;left:16px;top:50%;transform:translateY(-50%)">
+        <span>{{ gBtnLabel }}</span>
+      </button>
+      <div id="lunyi-login-gnote" style="font-size:12px;color:#625d55;text-align:center;line-height:1.6;margin:-4px 0 4px">{{ gBtnNote }}</div>
+      <button class="ly-loginbtn ly-autofocus" sc-camel-on-click="{{ loginOr }}" aria-describedby="lunyi-login-ornote" style="position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:10px 48px;border:1px solid #747775;border-radius:999px;background:#fff;color:#1f1f1f;font-size:15px;font-weight:500" style-hover="background:#f6f7f8">
+        <span aria-hidden="true" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:6px;background:#1d1b18;color:#faf9f6;display:grid;place-items:center;font-size:13px">✦</span>
+        <span>{{ orBtnLabel }}</span>
+      </button>
+      <div id="lunyi-login-ornote" style="font-size:12px;color:#625d55;text-align:center;line-height:1.6;margin-top:-4px">AI 帳號：用你自己的模型與額度問答、翻譯</div>
+      <sc-if value="{{ hasLoginMsg }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="font-size:13px;line-height:1.6;color:#7a2e12;background:#fbeee6;border:1px solid #f0d2c2;border-radius:8px;padding:10px 12px">{{ loginMsg }}<sc-if value="{{ showLoginAdmin }}" hint-placeholder-val="{{ false }}"> <button sc-camel-on-click="{{ loginAdmin }}" style="border:0;background:none;padding:0;color:oklch(0.42 0.1 200);text-decoration:underline;font-size:13px">我是網站管理者：在這台瀏覽器先試用</button></sc-if></div>
+      </sc-if>
+      <div aria-hidden="true" style="display:flex;align-items:center;gap:12px;color:#625d55;font-size:12px;margin:6px 0 2px"><span style="flex:1;height:1px;background:#e6e1d8"></span>或<span style="flex:1;height:1px;background:#e6e1d8"></span></div>
+      <button sc-camel-on-click="{{ closeLogin }}" style="border:1px solid #e2ddd3;background:#faf9f6;border-radius:999px;min-height:44px;padding:10px;font-size:14px;color:#37352f" style-hover="background:#f1eee8">先不登入，直接使用</button>
+      <p style="margin:6px 0 0;font-size:12px;color:#625d55;line-height:1.7;text-align:center">論憶沒有自己的帳號系統，論文存在這台電腦的瀏覽器。登入只用來連結你自己的 Google 雲端硬碟與 AI 帳號，隨時可以登出。</p>
+    </div>
+  </div>
+</sc-if>
+
 <sc-if value="{{ showAdd }}" hint-placeholder-val="{{ false }}">
   <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:45">
-    <div role="dialog" aria-modal="true" aria-label="新增論文" style="width:660px;max-width:calc(100vw - 40px);max-height:calc(100vh - 60px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
+    <div id="lunyi-add" role="dialog" aria-modal="true" aria-label="新增論文" style="width:660px;max-width:calc(100vw - 40px);max-height:calc(100vh - 60px);overflow:auto;background:#faf9f6;border-radius:10px;padding:26px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">新增論文</h2>
         <button sc-camel-on-click="{{ closeAdd }}" style="border:0;background:none;font-size:13px;color:#625d55">取消</button>
@@ -498,13 +529,13 @@
             <span style="width:48px;height:48px;border-radius:10px;background:{{ av.bg }};color:#fff;display:grid;place-items:center;font-size:20px;font-weight:600;flex-shrink:0;overflow:hidden;position:relative">{{ av.initial }}<span aria-hidden="true" style="position:absolute;inset:0;background:{{ av.imgBg }}"></span></span>
             <div style="min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:600">{{ av.name }}</span><span style="font-size:12px;color:#625d55;line-height:1.6;white-space:pre-line">{{ av.detail }}</span></div>
           </div>
-          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統。這裡的「帳號」是你連結的 Google 與 AI 服務：論文資料存在這台電腦的瀏覽器；連結 Google 後可以同步到你自己的雲端硬碟，連結 AI 帳號後，AI 費用算在你自己的帳號上。</div>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統，登入用的是你自己的 Google 或 AI 帳號：論文資料存在這台電腦的瀏覽器；登入 Google 後可以同步到你自己的雲端硬碟，登入 AI 帳號後，AI 費用算在你自己的帳號上。</div>
           <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
               <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">Google 帳號</span><span style="font-size:12px;color:#625d55">{{ gStatus }}</span></div>
               <div style="display:flex;gap:8px">
                 <button sc-camel-on-click="{{ gSignIn }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">{{ gSignInLabel }}</button>
-                <sc-if value="{{ gSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ gSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">中斷連結</button></sc-if>
+                <sc-if value="{{ gSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ gSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">登出</button></sc-if>
               </div>
             </div>
             <div style="font-size:12px;color:#625d55;line-height:1.6">用途：同步文獻庫到雲端硬碟、從雲端硬碟匯入 PDF、匯出 Google 文件、排入 Google 日曆。</div>
@@ -539,7 +570,7 @@
               <sc-if value="{{ orNotSigned }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ orSignIn }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500;white-space:nowrap">用 OpenRouter 登入</button></sc-if>
               <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ orSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px;white-space:nowrap">登出</button></sc-if>
             </div>
-            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#2c2925"><input type="checkbox" checked="{{ remember }}" sc-camel-on-change="{{ onRemember }}"> 在這台電腦記住 AI 登入（取消勾選的話，關閉這個分頁或瀏覽器就要重新登入；不影響 Google 連結與同步權杖）</label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#2c2925"><input type="checkbox" checked="{{ remember }}" sc-camel-on-change="{{ onRemember }}"> 在這台電腦記住 AI 登入（取消勾選的話，關閉這個分頁或瀏覽器就要重新登入；不影響 Google 登入與同步權杖）</label>
             <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:12px;color:#625d55;line-height:1.6">{{ orKeyInfo }}</div>
               <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
@@ -578,7 +609,7 @@
             <sc-for list="{{ syncBtns }}" as="sb" hint-placeholder-count="2"><button sc-camel-on-click="{{ sb.onClick }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ sb.bg }}">{{ sb.label }}</button></sc-for>
           </div>
           <sc-if value="{{ syncDrive }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:12px;color:#625d55;line-height:1.6">文獻庫存在你雲端硬碟的「論憶」資料夾（lunyi-library.json）。其他電腦連結同一個 Google 帳號即可同步。需要先在「我的帳號」連結 Google。</div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">文獻庫存在你雲端硬碟的「論憶」資料夾（lunyi-library.json）。其他電腦用同一個 Google 帳號登入即可同步。需要先在「我的帳號」用 Google 登入。</div>
           </sc-if>
           <sc-if value="{{ syncGist }}" hint-placeholder-val="{{ false }}">
             <div style="font-size:12px;color:#625d55;line-height:1.6">把文獻庫存在你 GitHub 帳號的私人 Gist，多台電腦填同一組權杖與 Gist ID 即可同步。權杖到 GitHub → Settings → Developer settings → Personal access tokens 建立，只需要 Gists 讀寫權限。第一次上傳會自動建立 Gist。</div>
@@ -614,7 +645,7 @@
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
             <span style="font-size:14px;font-weight:600">Google OAuth 用戶端 ID</span>
-            <div style="font-size:12px;color:#625d55;line-height:1.6">連結 Google 帳號需要的設定。網站管理者在 src/app.html 填入 GOOGLE_CLIENT_ID 後，一般使用者就不必填；建立步驟見 README 的「Google 整合」。</div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">用 Google 登入需要的設定。這裡填的只對這台瀏覽器有效；要讓所有人都能用 Google 登入，網站管理者要把它寫進 src/app.html 的 GOOGLE_CLIENT_ID 並重新發布。建立步驟見 README 的「Google 整合」。</div>
             <input value="{{ clientDraft }}" sc-camel-on-change="{{ onClientDraft }}" placeholder="….apps.googleusercontent.com" aria-label="Google OAuth 用戶端 ID" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
             <button sc-camel-on-click="{{ saveClient }}" style="align-self:flex-start;border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存</button>
           </div>
@@ -627,6 +658,7 @@
 <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
   <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1d1b18;color:#faf9f6;font-size:13px;padding:10px 18px;border-radius:6px;z-index:60;max-width:calc(100vw - 32px)">{{ toast }}<sc-if value="{{ hasToastLink }}" hint-placeholder-val="{{ false }}"><a href="{{ toastLink }}" target="_blank" rel="noopener" style="color:oklch(0.85 0.08 200);margin-left:12px">開啟</a></sc-if></div>
 </sc-if>
+<div role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">{{ toast }}</div>
 </x-dc>
 <script>
 (function(){
@@ -822,6 +854,7 @@ const GIST_FILE = 'lunyi-library.json';
 // 網站擁有者可在這裡填入預設的 Google OAuth 用戶端 ID，使用者就不必自己建立
 const GOOGLE_CLIENT_ID = '';
 const GSI = 'https://accounts.google.com/gsi/client';
+const G_OFF_MSG = 'Google 登入暫時還沒開放。現在可以先用 OpenRouter 登入，或不登入直接使用。';
 const GAPI = 'https://www.googleapis.com';
 const G_BASE = 'openid email profile https://www.googleapis.com/auth/drive.file';
 const G_DRIVE_RO = 'https://www.googleapis.com/auth/drive.readonly';
@@ -829,10 +862,12 @@ const G_CAL = 'https://www.googleapis.com/auth/calendar.events';
 const pad2 = n => String(n).padStart(2, '0');
 const localDT = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 const esc = t => String(t == null ? '' : t).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const loadScript = src => new Promise((ok, fail) => {
-  if (document.querySelector(`script[src="${src}"]`)) return ok();
-  const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = fail; document.head.appendChild(el);
-});
+const scriptLoads = {};
+const loadScript = src => scriptLoads[src] || (scriptLoads[src] = new Promise((ok, fail) => {
+  const el = document.createElement('script'); el.src = src; el.onload = ok;
+  el.onerror = () => { delete scriptLoads[src]; el.remove(); fail(new Error('無法載入 Google 登入元件，請檢查網路')); };
+  document.head.appendChild(el);
+}));
 const SYS_TR = '你是學術論文翻譯。使用者會給一個 JSON 字串陣列，每個元素是一段論文原文（可能是任何語言）。逐段翻譯成繁體中文（台灣學術用語），專有名詞首次出現時於括號保留原文。只輸出同樣長度的 JSON 字串陣列，不要任何說明。';
 const SYS_META = '閱讀論文開頭文字，只輸出 JSON：{"title":"原文標題","authors":"第一作者姓, 名縮寫 等","journal":"期刊或會議","year":"年份","language":"原文語言（繁中名稱）","keywords":["5–8 個英文小寫學術關鍵詞"],"tags":["1–3 個繁中領域標籤"]}';
 const SYS_ASK = '你是研究助理，只根據使用者提供的文獻庫與筆記回答。用繁體中文，精簡、可條列。凡是引用某篇論文的觀點，在句末標註方括號 id，例如 [p1] 或 [p1][p3]。資料不足就直說，不要編造。';
@@ -920,21 +955,23 @@ class Component extends DCLogic {
       gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
       projects: Array.isArray(d.projects) ? d.projects : [], projAt: d.projAt || {}, projDel: d.projDel || {}, orKeyErr: '', projOpen: d.papers[0] ? { [d.papers[0].folder || '未分類']: true } : {}, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
       sbOpen: window.innerWidth >= 1100, narrow: window.innerWidth <= 900, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
-      orModels: null, orModelErr: '', orModelQ: '', orModelPick: '', orKey: null, remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '' };
+      showLogin: false, loginMsg: '', loginBusy: '', orModels: null, orModelErr: '', orModelQ: '', orModelPick: '', orKey: null, remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '' };
   }
   componentDidMount() {
     this._ps = this.state;
+    const hadLib = !!this.lsGet(KEY); // 已有文獻庫＝更新前就用過的舊使用者，不算第一次開啟
     this.ensureSlots();
     this._needKey = e => { const d = e.detail || {}; this.toast((typeof d === 'string' ? d : d.msg) || '需要連結 AI'); this.openSettings(d.tab || 'ai'); };
     window.addEventListener('lunyi-need-key', this._needKey);
     // 視窗變窄時側欄改成浮動抽屜
     this._rs = () => { const n = window.innerWidth <= 900; if (n !== this.state.narrow) this.setState({ narrow: n, sbOpen: !n }); };
     window.addEventListener('resize', this._rs);
-    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.narrow && s.sbOpen) this.setState({ sbOpen: false }); };
+    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.narrow && s.sbOpen) this.setState({ sbOpen: false }); };
     window.addEventListener('keydown', this._esc);
     this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); };
     window.addEventListener('pointerdown', this._down);
     try { const t = sessionStorage.getItem('lunyi-gh-token'); if (t && !localStorage.getItem('lunyi-gh-token')) { localStorage.setItem('lunyi-gh-token', t); sessionStorage.removeItem('lunyi-gh-token'); } } catch (e) {}
+    const orBack = new URLSearchParams(location.search).has('code'); // orCallback() 會同步清掉網址列的 ?code，要先記下
     this.orCallback();
     // 沒選雲端 AI 時，看看同站有沒有 Vercel 後端（GitHub Pages 回 404，後端對 GET 回 405）
     if (!this.provider() && window.__lunyiShim && !/github\.io$/.test(location.hostname) && location.protocol !== 'file:') fetch('api/claude').then(r => { if (r.status === 405) { this._backend = true; this.forceUpdate(); } }).catch(() => {});
@@ -946,8 +983,20 @@ class Component extends DCLogic {
     }
     let gUser = null;
     try { gUser = JSON.parse(this.lsGet('lunyi-g-user') || 'null'); } catch (e) {}
-    this.setState({ gUser, syncTarget: this.cloudTarget() });
+    const firstVisit = !this.lsGet('lunyi-login-seen');
+    if (firstVisit) this.lsSet('lunyi-login-seen', '1');
+    // 只在真正第一次使用時跳出；存不了 localStorage 時也不跳，免得每次開都出現
+    const fresh = firstVisit && !hadLib && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
+    this.setState({ gUser, syncTarget: this.cloudTarget(), showLogin: fresh && !gUser && !this.secGet('lunyi-or-key') && !orBack });
     if (this.gClient()) loadScript(GSI).catch(() => {});
+    this.ensureOwner();
+    // 其他分頁登入、登出或換帳號：更新頭像；自動同步被關掉時取消這裡排著的上傳（每次上傳也會再檢查帳號）
+    this._store = e => {
+      if (e.key === 'lunyi-g-user') { let u = null; try { u = JSON.parse(e.newValue || 'null'); } catch (x) {} this.setState({ gUser: u }); }
+      if ((e.key === 'lunyi-sync-auto' || e.key === 'lunyi-sync-owner') && !this.syncOn()) { clearTimeout(this._push); this._push = null; }
+    };
+    window.addEventListener('storage', this._store);
+    this.lsSet('lunyi-sync-dirty', '');
     if (this.syncOn()) this.pullCloud(true).then(() => { this._syncReady = true; });
     else this._syncReady = true;
   }
@@ -961,7 +1010,7 @@ class Component extends DCLogic {
     if (libChanged || ps.fslots !== s.fslots) {
       try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone, fslots: s.fslots, projects: s.projects, projAt: s.projAt, projDel: s.projDel })); } catch (e) { this.toast('儲存空間已滿，請刪除部分論文'); }
     }
-    if (libChanged && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => this.pushCloud(true), 3000); }
+    if (libChanged && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) this.autoPush(); }, 3000); }
     if (ps.papers !== s.papers || ps.projects !== s.projects || ps.projDel !== s.projDel) this.ensureSlots();
     this.syncFocus(ps, s);
     // 離開總覽時元素直接卸載，收不到 mouseleave／blur，要自己清掉提示框
@@ -971,13 +1020,13 @@ class Component extends DCLogic {
     const { map, changed } = slotMap(this.slotNames(), this.state.fslots);
     if (changed) this.setState({ fslots: map });
   }
-  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); clearTimeout(this._push); }
+  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); clearTimeout(this._push); }
   lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
   lsSet(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
   openSettings(tab) {
-    if (!this.state.showSet && !this.state.showAdd) this._retFocus = document.activeElement;
+    if (!this.state.showSet && !this.state.showAdd && !this.state.showLogin) this._retFocus = document.activeElement;
     const t = tab || this.state.setTab || 'account';
-    this.setState({ showSet: true, setTab: t, acctOpen: false, keyDraft: this.secGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.secGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
+    this.setState({ showSet: true, setTab: t, acctOpen: false, showLogin: false, loginMsg: '', loginBusy: '', keyDraft: this.secGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.secGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
       gemKeyDraft: this.secGet('lunyi-gemini-key'), gemModelDraft: this.lsGet('lunyi-gemini-model'), claudeModelDraft: this.lsGet('lunyi-claude-model'), clientDraft: this.gClient(), syncTarget: this.cloudTarget(), gemMsg: '', claudeMsg: '' });
     if (t === 'ai') this.loadAiInfo();
   }
@@ -1058,37 +1107,46 @@ class Component extends DCLogic {
     if (!f) throw new Error('Gist 裡沒有 ' + GIST_FILE);
     return f.truncated ? (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content;
   }
-  async drivePush(content, ia) {
-    const id = await this.driveLibId(ia);
-    if (id) { await this.driveUpload({}, content, 'application/json', id, ia); return '已上傳到 Google 雲端硬碟'; }
-    await this.driveUpload({ name: GIST_FILE, parents: [await this.driveFolder(ia)], appProperties: { lunyi: 'library' } }, content, 'application/json', null, ia);
+  async drivePush(content, ia, tok) {
+    tok = tok || await this.gToken(null, ia);
+    const id = await this.driveLibId(ia, tok);
+    if (id) { await this.driveUpload({}, content, 'application/json', id, ia, tok); return '已上傳到 Google 雲端硬碟'; }
+    await this.driveUpload({ name: GIST_FILE, parents: [await this.driveFolder(ia, tok)], appProperties: { lunyi: 'library' } }, content, 'application/json', null, ia, tok);
     return '已在雲端硬碟「論憶」資料夾建立同步檔';
   }
-  async drivePull(ia) {
-    const id = await this.driveLibId(ia);
-    if (!id) throw new Error('雲端硬碟裡還沒有論憶的資料，請先上傳');
-    return (await this.gFetch(`/drive/v3/files/${id}?alt=media`, { cache: 'no-store' }, null, ia)).text();
+  async drivePull(ia, tok) {
+    tok = tok || await this.gToken(null, ia);
+    const id = await this.driveLibId(ia, tok);
+    if (!id) { const e = new Error('雲端硬碟裡還沒有論憶的資料，請先上傳'); e.empty = true; throw e; }
+    return (await this.gFetch(`/drive/v3/files/${id}?alt=media`, { cache: 'no-store' }, null, ia, tok)).text();
   }
-  // quiet = 自動同步：不跳 toast，也不開 Google 登入視窗
+  // quiet = 自動同步：不跳 toast，也不開 Google 登入視窗；只用自動同步綁定帳號的權杖
   async pushCloud(quiet) {
     this.setState({ syncStatus: '上傳中…' });
     try {
       const content = JSON.stringify(this.payload());
-      const msg = this.cloudTarget() === 'drive' ? await this.drivePush(content, !quiet) : await this.gistPush(content);
+      const drive = this.cloudTarget() === 'drive', tok = drive ? (quiet ? this.syncTok() : await this.gToken(null, true)) : null;
+      const msg = drive ? await this.drivePush(content, !quiet, tok) : await this.gistPush(content);
+      if (quiet) this._pushFailed = false;
       this.setState({ syncStatus: `最後上傳：${this.stamp()}` });
       if (!quiet) this.toast(msg);
       return true;
-    } catch (e) { this.setState({ syncStatus: '上傳失敗：' + e.message }); if (!quiet) this.toast('上傳失敗：' + e.message); return false; }
+    } catch (e) { if (quiet) this._pushFailed = true; this.setState({ syncStatus: '上傳失敗：' + e.message }); if (!quiet && !e.switched) this.toast('上傳失敗：' + e.message); return false; }
   }
+  // 自動上傳：記下進行中的上傳，登出時可以等它結束
+  autoPush() { const p = this._pushing = this.pushCloud(true).finally(() => { if (this._pushing === p) this._pushing = null; }); return p; }
+  // 回傳 true（已合併）、'empty'（雲端還沒有資料）或 false（失敗）
   async pullCloud(quiet) {
     this.setState({ syncStatus: '下載中…' });
     try {
-      const d = J(this.cloudTarget() === 'drive' ? await this.drivePull(!quiet) : await this.gistPull());
+      const drive = this.cloudTarget() === 'drive', tok = drive ? (quiet ? this.syncTok() : await this.gToken(null, true)) : null;
+      const d = J(drive ? await this.drivePull(!quiet, tok) : await this.gistPull());
       if (!d || !Array.isArray(d.papers)) throw new Error('雲端資料格式不符');
       const n = this.mergeData(d);
       this.setState({ syncStatus: `最後下載：${this.stamp()}` });
       if (!quiet) this.toast(`已從雲端合併 ${n} 篇論文`);
-    } catch (e) { this.setState({ syncStatus: '下載失敗：' + e.message }); if (!quiet) this.toast('下載失敗：' + e.message); }
+      return true;
+    } catch (e) { this.setState({ syncStatus: '下載失敗：' + e.message }); if (!quiet && !e.switched) this.toast('下載失敗：' + e.message); return e.empty ? 'empty' : false; }
   }
 
   // ---- Google 帳號（Google Identity Services，只在瀏覽器取得短效存取權杖）----
@@ -1100,71 +1158,223 @@ class Component extends DCLogic {
     } catch (e) {}
     return null;
   }
-  async gToken(extra, ia = true) {
+  async gToken(extra, ia = true, prompt, seq) {
     const scope = [G_BASE, extra].filter(Boolean).join(' ');
-    const cached = this.gCached(scope);
+    // 登入（指定 prompt）時一定跳出 Google 視窗；其他時候先用存著的權杖
+    const cached = prompt ? null : this.gCached(scope);
     if (cached) return cached;
-    if (!ia) throw new Error('Google 登入已過期，請到「設定」重新連結');
+    if (!ia) throw new Error('Google 登入已過期，請到「設定」重新登入');
     const id = this.gClient();
     if (!id) { this.openSettings('adv'); throw new Error('請先在「設定 → 進階」填入 Google OAuth 用戶端 ID'); }
     await loadScript(GSI);
+    // 不是登入的請求（匯入、日曆等）：請 Google 沿用目前的帳號
+    const hint = prompt ? '' : (this.state.gUser || {}).email || '';
+    let retry = null;
     const r = await new Promise((ok, fail) => {
-      window.google.accounts.oauth2.initTokenClient({ client_id: id, scope, include_granted_scopes: true, callback: ok,
-        error_callback: e => fail(new Error(e && e.type === 'popup_closed' ? '已取消 Google 登入' : e && e.type === 'popup_failed_to_open' ? '瀏覽器擋住了 Google 登入視窗，請允許彈出視窗' : 'Google 登入失敗')) }).requestAccessToken();
-    });
+      const c = window.google.accounts.oauth2.initTokenClient({ client_id: id, scope, include_granted_scopes: true, ...(prompt ? { prompt } : hint ? { prompt: '', login_hint: hint } : {}), callback: ok,
+        error_callback: e => fail(new Error(e && e.type === 'popup_closed' ? '已取消 Google 登入' : e && e.type === 'popup_failed_to_open' ? '瀏覽器擋住了 Google 登入視窗，請允許彈出視窗' : 'Google 登入失敗')) });
+      // 只有登入的請求可以被「再按一次」叫回前面
+      if (prompt) retry = this._gRetry = () => c.requestAccessToken();
+      c.requestAccessToken();
+    }).finally(() => { if (this._gRetry === retry) this._gRetry = null; });
     if (r.error) throw new Error(r.error === 'access_denied' ? '你拒絕了 Google 授權' : 'Google 授權失敗：' + r.error);
-    const t = { token: r.access_token, scope: r.scope || scope, exp: Date.now() + (Number(r.expires_in) || 3600) * 1000 };
-    this.lsSet('lunyi-g-token', JSON.stringify(t));
-    await this.gProfile(t.token);
+    const info = await this.gUserInfo(r.access_token);
+    // 等個人資料時又開始了新的登入：這個舊的結果不存，也不動自動同步
+    if (seq && seq !== this._gSeq) throw new Error('已取消 Google 登入');
+    const t = { token: r.access_token, scope: r.scope || scope, exp: Date.now() + (Number(r.expires_in) || 3600) * 1000, email: info ? info.email : '' };
+    const off = this.gAdopt(t, info);
+    // 不是登入的請求（上傳、下載、匯入、匯出…）卻換了帳號或讀不到是誰：新權杖已存好，但這次先不做，免得資料傳到或讀自另一個帳號
+    if (!prompt && hint && t.email !== hint) {
+      const e = new Error(`Google 帳號${info ? '換成了 ' + info.name : '讀不到是哪個帳號'}，這次沒有執行${off ? '；雲端硬碟自動同步已先關閉，可到「設定 → 同步與備份」重新開啟' : ''}。確定要用這個帳號的話，請再操作一次`);
+      e.switched = true; this.toast(e.message, '', 9000); throw e;
+    }
+    if (!prompt && off) this.toast(`Google 帳號換成了 ${this.state.gUser.name}，雲端硬碟自動同步已先關閉，可到「設定 → 同步與備份」重新開啟`, '', 9000);
     return t.token;
   }
-  async gProfile(token) {
+  // 讀 Google 個人資料；10 秒沒回應就當作讀不到
+  async gUserInfo(token) {
+    const ac = new AbortController(), timer = setTimeout(() => ac.abort(), 10000);
     try {
-      const r = await fetch(GAPI + '/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + token } });
-      if (!r.ok) return;
-      const u = await r.json(), gUser = { email: u.email || '', name: u.name || u.email || 'Google 帳號', picture: u.picture || '' };
-      this.lsSet('lunyi-g-user', JSON.stringify(gUser));
-      this.setState({ gUser });
-    } catch (e) {}
+      const r = await fetch(GAPI + '/oauth2/v3/userinfo', { headers: { Authorization: 'Bearer ' + token }, signal: ac.signal });
+      if (!r.ok) return null;
+      const u = await r.json();
+      return { email: u.email || '', name: u.name || u.email || 'Google 帳號', picture: u.picture || '' };
+    } catch (e) { return null; } finally { clearTimeout(timer); }
   }
-  async gFetch(url, opts = {}, extra, ia = true) {
-    const token = await this.gToken(extra, ia);
+  // 存新權杖。和雲端硬碟自動同步綁定的帳號不同（或讀不到是誰）時：待上傳的修改用原本的權杖傳回原本的帳號，再關掉自動同步。回傳是否關掉了自動同步
+  gAdopt(t, info) {
+    this.ensureOwner();
+    const prev = J(this.lsGet('lunyi-g-token') || 'null'), owner = this.lsGet('lunyi-sync-owner');
+    const auto = this.lsGet('lunyi-sync-auto') === '1' && this.cloudTarget() === 'drive';
+    let off = false;
+    if (auto && owner && t.email !== owner) {
+      const pending = !!this._push;
+      off = this.stopDriveAuto();
+      const old = prev && prev.exp > Date.now() + 60000 && this.tokEmail(prev) === owner ? prev.token : null;
+      if (pending && old) this.flushDrive(old);
+      this.setState({ syncStatus: t.email ? '因為換了 Google 帳號，自動同步已先關閉。確定要把這台電腦的文獻庫同步到這個帳號後，再開啟自動同步。' : '讀不到這次登入的 Google 帳號，自動同步已先關閉。請重新登入後再開啟自動同步。' });
+    } else if (auto && !owner && t.email) { this.lsSet('lunyi-sync-owner', t.email); this._joining = true; setTimeout(() => this.syncPullPush(), 0); }
+    this.lsSet('lunyi-g-token', JSON.stringify(t));
+    // 讀不到個人資料：無法確認是誰，不沿用上一個帳號的名稱
+    const gUser = info || { email: '', name: 'Google 帳號', picture: '' };
+    this.lsSet('lunyi-g-user', JSON.stringify(gUser));
+    this.setState({ gUser });
+    return off;
+  }
+  // 權杖屬於哪個帳號（舊版存的權杖沒有記錄，以當時登入的帳號為準）
+  tokEmail(rec) { return 'email' in rec ? rec.email || '' : ((J(this.lsGet('lunyi-g-user') || 'null') || {}).email || ''); }
+  // 自動同步綁定的帳號：開啟自動同步或第一次登入時決定；舊版開啟的自動同步以目前登入的帳號為準
+  ensureOwner() {
+    if (this.lsGet('lunyi-sync-owner') || this.lsGet('lunyi-sync-auto') !== '1' || this.cloudTarget() !== 'drive') return;
+    // 沒有權杖記錄（例如權杖失效被清掉）時，以畫面上登入的帳號為準
+    const e = this.tokEmail(J(this.lsGet('lunyi-g-token') || 'null') || {});
+    if (e) this.lsSet('lunyi-sync-owner', e);
+  }
+  // 自動同步用的權杖：必須是綁定帳號的（其他分頁換了帳號也擋得住）
+  syncTok() {
+    this.ensureOwner();
+    const rec = J(this.lsGet('lunyi-g-token') || 'null'), owner = this.lsGet('lunyi-sync-owner');
+    if (!rec || !(rec.exp > Date.now() + 60000)) throw new Error('Google 登入已過期，請到「設定」重新登入');
+    if (!owner) throw new Error('讀不到目前登入的是哪個 Google 帳號，這次沒有同步；請到「設定」重新登入 Google');
+    if (this.tokEmail(rec) !== owner) throw new Error('目前登入的 Google 帳號不是自動同步綁定的帳號，這次沒有同步');
+    return rec.token;
+  }
+  tokNoEmail() { const rec = J(this.lsGet('lunyi-g-token') || 'null'); return !!rec && !this.tokEmail(rec); }
+  // 權杖沒記到是哪個帳號（登入時讀不到個人資料）：用同一把權杖再讀一次補記；期間換了權杖或登出就不補
+  async gFillEmail() {
+    const rec = J(this.lsGet('lunyi-g-token') || 'null');
+    if (!rec || this.tokEmail(rec) || !(rec.exp > Date.now() + 60000)) return false;
+    const info = await this.gUserInfo(rec.token), cur = J(this.lsGet('lunyi-g-token') || 'null');
+    if (!info || !info.email || !cur || cur.token !== rec.token) return false;
+    this.lsSet('lunyi-g-token', JSON.stringify({ ...cur, email: info.email }));
+    this.lsSet('lunyi-g-user', JSON.stringify(info));
+    this.setState({ gUser: info });
+    return true;
+  }
+  async gFetch(url, opts = {}, extra, ia = true, tok) {
+    const token = tok || await this.gToken(extra, ia);
     const r = await fetch(url.startsWith('http') ? url : GAPI + url, { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + token } });
-    if (r.status === 401) { this.lsSet('lunyi-g-token', ''); throw new Error('Google 登入已過期，請重新連結'); }
+    if (r.status === 401) { if ((J(this.lsGet('lunyi-g-token') || 'null') || {}).token === token) this.lsSet('lunyi-g-token', ''); throw new Error('Google 登入已過期，請重新登入'); }
     if (r.status === 403) throw new Error('Google 拒絕存取，請確認 Google Cloud 已啟用對應的 API');
     if (!r.ok) throw new Error('Google HTTP ' + r.status);
     return r;
   }
+  // 登入視窗：訪客按頭像或第一次開啟時出現
+  openLogin(msg) {
+    const s = this.state;
+    if (!s.showSet && !s.showAdd && !s.showLogin) this._retFocus = document.activeElement;
+    this.setState({ showLogin: true, acctOpen: false, loginMsg: msg || '', loginBusy: '' });
+    if (this.gClient()) loadScript(GSI).catch(() => {});
+  }
+  closeLogin() { this.setState({ showLogin: false, loginMsg: '', loginBusy: '' }); }
+  // 跳出 Google 的帳號選擇視窗；不用輸入帳號密碼（瀏覽器已登入 Google 時直接選帳號）
   async gSignIn() {
     if (this.state.showSet && this.state.clientDraft.trim()) this.lsSet('lunyi-g-client', this.state.clientDraft.trim());
-    if (!this.gClient()) { this.openSettings('adv'); return this.toast('網站尚未設定 Google 登入：請先填入 OAuth 用戶端 ID'); }
-    try { this.lsSet('lunyi-g-token', ''); await this.gToken(); this.toast('已連結 Google 帳號'); } catch (e) { this.toast(e.message); }
+    if (!this.gClient()) {
+      if (this.state.showSet) return this.toast('請先在「進階」填入 Google OAuth 用戶端 ID');
+      // 已用 OpenRouter 登入的人不必再看訪客用的登入視窗
+      return this.secGet('lunyi-or-key') ? this.toast('Google 登入暫時還沒開放') : this.openLogin(G_OFF_MSG);
+    }
+    // Google 視窗還開著（可能被主視窗蓋住）：再叫一次，讓它回到最前面
+    if (this.state.loginBusy === 'google' && this._gRetry) return this._gRetry();
+    if (this.state.loginBusy) return;
+    // 每次登入編號，舊的請求晚回來時不要蓋掉新請求的狀態
+    const req = this._gSeq = (this._gSeq || 0) + 1;
+    this.setState({ loginBusy: 'google', loginMsg: '', acctOpen: false });
+    try {
+      const before = this.lsGet('lunyi-sync-auto');
+      await this.gToken(null, true, 'select_account', req);
+      const off = before === '1' && this.lsGet('lunyi-sync-auto') !== '1', paused = !off && this.syncOn() && this.cloudTarget() === 'drive' && !this.lsGet('lunyi-sync-owner');
+      if (req !== this._gSeq) return;
+      this.setState({ showLogin: false, loginBusy: '' });
+      const u = this.state.gUser;
+      this.toast((u ? `已用 Google 登入：${u.name}` : '已用 Google 登入') + (!off ? '' : u && u.email ? '。因為換了帳號，雲端硬碟自動同步已先關閉，可到「設定 → 同步與備份」重新開啟' : '。讀不到帳號資料，雲端硬碟自動同步已先關閉，請重新登入後再開啟') + (paused ? '。讀不到帳號資料，雲端硬碟自動同步暫停，請稍後重新登入' : ''), '', off || paused ? 9000 : 0);
+      this.retryPush();
+    } catch (e) {
+      if (req !== this._gSeq) return;
+      this.setState({ loginBusy: '' });
+      if (this.state.showLogin) this.setState({ loginMsg: e.message }); else this.toast(e.message);
+    }
   }
-  gSignOut() {
-    const t = this.gCached(G_BASE);
-    if (t && window.google && window.google.accounts) window.google.accounts.oauth2.revoke(t, () => {});
+  // 這台裝置第一次和這個帳號的雲端硬碟同步：先下載合併（同一篇以雲端為準，和開啟網站時一樣），再上傳；避免用這台的資料蓋掉雲端的整個文獻庫
+  async syncPullPush() {
+    try {
+      if (!this.syncOn() || this.cloudTarget() !== 'drive') return;
+      clearTimeout(this._push); this._push = null;
+      this._syncReady = false;
+      if (this._pushing) await this._pushing;
+      const r = await this.pullCloud(true); // pullCloud 與進行中的上傳都不會丟出錯誤
+      this._syncReady = true;
+      if (r && this.syncOn()) this.autoPush();
+    } finally { this._joining = false; }
+  }
+  // 同一個帳號重新登入：之前因權杖過期沒傳成功的修改現在補傳（和下一次編輯時會做的一樣）
+  retryPush() {
+    if (!this.syncOn() || this.cloudTarget() !== 'drive' || this._joining || !(this._pushFailed || this._push)) return;
+    clearTimeout(this._push); this._push = null;
+    this.autoPush();
+  }
+  // 用指定帳號的權杖把文獻庫傳到該帳號的雲端硬碟（登出、換帳號時補傳最後的修改）
+  async flushDrive(tok, content) {
+    try { await this.drivePush(content || JSON.stringify(this.payload()), false, tok); return true; } catch (e) { return false; }
+  }
+  // 本機文獻庫不分帳號：Google 帳號登出或更換時關掉雲端硬碟自動同步、解除綁定，並取消還沒送出的上傳
+  stopDriveAuto() {
+    this.lsSet('lunyi-sync-owner', '');
+    if (this.cloudTarget() !== 'drive' || this.lsGet('lunyi-sync-auto') !== '1') return false;
+    clearTimeout(this._push); this._push = null;
+    this.lsSet('lunyi-sync-auto', '');
+    return true;
+  }
+  async loginOr() {
+    if (this.state.loginBusy) return;
+    if (this.secGet('lunyi-or-key')) { this.closeLogin(); return this.toast('已經用 OpenRouter 登入了'); }
+    const bad = this.orBlocked();
+    if (bad) return this.setState({ loginMsg: bad });
+    this.setState({ loginBusy: 'or', loginMsg: '' });
+    try { await this.orRedirect(); } catch (e) { this.setState({ loginMsg: '無法開始登入：' + (e && e.message || e) }); }
+    // 成功時頁面會直接跳到 OpenRouter；還在這裡代表沒有跳轉（例如取消了上傳確認）
+    setTimeout(() => this.setState({ loginBusy: '' }), 800);
+  }
+  async gSignOut() {
+    // 先在這台電腦登出（之後關掉分頁也不會停在登入狀態），再用原本的權杖補傳最後的修改、撤銷授權
+    const t = this.gCached(G_BASE), running = this._pushing;
+    let mine = false;
+    try { mine = !!t && this.syncTok() === t; } catch (e) {}
+    const flush = mine && this.cloudTarget() === 'drive' && this.syncOn() && (!!this._push || !!running);
+    const content = flush ? JSON.stringify(this.payload()) : '';
     this.lsSet('lunyi-g-token', ''); this.lsSet('lunyi-g-user', '');
-    this.setState({ gUser: null, driveFiles: [] });
-    this.toast('已中斷 Google 連結');
+    this._gSeq = (this._gSeq || 0) + 1;
+    const off = this.stopDriveAuto();
+    this.setState({ gUser: null, driveFiles: [], loginBusy: '' });
+    this.toast(off ? '已登出 Google，雲端硬碟自動同步也已關閉' : '已登出 Google', '', off ? 6000 : 0);
+    if (flush) {
+      if (running) await running;
+      const ok = await this.flushDrive(t, content);
+      this.setState({ syncStatus: ok ? `最後上傳：${this.stamp()}` : '登出前最後的修改沒有上傳到雲端硬碟，仍保留在這台電腦' });
+      if (!ok) this.toast('已登出 Google。最後的修改沒有上傳到雲端硬碟，仍保留在這台電腦', '', 6000);
+    }
+    // 補傳期間又登入了（存了新的權杖）：不撤銷，撤銷會收回整個授權、連新權杖一起失效；舊權杖一小時內自然過期
+    if (t && !this.lsGet('lunyi-g-token') && window.google && window.google.accounts) window.google.accounts.oauth2.revoke(t, () => {});
   }
 
   // ---- Google 雲端硬碟 ----
-  async driveFolder(ia = true) {
+  async driveFolder(ia = true, tok) {
     const q = encodeURIComponent("name='論憶' and mimeType='application/vnd.google-apps.folder' and trashed=false");
-    const j = await (await this.gFetch(`/drive/v3/files?q=${q}&fields=files(id)&spaces=drive`, {}, null, ia)).json();
+    const j = await (await this.gFetch(`/drive/v3/files?q=${q}&fields=files(id)&spaces=drive`, {}, null, ia, tok)).json();
     if (j.files && j.files[0]) return j.files[0].id;
-    const r = await this.gFetch('/drive/v3/files?fields=id', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '論憶', mimeType: 'application/vnd.google-apps.folder' }) }, null, ia);
+    const r = await this.gFetch('/drive/v3/files?fields=id', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: '論憶', mimeType: 'application/vnd.google-apps.folder' }) }, null, ia, tok);
     return (await r.json()).id;
   }
-  async driveLibId(ia = true) {
+  async driveLibId(ia = true, tok) {
     const q = encodeURIComponent("appProperties has { key='lunyi' and value='library' } and trashed=false");
-    const j = await (await this.gFetch(`/drive/v3/files?q=${q}&fields=files(id)&orderBy=modifiedTime desc`, { cache: 'no-store' }, null, ia)).json();
+    const j = await (await this.gFetch(`/drive/v3/files?q=${q}&fields=files(id)&orderBy=modifiedTime desc`, { cache: 'no-store' }, null, ia, tok)).json();
     return j.files && j.files[0] && j.files[0].id;
   }
-  async driveUpload(meta, body, type, id, ia = true) {
+  async driveUpload(meta, body, type, id, ia = true, tok) {
     const b = 'lunyi' + Date.now().toString(36);
     const data = `--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${type}\r\n\r\n${body}\r\n--${b}--`;
-    const r = await this.gFetch(`/upload/drive/v3/files${id ? '/' + id : ''}?uploadType=multipart&fields=id,webViewLink`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + b }, body: data }, null, ia);
+    const r = await this.gFetch(`/upload/drive/v3/files${id ? '/' + id : ''}?uploadType=multipart&fields=id,webViewLink`, { method: id ? 'PATCH' : 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + b }, body: data }, null, ia, tok);
     return r.json();
   }
   async driveSearch() {
@@ -1201,7 +1411,7 @@ class Component extends DCLogic {
         + `<p>關鍵詞：${esc(cur.keywords.join(', '))}${(cur.tags || []).length ? '　標籤：' + esc(cur.tags.join('、')) : ''}</p><p>APA：${esc(this.apa(cur))}</p>${whole ? '<h2>整篇筆記</h2>' + whole : ''}<h2>內文</h2>${body}</body></html>`;
       const j = await this.driveUpload({ name: `論憶｜${cur.title}`, mimeType: 'application/vnd.google-apps.document', parents: [await this.driveFolder()] }, html, 'text/html; charset=UTF-8');
       this.toast('已匯出到 Google 文件', j.webViewLink || `https://docs.google.com/document/d/${j.id}/edit`);
-    } catch (e) { this.toast('匯出失敗：' + e.message); }
+    } catch (e) { if (!e.switched) this.toast('匯出失敗：' + e.message); }
   }
   async planReading(cur) {
     const m = String(this.state.planAt).match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
@@ -1213,9 +1423,9 @@ class Component extends DCLogic {
       const j = await (await this.gFetch('/calendar/v3/calendars/primary/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ev) }, G_CAL)).json();
       this.setState({ planOpen: false });
       this.toast('已排入 Google 日曆', j.htmlLink);
-    } catch (e) { this.toast('排程失敗：' + e.message); }
+    } catch (e) { if (!e.switched) this.toast('排程失敗：' + e.message); }
   }
-  toast(msg, link) { this.setState({ toast: msg, toastLink: link || '' }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '', toastLink: '' }), link ? 9000 : 2600); }
+  toast(msg, link, ms) { this.setState({ toast: msg, toastLink: link || '' }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '', toastLink: '' }), ms || (link ? 9000 : 2600)); }
   find(id) { return this.state.papers.find(p => p.id === id); }
   upd(id, fn) { this.setState(s => ({ papers: s.papers.map(p => p.id === id ? fn(p) : p) })); }
   open(id, layout) { this.setState(s => ({ sel: id, selPara: null, noteDraft: '', layout: layout || s.layout, hov: null })); }
@@ -1469,9 +1679,14 @@ class Component extends DCLogic {
   }
 
   // ---- OpenRouter 登入（OAuth PKCE，純前端，不需要後端或 client_id）----
+  orBlocked() {
+    if (this.state.tAll) return '翻譯進行中，完成後再登入';
+    if (location.protocol === 'file:' || !window.isSecureContext || !(window.crypto && crypto.subtle)) return '請用 https 網址（例如 GitHub Pages 上的論憶）開啟，才能登入 OpenRouter';
+    return '';
+  }
   async orSignIn() {
-    if (this.state.tAll) return this.toast('翻譯進行中，完成後再登入');
-    if (location.protocol === 'file:' || !window.isSecureContext || !(window.crypto && crypto.subtle)) return this.toast('請用 https 網址（例如 GitHub Pages 上的論憶）開啟，才能登入 OpenRouter');
+    const bad = this.orBlocked();
+    if (bad) return this.toast(bad);
     try { await this.orRedirect(); } catch (e) { this.toast('無法開始登入：' + (e && e.message || e)); }
   }
   async orRedirect() {
@@ -1577,12 +1792,16 @@ class Component extends DCLogic {
 
   syncFocus(ps, s) {
     const root = document.querySelector('.ly-root'), main = document.querySelector('.ly-mainwrap');
-    const modal = s.showSet || s.showAdd, wasModal = ps.showSet || ps.showAdd;
-    if (root) root.inert = !!modal;
+    const DLG = ['#lunyi-login', '.ly-setbox', '#lunyi-add'];
+    const top = st => st.showLogin ? DLG[0] : st.showSet ? DLG[1] : st.showAdd ? DLG[2] : '';
+    const t = top(s), pt = top(ps), modal = !!t, wasModal = !!pt;
+    if (root) root.inert = modal;
     if (main) main.inert = !modal && s.narrow && s.sbOpen;
-    if (modal && !wasModal) {
-      this._retFocus = this._retFocus || document.activeElement;
-      this.focusSoon(() => { const d = document.querySelector('[role=dialog]'); return d && (d.querySelector('[aria-current=page]') || d.querySelector('button, input, textarea, select')); });
+    // 同時開著兩個視窗時，下層的也不能操作
+    DLG.forEach(sel => { const d = document.querySelector(sel); if (d && d.parentElement) d.parentElement.inert = modal && sel !== t; });
+    if (modal && t !== pt) {
+      if (!wasModal) this._retFocus = this._retFocus || document.activeElement;
+      this.focusSoon(() => { const d = document.querySelector(t); return d && (d.querySelector('.ly-autofocus:not([aria-disabled="true"])') || d.querySelector('[aria-current=page]') || d.querySelector('button, input, textarea, select')); });
     } else if (!modal && wasModal) {
       const el = this._retFocus; this._retFocus = null;
       this.focusSoon(() => el && el.isConnected && el.offsetParent !== null ? el : document.querySelector(s.sbOpen && !s.narrow ? '#lunyi-acct-btn' : 'button[aria-label="開啟側欄"]') || document.querySelector('#lunyi-acct-btn'));
@@ -1595,16 +1814,17 @@ class Component extends DCLogic {
     const p = this.provider(), or = !!this.secGet('lunyi-or-key'), g = s.gUser;
     const orModel = this.lsGet('lunyi-or-model') || 'openrouter/free';
     const aiShort = p === 'openrouter' ? `OpenRouter · ${orModel}` : p === 'gemini' ? `Gemini 金鑰 · ${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}` : p === 'claude' ? `Claude 金鑰 · ${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '';
-    // 頭像：連結 Google 時用 Google 名稱與照片，否則顯示訪客；顏色由名稱決定
+    // 頭像：登入 Google 時用 Google 名稱與照片，否則顯示訪客；顏色由名稱決定
     const name = g ? g.name : or ? '論憶使用者' : '訪客';
     const hue = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
     // 頭像照片用 CSS 背景顯示：範本初次渲染時才不會先送出網址是 {{ … }} 的圖片請求
     const pic = g && /^https:\/\//.test(g.picture || '') ? g.picture.replace(/["'()\\]/g, encodeURIComponent) : '';
     const av = { name, initial: [...name][0] || '訪', bg: `oklch(0.5 0.09 ${hue})`, imgBg: pic ? `center / cover no-repeat url("${pic}")` : 'transparent',
-      sub: g ? g.email : or ? 'AI 帳號已連結' : '尚未連結帳號', detail: `Google：${g ? g.email : '未連結'}\nAI：${aiShort || '未連結'}` };
+      sub: g ? g.email || '已登入 Google' : or ? 'AI 帳號已登入' : '按此登入', detail: `Google：${g ? g.email || '已登入' : '未登入'}\nAI：${aiShort || '未設定'}` };
+    const guest = !g && !or;
     const closeMenu = fn => () => { this.setState({ acctOpen: false }); fn(); };
     const acctItems = [
-      g ? { label: '中斷 Google 連結', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '連結 Google 帳號', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
+      g ? { label: '登出 Google', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '用 Google 登入', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
       or ? { label: '登出 OpenRouter', note: 'AI 帳號', onClick: closeMenu(() => this.orSignOut()) } : { label: '用 OpenRouter 登入', note: 'AI 帳號', onClick: closeMenu(() => this.orSignIn()) },
       { label: '設定與備份', note: '', onClick: closeMenu(() => this.openSettings('account')) }
     ];
@@ -1657,7 +1877,14 @@ class Component extends DCLogic {
       .filter(Boolean).map(([kk, label]) => { const on = p === kk || (kk === 'claude' && p === 'native'); return { label, pressed: String(on), ...pill(on), onClick: () => { this.lsSet('lunyi-ai', kk); this.toast(`已改用 ${label}`); this.forceUpdate(); } }; });
     const trName = { auto: '自動', builtin: '瀏覽器內建', ai: '雲端 AI' }[tm];
     return {
-      av, acctItems, acctOpen: s.acctOpen, acctAttr: String(s.acctOpen), toggleAcct: () => this.setState(st => ({ acctOpen: !st.acctOpen })),
+      av, acctItems, acctOpen: s.acctOpen, acctAttr: String(guest ? s.showLogin : s.acctOpen), acctPopup: guest ? 'dialog' : 'false', acctTitle: guest ? '登入' : '帳號與連線',
+      toggleAcct: () => guest ? this.openLogin() : this.setState(st => ({ acctOpen: !st.acctOpen })),
+      showLogin: s.showLogin, closeLogin: () => this.closeLogin(), loginGoogle: () => this.gSignIn(), loginOr: () => this.loginOr(),
+      gOff: String(!this.gClient()), gOpacity: this.gClient() ? 1 : 0.6,
+      gBtnLabel: s.loginBusy === 'google' ? '請在 Google 視窗選擇帳號…' : '繼續使用 Google',
+      gBtnNote: this.gClient() ? '同步文獻庫到你的 Google 雲端硬碟，也能匯入 PDF、匯出 Google 文件' : 'Google 登入暫時還沒開放',
+      orBtnLabel: s.loginBusy === 'or' ? '正在前往 OpenRouter…' : '用 OpenRouter 登入',
+      hasLoginMsg: !!s.loginMsg, loginMsg: s.loginMsg, showLoginAdmin: !this.gClient() && s.loginMsg === G_OFF_MSG, loginAdmin: () => this.openSettings('adv'),
       acctBlur: e => { const box = e.currentTarget; if (!box.contains(e.relatedTarget)) this.setState({ acctOpen: false }); },
       orListKey: e => { const opts = [...e.currentTarget.querySelectorAll('[role=option]')], i = opts.indexOf(document.activeElement); const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: opts.length - 1 }[e.key]; if (to == null || !opts.length) return; e.preventDefault(); const t = opts[Math.max(0, Math.min(opts.length - 1, to))]; opts.forEach(o => o.tabIndex = -1); t.tabIndex = 0; t.focus(); },
       addHint: this.hasCloud() ? '以下欄位可留空，會由 AI 自動辨識。儲存後自動擷取關鍵詞、比對引用、與現有論文串聯並翻譯成繁中。' : '目前沒有連結雲端 AI：請自行填寫標題等欄位（留空會用檔名）。儲存後會用瀏覽器內建翻譯翻成繁中；連結 AI 後可自動辨識標題與關鍵詞、串聯相關論文。',
@@ -1675,8 +1902,8 @@ class Component extends DCLogic {
       openSettings: () => this.openSettings('account'), setTabs,
       setAccount: s.setTab === 'account', setAi: s.setTab === 'ai', setSync: s.setTab === 'sync', setAdv: s.setTab === 'adv',
       goAi: () => this.goTab('ai'), goAdv: () => this.goTab('adv'),
-      gStatus: g ? `已連結：${g.name}（${g.email}）` : this.gClient() ? '尚未連結 Google 帳號' : '網站尚未設定 Google 登入：管理者要先在「進階」或程式中填入 OAuth 用戶端 ID',
-      orSigned: or, orNotSigned: !or, orStatus: or ? `已連結・使用 ${orModel}` : '尚未登入', orLine: or ? ACC : '#e2ddd3',
+      gStatus: g ? `已登入：${g.name}${g.email ? `（${g.email}）` : ''}` : this.gClient() ? '尚未登入 Google' : '網站尚未開放 Google 登入：管理者要在程式的 GOOGLE_CLIENT_ID 填入 OAuth 用戶端 ID',
+      orSigned: or, orNotSigned: !or, orStatus: or ? `已登入・使用 ${orModel}` : '尚未登入', orLine: or ? ACC : '#e2ddd3',
       orSignIn: () => this.orSignIn(), orSignOut: () => this.orSignOut(), orKeyInfo, orPicks, orModel,
       orModelQ: s.orModelQ, onOrModelQ: e => this.setState({ orModelQ: e.target.value }),
       orModelList, orModelEmpty: !orModelList.length, orModelMsg: s.orModels == null ? '載入模型清單中…' : s.orModelErr || '沒有符合的模型',
@@ -1688,7 +1915,7 @@ class Component extends DCLogic {
       saveGem: () => this.saveGem(), clearGem: () => this.clearGem(), gemMsg: s.gemMsg,
       saveClaude: () => this.saveClaude(), clearClaude: () => this.clearClaude(), claudeMsg: s.claudeMsg,
       claudeModelDraft: s.claudeModelDraft, onClaudeModelDraft: e => this.setState({ claudeModelDraft: e.target.value }),
-      saveClient: () => { this.lsSet('lunyi-g-client', s.clientDraft.trim()); if (s.clientDraft.trim()) loadScript(GSI).catch(() => {}); this.toast(s.clientDraft.trim() ? '已儲存 Google 用戶端 ID' : '已清除 Google 用戶端 ID'); }
+      saveClient: () => { this.lsSet('lunyi-g-client', s.clientDraft.trim()); if (s.clientDraft.trim()) loadScript(GSI).catch(() => {}); this.toast(s.clientDraft.trim() ? '已儲存 Google 用戶端 ID（只對這台瀏覽器有效）' : '已清除 Google 用戶端 ID'); }
     };
   }
 
@@ -1958,7 +2185,7 @@ class Component extends DCLogic {
       gemKeyDraft: s.gemKeyDraft, gemModelDraft: s.gemModelDraft,
       onGemKeyDraft: e => this.setState({ gemKeyDraft: e.target.value }), onGemModelDraft: e => this.setState({ gemModelDraft: e.target.value }),
       clientDraft: s.clientDraft, onClientDraft: e => this.setState({ clientDraft: e.target.value }),
-      gSignIn: () => this.gSignIn(), gSignOut: () => this.gSignOut(), gSigned: !!s.gUser, gSignInLabel: s.gUser ? '重新連結' : '連結 Google 帳號',
+      gSignIn: () => this.gSignIn(), gSignOut: () => this.gSignOut(), gSigned: !!s.gUser, gSignInLabel: s.loginBusy === 'google' ? '請在 Google 視窗選擇帳號…' : s.gUser ? '重新登入' : '用 Google 登入',
       syncBtns: [['drive', 'Google 雲端硬碟'], ['gist', 'GitHub Gist']].map(([k, label]) => ({ label, bg: s.syncTarget === k ? '#fff' : 'transparent', onClick: () => { this.lsSet('lunyi-sync-target', k); this.setState({ syncTarget: k, syncStatus: '' }); } })),
       syncDrive: s.syncTarget === 'drive', syncGist: s.syncTarget === 'gist',
       scholarUrl: cur ? 'https://scholar.google.com/scholar?q=' + encodeURIComponent(cur.title) : 'https://scholar.google.com/',
@@ -1968,7 +2195,7 @@ class Component extends DCLogic {
       planReading: () => cur && this.planReading(cur),
       driveQ: s.driveQ, onDriveQ: e => this.setState({ driveQ: e.target.value }),
       onDriveKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.driveSearch(); } },
-      driveSearch: () => this.driveSearch(), driveMsg: s.driveMsg || (s.gUser ? '輸入檔名搜尋，或直接按「搜尋」列出最近的 PDF。' : '按「搜尋」會先請你連結 Google 帳號。'),
+      driveSearch: () => this.driveSearch(), driveMsg: s.driveMsg || (s.gUser ? '輸入檔名搜尋，或直接按「搜尋」列出最近的 PDF。' : '按「搜尋」會先請你用 Google 登入。'),
       driveFiles: s.driveFiles.map(f => ({ name: f.name, meta: `${(f.modifiedTime || '').slice(0, 10)}${f.size ? ' · ' + Math.max(1, Math.round(f.size / 1024)) + ' KB' : ''}`, bg: s.drivePicked === f.id ? '#ece8e0' : 'transparent', onClick: () => this.drivePick(f) })),
       addDrive: s.addTab === 'drive',
       tokenDraft: s.tokenDraft, gistDraft: s.gistDraft, syncStatus: s.syncStatus,
@@ -1976,9 +2203,9 @@ class Component extends DCLogic {
       saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); try { sessionStorage.removeItem('lunyi-gh-token'); } catch (e) {} this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); if (this.syncOn() && s.gistDraft.trim()) { this._syncReady = false; this.pullCloud(true).then(() => { this._syncReady = true; }); } },
       pushCloud: () => this.pushCloud(), pullCloud: () => this.pullCloud(),
       ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
-      toggleAuto: () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = true; this.setState({ syncStatus: s.syncStatus }); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並連結帳號後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
+      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; if (on && this.cloudTarget() === 'drive' && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this.lsSet('lunyi-sync-owner', ''); if (on) this.ensureOwner(); this._syncReady = true; this.setState({ syncStatus: this.state.syncStatus }); if (on && this.cloudTarget() === 'drive' && this.lsGet('lunyi-sync-owner')) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並登入 Google 後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
-      openAdd: () => { if (!s.showSet && !s.showAdd) this._retFocus = document.activeElement; this.setState(st => ({ showAdd: true, acctOpen: false, sbOpen: st.narrow ? false : st.sbOpen, form: { ...st.form, folder: st.form.folder || (st.folder !== '全部' ? st.folder : '') } })); }, closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
+      openAdd: () => { if (!s.showSet && !s.showAdd && !s.showLogin) this._retFocus = document.activeElement; this.setState(st => ({ showAdd: true, acctOpen: false, sbOpen: st.narrow ? false : st.sbOpen, form: { ...st.form, folder: st.form.folder || (st.folder !== '全部' ? st.folder : '') } })); }, closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
       folders: [fBtn('全部', qAll.length), ...folderNames.map(f => fBtn(f, qAll.filter(p => (p.folder || '未分類') === f).length))],
       folderNames, onFolder: e => cur && this.upd(cur.id, p => ({ ...p, folder: e.target.value })),
       list: filtered.map(p => ({ title: p.title, meta: meta(p), tagsText: (p.tags || []).join(' · '), prog: `譯 ${p.paras.filter(x => x.zh).length}/${p.paras.length}`, bg: cur && p.id === cur.id ? '#fff' : 'transparent', onClick: () => this.open(p.id) })),
