@@ -3,13 +3,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>論憶｜期刊論文記憶庫</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2216%22 fill=%22%231d1b18%22/%3E%3Ctext x=%2250%22 y=%2270%22 text-anchor=%22middle%22 font-size=%2260%22 fill=%22%23faf9f6%22%3E%E8%AB%96%3C/text%3E%3C/svg%3E">
 <script src="94329b98-64b9-4570-a9b5-9968db413be9"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Noto Sans TC',sans-serif}*{box-sizing:border-box}a{color:oklch(0.45 0.1 200)}a:hover{color:#1d1b18}input,textarea,select,button{font:inherit;color:inherit}button,label{cursor:pointer}
+<style>@media (max-width:1220px){.ly-head{gap:12px!important}.ly-sub{display:none}}@media (max-width:1100px){.ly-glabel{display:none}}
+html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Noto Sans TC',sans-serif}*{box-sizing:border-box}a{color:oklch(0.45 0.1 200)}a:hover{color:#1d1b18}input,textarea,select,button{font:inherit;color:inherit}button,label{cursor:pointer}
 @media (max-width:900px){
 .ly-root{height:auto!important;min-height:100vh;grid-template-rows:auto auto!important}
 .ly-head{flex-wrap:wrap;gap:10px!important;padding:10px 16px!important}
@@ -26,25 +28,31 @@
 .ly-node{width:112px!important;padding:7px 8px!important}
 .ly-pad{padding:0 16px!important}.ly-askbar{padding:12px 16px!important}
 .ly-form4{grid-template-columns:1fr 1fr!important}
+.ly-dash{padding:18px 16px 48px!important}
+.ly-kpis{grid-template-columns:1fr 1fr!important}
+.ly-dash-grid{grid-template-columns:minmax(0,1fr)!important}
+.ly-prow{grid-template-columns:minmax(0,1fr) 128px!important}
+.ly-frow{grid-template-columns:minmax(0,1fr) 72px 84px!important}.ly-pextra{display:none!important}
+.ly-kwrow{grid-template-columns:minmax(118px,40%) minmax(0,1fr)!important}
 }</style>
 </helmet>
 
 <div class="ly-root" style="height:100vh;display:grid;grid-template-rows:56px minmax(0,1fr)">
   <header class="ly-head" style="display:flex;align-items:center;gap:24px;padding:0 20px;border-bottom:1px solid #e2ddd3;background:#faf9f6">
-    <div style="display:flex;align-items:baseline;gap:10px">
-      <span style="font-family:'Noto Serif TC',serif;font-size:21px;font-weight:600;letter-spacing:0.04em">論憶</span>
-      <span style="font-size:12px;color:#625d55">期刊論文記憶庫</span>
+    <div style="display:flex;align-items:baseline;gap:10px;flex-shrink:0">
+      <span style="font-family:'Noto Serif TC',serif;font-size:21px;font-weight:600;letter-spacing:0.04em;white-space:nowrap">論憶</span>
+      <span class="ly-sub" style="font-size:12px;color:#625d55;white-space:nowrap">期刊論文記憶庫</span>
     </div>
-    <nav style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:7px">
+    <nav style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:7px;flex-shrink:0">
       <sc-for list="{{ layoutTabs }}" as="t" hint-placeholder-count="3">
-        <button sc-camel-on-click="{{ t.onClick }}" style="border:0;padding:5px 12px;border-radius:5px;font-size:13px;background:{{ t.bg }};color:{{ t.color }};display:flex;gap:7px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:0.7">{{ t.id }}</span>{{ t.label }}</button>
+        <button sc-camel-on-click="{{ t.onClick }}" aria-pressed="{{ t.pressed }}" style="border:0;padding:5px 12px;border-radius:5px;font-size:13px;background:{{ t.bg }};color:{{ t.color }};display:flex;gap:7px;align-items:baseline;white-space:nowrap"><span style="font-family:'IBM Plex Mono',monospace;font-size:10px">{{ t.id }}</span>{{ t.label }}</button>
       </sc-for>
     </nav>
     <div class="ly-spacer" style="flex:1"></div>
-    <input class="ly-search" value="{{ q }}" sc-camel-on-change="{{ onQ }}" placeholder="搜尋標題、作者、關鍵詞、內文" style="width:280px;padding:8px 12px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-    <button sc-camel-on-click="{{ gChip }}" title="{{ gChipTitle }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:13px;display:flex;align-items:center;gap:7px;max-width:200px"><span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:{{ gDot }};color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center">G</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ gChipLabel }}</span></button>
-    <button sc-camel-on-click="{{ openSettings }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:transparent;font-size:13px">設定與備份</button>
-    <button sc-camel-on-click="{{ openAdd }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500">＋ 新增論文</button>
+    <input class="ly-search" value="{{ q }}" sc-camel-on-change="{{ onQ }}" placeholder="搜尋標題、作者、關鍵詞、內文" style="flex:0 1 280px;min-width:120px;padding:8px 12px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+    <button sc-camel-on-click="{{ gChip }}" title="{{ gChipTitle }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:13px;display:flex;align-items:center;gap:7px;max-width:200px;min-width:0"><span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:{{ gDot }};color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center">G</span><span class="ly-glabel" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ gChipLabel }}</span></button>
+    <button sc-camel-on-click="{{ openSettings }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:transparent;font-size:13px;white-space:nowrap;flex-shrink:0">設定與備份</button>
+    <button sc-camel-on-click="{{ openAdd }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500;white-space:nowrap;flex-shrink:0">＋ 新增論文</button>
   </header>
 
   <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
@@ -52,8 +60,9 @@
       <aside class="ly-list" style="border-right:1px solid #e2ddd3;display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0">
         <div style="padding:16px 14px 10px;display:flex;flex-wrap:wrap;gap:5px">
           <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
-            <button sc-camel-on-click="{{ f.onClick }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;display:flex;gap:6px;white-space:nowrap;flex-shrink:0">{{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;opacity:0.65">{{ f.count }}</span></button>
+            <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;display:flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;opacity:0.65">{{ f.count }}</span></button>
           </sc-for>
+          <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
         </div>
         <div style="overflow:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:2px">
           <sc-for list="{{ list }}" as="it" hint-placeholder-count="4">
@@ -216,8 +225,9 @@
           </div>
           <div style="flex:1"></div>
           <div style="display:flex;flex-wrap:wrap;gap:5px">
+            <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
             <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
-              <button sc-camel-on-click="{{ f.onClick }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0">{{ f.label }}</button>
+              <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}</button>
             </sc-for>
           </div>
         </div>
@@ -227,9 +237,9 @@
             <div style="position:absolute;left:{{ el.x }};top:{{ el.y }};transform:translate(-50%,-50%);font-size:10px;line-height:1.4;color:{{ el.color }};background:#faf9f6;padding:1px 6px;border-radius:3px;max-width:170px;text-align:center">{{ el.text }}</div>
           </sc-for>
           <sc-for list="{{ nodes }}" as="nd" hint-placeholder-count="0">
-            <button sc-camel-on-click="{{ nd.onClick }}" class="ly-node" style="position:absolute;left:{{ nd.x }};top:{{ nd.y }};transform:translate(-50%,-50%);width:196px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid #d6d0c4;background:{{ nd.bg }};color:{{ nd.color }};opacity:{{ nd.op }};display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
+            <button sc-camel-on-click="{{ nd.onClick }}" class="ly-node" style="position:absolute;left:{{ nd.x }};top:{{ nd.y }};transform:translate(-50%,-50%);width:196px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid #d6d0c4;border-left:4px solid {{ nd.swatch }};background:{{ nd.bg }};color:{{ nd.color }};opacity:{{ nd.op }};display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
               <span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.35">{{ nd.title }}</span>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:0.75">{{ nd.meta }}</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:0.75;overflow-wrap:anywhere">{{ nd.meta }}</span>
             </button>
           </sc-for>
         </div>
@@ -318,6 +328,66 @@
         </sc-if>
       </aside>
     </div>
+  </sc-if>
+
+  <sc-if value="{{ isD }}" hint-placeholder-val="{{ false }}">
+    <main class="ly-main ly-dash" style="min-height:0;overflow:auto;background:#faf9f6;padding:24px 32px 64px">
+      <div style="max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">文獻庫總覽</h2>
+          <span style="font-size:12px;color:#625d55">{{ dashScope }}</span>
+          <div style="flex:1"></div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px">
+            <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
+            <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
+              <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;opacity:0.65">{{ f.count }}</span></button>
+            </sc-for>
+          </div>
+        </div>
+        <div class="ly-kpis" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
+            <div style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0">
+              <span style="font-size:12px;color:#625d55">{{ k.label }}</span>
+              <span style="font-size:26px;font-weight:600;line-height:1.15">{{ k.value }}</span>
+              <sc-if value="{{ k.hasMeter }}" hint-placeholder-val="{{ false }}"><span style="display:block;height:6px;border-radius:3px;background:oklch(0.92 0.03 200);overflow:hidden"><span style="display:block;height:100%;width:{{ k.pct }};background:oklch(0.45 0.1 200);border-radius:3px"></span></span></sc-if>
+              <span style="font-size:11px;color:#625d55;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ k.sub }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div class="ly-dash-grid" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px">
+          <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
+            <div><div style="font-size:14px;font-weight:500">出版年份</div><div style="font-size:12px;color:#625d55;margin-top:2px">每年收錄幾篇，看出文獻集中在哪個時期</div></div>
+            {{ yearChart }}
+          </section>
+          <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
+            <div><div style="font-size:14px;font-weight:500">資料夾組成</div><div style="font-size:12px;color:#625d55;margin-top:2px">點色塊或圖例可篩選；同一資料夾在圖譜用同一顏色</div></div>
+            {{ folderChart }}
+          </section>
+          <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
+            <div><div style="font-size:14px;font-weight:500">熱門關鍵詞</div><div style="font-size:12px;color:#625d55;margin-top:2px">{{ kwSub }}</div></div>
+            {{ kwChart }}
+          </section>
+          <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
+            <div><div style="font-size:14px;font-weight:500">閱讀進度</div><div style="font-size:12px;color:#625d55;margin-top:2px">翻譯進度最低的排最上面，點一下在閱讀器開啟</div></div>
+            <div style="display:flex;flex-direction:column;max-height:330px;overflow:auto">
+              <div aria-hidden="true" class="ly-prow" style="display:grid;grid-template-columns:minmax(0,1fr) 128px 36px 36px 36px;gap:10px;padding:0 6px 6px;border-bottom:1px solid #e2ddd3;font-size:11px;color:#625d55;position:sticky;top:0;background:#fff">
+                <span>論文</span><span>翻譯</span><span class="ly-pextra" style="text-align:right">螢光</span><span class="ly-pextra" style="text-align:right">筆記</span><span class="ly-pextra" style="text-align:right">被引</span>
+              </div>
+              <sc-for list="{{ dashRows }}" as="r" hint-placeholder-count="4">
+                <button class="ly-prow" sc-camel-on-click="{{ r.onClick }}" title="{{ r.full }}" aria-label="{{ r.aria }}" style="display:grid;grid-template-columns:minmax(0,1fr) 128px 36px 36px 36px;gap:10px;align-items:center;text-align:left;border:0;border-bottom:1px solid #efebe4;background:transparent;padding:8px 6px;font-size:13px" style-hover="background:#f4f2ed">
+                  <span style="display:flex;align-items:center;gap:8px;min-width:0"><span style="width:8px;height:8px;border-radius:2px;background:{{ r.swatch }};box-shadow:{{ r.swRing }};flex-shrink:0"></span><span style="font-family:'Noto Serif TC',serif;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.title }}</span></span>
+                  <span style="display:flex;align-items:center;gap:7px"><span style="flex:1;height:6px;border-radius:3px;background:oklch(0.92 0.03 200);overflow:hidden"><span style="display:block;height:100%;width:{{ r.pct }};background:oklch(0.45 0.1 200);border-radius:3px"></span></span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;font-variant-numeric:tabular-nums;min-width:46px;white-space:nowrap;text-align:right">{{ r.prog }}</span></span>
+                  <span class="ly-pextra" style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right;font-variant-numeric:tabular-nums">{{ r.hl }}</span>
+                  <span class="ly-pextra" style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right;font-variant-numeric:tabular-nums">{{ r.notes }}</span>
+                  <span class="ly-pextra" style="font-family:'IBM Plex Mono',monospace;font-size:12px;text-align:right;font-variant-numeric:tabular-nums">{{ r.cited }}</span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ dashEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:16px 6px;font-size:13px;color:#625d55">沒有符合的論文。</div></sc-if>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
   </sc-if>
 </div>
 
@@ -486,10 +556,33 @@
   } };
 })();
 </script>
-<script type="text/x-dc" data-dc-script="" data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;reader&quot;,&quot;graph&quot;,&quot;chat&quot;],&quot;default&quot;:&quot;reader&quot;,&quot;tsType&quot;:&quot;'reader'|'graph'|'chat'&quot;},&quot;defaultMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;en&quot;,&quot;zh&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;'both'|'en'|'zh'&quot;},&quot;autoTranslate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;reader&quot;,&quot;graph&quot;,&quot;chat&quot;,&quot;dash&quot;],&quot;default&quot;:&quot;reader&quot;,&quot;tsType&quot;:&quot;'reader'|'graph'|'chat'|'dash'&quot;},&quot;defaultMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;en&quot;,&quot;zh&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;'both'|'en'|'zh'&quot;},&quot;autoTranslate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
 const KEY = 'lunyi-v2';
 const ACC = 'oklch(0.45 0.1 200)';
 const HL = { y: 'oklch(0.94 0.07 95)', b: 'oklch(0.93 0.045 220)' };
+// 資料夾類別色：dataviz 參考色盤前 3 色。圖譜節點四散，任兩色都可能相鄰，validate_palette.js --pairs all
+// 只有前 3 色通過（色盲 ΔE 9.2、一般視覺 24.0）。色槽存在 fslots，第一次出現時分配，之後改資料夾、刪除或同步都不變；
+// 沒有色槽的資料夾一律算「其他」灰色。綠松對比不足 3:1，所以資料夾名稱一定跟著色塊顯示。
+const CAT = ['#2a78d6', '#eb6834', '#1baf7a'];
+const CAT_OTHER = '#a8a196';
+// 依現有資料夾補齊色槽：保留舊的對應；新資料夾優先用從沒用過的色槽，再用已不存在的資料夾留下的色槽
+function slotMap(papers, fslots) {
+  const map = { ...(fslots || {}) }, live = [...new Set(papers.map(p => p.folder || '未分類'))];
+  const has = f => Object.prototype.hasOwnProperty.call(map, f);
+  let changed = false;
+  live.forEach(f => {
+    if (has(f)) return;
+    const held = new Set(live.filter(has).map(x => map[x])), ever = new Set(Object.values(map));
+    const free = CAT.map((_, i) => i).filter(i => !held.has(i));
+    const slot = free.find(i => !ever.has(i)) ?? free[0];
+    if (slot === undefined) return;
+    map[f] = slot; changed = true;
+  });
+  return { map, changed };
+}
+const MUTE = '#cdc7bb';
+const ACC_DARK = 'oklch(0.36 0.09 200)';
+const ce = React.createElement;
 const norm = k => String(k).trim().toLowerCase();
 const J = t => { const m = String(t).match(/[\[{][\s\S]*[\]}]/); try { return m ? JSON.parse(m[0]) : null; } catch (e) { return null; } };
 const surname = p => (p.authors || '').split(/[,，\s]/)[0] || '佚名';
@@ -576,6 +669,19 @@ function splitParas(lines) {
   return { paras: res.slice(0, 300), refs: refs.join(' ') };
 }
 
+// 圖表提示框：數值在前、名稱在後。寬度固定，pos 是中心點在容器裡的比例位置（null 為靠左），
+// 用 clamp 限制在容器內，手機上也不會超出畫面。要放在沒有 opacity 的容器裡，否則會跟著變淡。
+function chartTip(value, label, lines, pos) {
+  const left = pos == null ? '0px' : `clamp(0px, calc(${(pos * 100).toFixed(2)}% - min(130px, 50%)), calc(100% - min(260px, 100%)))`;
+  return ce('div', { role: 'tooltip', id: TIP_ID, style: { position: 'absolute', bottom: 'calc(100% + 6px)', left, width: 'min(260px, 100%)', zIndex: 5, background: '#1d1b18', color: '#faf9f6', borderRadius: 6, padding: '7px 10px', fontSize: 12, lineHeight: 1.5, pointerEvents: 'none', boxShadow: '0 4px 14px rgba(0,0,0,0.18)', textAlign: 'left', fontWeight: 400 } },
+    ce('div', { style: { fontWeight: 600, fontSize: 13 } }, value),
+    ce('div', { style: { opacity: 0.75, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, label),
+    ...(lines || []).map(t => ce('div', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, t)));
+}
+const MONO = "'IBM Plex Mono',monospace";
+const TIP_ID = 'lunyi-chart-tip';
+const chartEmpty = text => ce('div', { style: { padding: '28px 0', fontSize: 13, color: '#625d55', textAlign: 'center' } }, text);
+
 class Component extends DCLogic {
   state = this.init();
   init() {
@@ -586,10 +692,11 @@ class Component extends DCLogic {
       layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '',
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
       linkTarget: '', linkNote: '', toast: '', ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
-      gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '' };
+      gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {} };
   }
   componentDidMount() {
     this._ps = this.state;
+    this.ensureSlots();
     this._needKey = e => { this.toast(e.detail || '需要設定 AI 金鑰'); this.openSettings(); };
     window.addEventListener('lunyi-need-key', this._needKey);
     if (!document.getElementById('lunyi-fonts')) {
@@ -611,10 +718,18 @@ class Component extends DCLogic {
     this._ps = s;
     if (pp.layout !== this.props.layout && this.props.layout) this.setState({ layout: this.props.layout });
     if (pp.defaultMode !== this.props.defaultMode && this.props.defaultMode) this.setState({ mode: this.props.defaultMode });
-    if (ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone) {
-      try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone })); } catch (e) { this.toast('儲存空間已滿，請刪除部分論文'); }
-      if (this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => this.pushCloud(true), 3000); }
+    const libChanged = ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone;
+    if (libChanged || ps.fslots !== s.fslots) {
+      try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone, fslots: s.fslots })); } catch (e) { this.toast('儲存空間已滿，請刪除部分論文'); }
     }
+    if (libChanged && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => this.pushCloud(true), 3000); }
+    if (ps.papers !== s.papers) this.ensureSlots();
+    // 離開總覽時元素直接卸載，收不到 mouseleave／blur，要自己清掉提示框
+    if (ps.layout !== s.layout && s.hov) this.setState({ hov: null });
+  }
+  ensureSlots() {
+    const { map, changed } = slotMap(this.state.papers, this.state.fslots);
+    if (changed) this.setState({ fslots: map });
   }
   componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); clearTimeout(this._push); }
   lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
@@ -854,7 +969,7 @@ class Component extends DCLogic {
   toast(msg, link) { this.setState({ toast: msg, toastLink: link || '' }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '', toastLink: '' }), link ? 9000 : 2600); }
   find(id) { return this.state.papers.find(p => p.id === id); }
   upd(id, fn) { this.setState(s => ({ papers: s.papers.map(p => p.id === id ? fn(p) : p) })); }
-  open(id, layout) { this.setState(s => ({ sel: id, selPara: null, noteDraft: '', layout: layout || s.layout })); }
+  open(id, layout) { this.setState(s => ({ sel: id, selPara: null, noteDraft: '', layout: layout || s.layout, hov: null })); }
   async copy(text, label) {
     try { await navigator.clipboard.writeText(text); } catch (e) { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
     this.toast(`已複製 ${label}`);
@@ -1001,19 +1116,166 @@ class Component extends DCLogic {
     return out;
   }
 
+  // ---- 1d 總覽的圖表：和圖譜的 SVG 一樣直接產生 React 元素放進模板 ----
+  // 鍵盤聚焦和滑鼠移入顯示同一個提示框；數值也都標在圖上或軸上，提示框只是補充
+  hover(k) {
+    const off = () => this.setState(st => ({ hov: st.hov === k ? null : st.hov }));
+    return { onMouseEnter: () => this.setState({ hov: k }), onMouseLeave: off, onFocus: () => this.setState({ hov: k }), onBlur: off };
+  }
+  yearChart(papers) {
+    if (!papers.length) return chartEmpty('沒有符合的論文');
+    const maxY = new Date().getFullYear() + 1, by = {};
+    let blank = 0, bad = 0;
+    papers.forEach(p => {
+      const t = String(p.year == null ? '' : p.year).trim(), m = t.match(/^(\d{4})(?!\d)/), y = m ? +m[1] : NaN;
+      if (!t) blank++;
+      else if (!(y >= 1000 && y <= maxY)) bad++;
+      else (by[y] = by[y] || []).push(p);
+    });
+    const ys = Object.keys(by).map(Number);
+    const skipped = [blank ? `${blank} 篇未填年份` : '', bad ? `${bad} 篇年份無法辨識` : ''].filter(Boolean);
+    if (!ys.length) return chartEmpty(skipped.length ? `沒有可畫的年份（${skipped.join('、')}）` : '還沒有填年份的論文');
+    // 時間軸連續：沒有論文的年份也留空位；跨度超過 40 年只畫最近 40 年
+    const hi = Math.max(...ys), lo = Math.max(Math.min(...ys), hi - 39);
+    const early = ys.filter(y => y < lo).reduce((n, y) => n + by[y].length, 0);
+    const years = [];
+    for (let y = lo; y <= hi; y++) years.push(y);
+    const max = Math.max(...years.map(y => (by[y] || []).length));
+    // 有資料的年份不多時每根都標數值；太多時只標最高的一根，其餘由 y 軸刻度讀
+    const caps = years.filter(y => by[y]).length <= 12, peak = years.filter(y => (by[y] || []).length === max).pop();
+    const ticks = max <= 4 ? Array.from({ length: max + 1 }, (_, i) => i) : [0, Math.round(max / 2), max];
+    const PH = 124, step = Math.ceil(years.length / 8), hov = this.state.hov;
+    const idx = hov && hov.startsWith('y:') ? years.indexOf(+hov.slice(2)) : -1;
+    // 滑鼠在整個繪圖區移動時對齊最近的年份，不必剛好指在細長條上
+    const onMove = e => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const y = years[Math.min(years.length - 1, Math.max(0, Math.floor((e.clientX - r.left) / r.width * years.length)))];
+      const k = by[y] ? 'y:' + y : null;
+      if (k !== this.state.hov) this.setState({ hov: k });
+    };
+    const onLeave = () => this.setState(st => ({ hov: st.hov && st.hov.startsWith('y:') ? null : st.hov }));
+    const cols = years.map((y, i) => {
+      const list = by[y] || [], c = list.length, h = this.hover('y:' + y);
+      return ce('div', { key: y, role: 'img', tabIndex: c ? 0 : -1, 'aria-label': `${y} 年 ${c} 篇`, 'aria-describedby': i === idx ? TIP_ID : undefined, onFocus: c ? h.onFocus : undefined, onBlur: c ? h.onBlur : undefined,
+        style: { flex: '1 1 0', minWidth: 0, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', outline: 'none' } },
+        c && (caps || y === peak) ? ce('div', { style: { fontFamily: MONO, fontSize: 11, color: '#2c2925', marginBottom: 3 } }, String(c)) : null,
+        ce('div', { style: { width: '100%', maxWidth: 24, height: Math.round(c / max * PH), background: i === idx ? ACC_DARK : ACC, borderRadius: '4px 4px 0 0' } }));
+    });
+    const grid = ticks.map(t => ce('div', { key: t, style: { position: 'absolute', left: 0, right: 0, bottom: Math.round(t / max * PH), borderTop: `1px solid ${t ? '#efebe4' : '#d6d0c4'}` } }));
+    const yAxis = ticks.map(t => ce('div', { key: t, style: { position: 'absolute', right: 6, bottom: Math.round(t / max * PH) - 7, fontFamily: MONO, fontSize: 10, color: '#625d55', fontVariantNumeric: 'tabular-nums' } }, String(t)));
+    const axis = years.map(y => ce('div', { key: y, style: { flex: '1 1 0', minWidth: 0, textAlign: 'center', fontFamily: MONO, fontSize: 10, color: '#625d55', whiteSpace: 'nowrap' } }, (hi - y) % step === 0 ? String(y) : ''));
+    const list = idx >= 0 ? by[years[idx]] : null;
+    const note = [...skipped, early ? `${lo} 年以前的 ${early} 篇未畫出` : ''].filter(Boolean).join('；');
+    return ce('div', { style: { display: 'flex', flexDirection: 'column', gap: 5 } },
+      ce('div', { style: { display: 'flex' } },
+        ce('div', { 'aria-hidden': true, style: { position: 'relative', width: 26, flexShrink: 0, height: PH + 18 } }, yAxis),
+        ce('div', { onMouseMove: onMove, onMouseLeave: onLeave, style: { position: 'relative', flex: 1, minWidth: 0, height: PH + 18 } },
+          grid,
+          ce('div', { style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end', gap: 2 } }, cols),
+          list ? chartTip(`${list.length} 篇`, `${years[idx]} 年`, list.slice(0, 4).map(p => p.title).concat(list.length > 4 ? [`…另 ${list.length - 4} 篇`] : []), (idx + 0.5) / years.length) : null)),
+      ce('div', { style: { display: 'flex', gap: 2, marginLeft: 26 } }, axis),
+      note ? ce('div', { style: { fontSize: 11, color: '#625d55', marginTop: 4 } }, note) : null);
+  }
+  folderChart(papers, fColor, fSlot) {
+    if (!papers.length) return chartEmpty('沒有符合的論文');
+    const groups = [];
+    papers.forEach(p => {
+      const f = p.folder || '未分類';
+      let g = groups.find(x => x.f === f);
+      if (!g) groups.push(g = { f, n: 0, done: 0, tot: 0 });
+      g.n++; g.tot += p.paras.length; g.done += p.paras.filter(x => x.zh).length;
+    });
+    const total = papers.length, sel = this.state.folder, hov = this.state.hov;
+    const pct = (a, b) => b ? Math.floor(a / b * 100) : 0;
+    const share = n => `${n} 篇 · ${pct(n, total)}%`;
+    // 色段依色槽順序排列，相鄰的一定是驗證過的色對；沒有色槽的資料夾合併成一段灰色「其他」
+    const colored = groups.filter(g => fSlot(g.f) >= 0).sort((a, b) => fSlot(a.f) - fSlot(b.f)), rest = groups.filter(g => fSlot(g.f) < 0);
+    const segs = colored.map(g => ({ key: g.f, label: g.f, n: g.n, done: g.done, tot: g.tot, color: fColor(g.f), on: sel === '全部' || sel === g.f, pick: g.f }));
+    if (rest.length) segs.push({ key: '其他', label: `其他（${rest.length} 個資料夾）`, n: rest.reduce((a, g) => a + g.n, 0), done: rest.reduce((a, g) => a + g.done, 0), tot: rest.reduce((a, g) => a + g.tot, 0), color: CAT_OTHER, on: sel === '全部' || rest.some(g => g.f === sel), pick: rest.length === 1 ? rest[0].f : null, members: rest.slice().sort((x, y) => y.n - x.n) });
+    const pick = f => f && this.setState(st => ({ folder: st.folder === f ? '全部' : f }));
+    let acc = 0, tipAt = null, tipSeg = null;
+    const bars = segs.map((g, i) => {
+      const on = hov === 'f:' + g.key, mid = (acc + g.n / 2) / total;
+      acc += g.n;
+      if (on) { tipAt = mid; tipSeg = g; }
+      const r = segs.length === 1 ? 4 : i === 0 ? '4px 0 0 4px' : i === segs.length - 1 ? '0 4px 4px 0' : 0;
+      // 淡化只套在色塊上，提示框放在外層，才不會跟著變淡
+      return ce('button', { key: g.key, 'data-lunyi-fseg': i === 0 ? '1' : undefined, 'aria-label': `${g.label}：${share(g.n)}${g.pick ? (sel === g.pick ? '，再點一次顯示全部' : '，點選以篩選') : ''}`, 'aria-pressed': g.pick ? sel === g.pick : undefined, 'aria-describedby': on ? TIP_ID : undefined, onClick: () => pick(g.pick), ...this.hover('f:' + g.key),
+        style: { flex: `${g.n} 1 0`, minWidth: 8, height: 24, border: 0, padding: 0, background: 'transparent', cursor: g.pick ? 'pointer' : 'default' } },
+        ce('span', { style: { display: 'block', height: '100%', borderRadius: r, background: g.color, opacity: g.on ? 1 : 0.3, boxShadow: on ? 'inset 0 0 0 2px rgba(255,255,255,0.65)' : 'none' } }));
+    });
+    // 圖例兼表格：名稱、篇數占比、翻譯進度；色盲或列印時也讀得到所有數值。「其他」的資料夾不給色塊
+    const ordered = [...colored, ...rest.sort((a, b) => b.n - a.n)];
+    const rows = ordered.map(g => {
+      const has = fSlot(g.f) >= 0, p = pct(g.done, g.tot);
+      const dim = sel !== '全部' && sel !== g.f ? 0.35 : 1;
+      return ce('button', { key: g.f, className: 'ly-frow', title: g.f, 'aria-pressed': sel === g.f, onClick: () => pick(g.f), style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 92px 120px', alignItems: 'center', gap: 10, border: 0, borderBottom: '1px solid #efebe4', background: sel === g.f ? '#f4f2ed' : 'transparent', padding: '7px 4px', textAlign: 'left', fontSize: 13, fontWeight: sel === g.f ? 600 : 400 } },
+        ce('span', { style: { display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 } },
+          ce('span', { style: { width: 10, height: 10, borderRadius: 2, background: has ? fColor(g.f) : 'transparent', boxShadow: has ? 'none' : 'inset 0 0 0 1px #bdb6a9', flexShrink: 0, opacity: dim } }),
+          ce('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, g.f)),
+        ce('span', { style: { fontFamily: MONO, fontSize: 11, color: '#625d55', textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } }, share(g.n)),
+        ce('span', { style: { display: 'flex', alignItems: 'center', gap: 6 } },
+          ce('span', { style: { flex: 1, height: 6, borderRadius: 3, background: 'oklch(0.92 0.03 200)', overflow: 'hidden', opacity: dim } }, ce('span', { style: { display: 'block', height: '100%', width: p + '%', background: ACC, borderRadius: 3 } })),
+          ce('span', { style: { fontFamily: MONO, fontSize: 11, color: '#625d55', width: 34, textAlign: 'right', fontVariantNumeric: 'tabular-nums' } }, p + '%')));
+    });
+    return ce('div', { style: { display: 'flex', flexDirection: 'column', gap: 12 } },
+      ce('div', { style: { position: 'relative', display: 'flex', gap: 2 } }, bars,
+        tipSeg ? chartTip(share(tipSeg.n), tipSeg.label, [`已譯 ${tipSeg.done} / ${tipSeg.tot} 段`, ...(tipSeg.members || []).slice(0, 4).map(g => `${g.f} · ${g.n} 篇`), ...((tipSeg.members || []).length > 4 ? [`…另 ${tipSeg.members.length - 4} 個資料夾`] : [])], tipAt) : null),
+      ce('div', { style: { display: 'flex', flexDirection: 'column' } },
+        ce('div', { className: 'ly-frow', style: { display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 92px 120px', gap: 10, padding: '0 4px 5px', borderBottom: '1px solid #e2ddd3', fontSize: 11, color: '#625d55' } },
+          ce('span', null, '資料夾'), ce('span', { style: { textAlign: 'right' } }, '篇數'), ce('span', null, '翻譯進度')),
+        rows),
+      rest.length ? ce('div', { style: { fontSize: 11, color: '#625d55' } }, `前 ${CAT.length} 個資料夾各有固定顏色，其餘歸為灰色「其他」。`) : null,
+      sel !== '全部' ? ce('button', { onClick: () => this.setState({ folder: '全部' }, () => { const b = document.querySelector('[data-lunyi-fseg]'); b && b.focus(); }), style: { alignSelf: 'flex-start', border: 0, background: 'none', padding: 0, fontSize: 12, color: '#625d55', textDecoration: 'underline' } }, '顯示全部資料夾') : null);
+  }
+  kwChart(papers, cur) {
+    if (!papers.length) return chartEmpty('沒有符合的論文');
+    const cnt = new Map();
+    papers.forEach(p => new Set((p.keywords || []).map(norm)).forEach(k => { if (!cnt.has(k)) cnt.set(k, []); cnt.get(k).push(p); }));
+    const top = [...cnt.keys()].sort((a, b) => cnt.get(b).length - cnt.get(a).length || a.localeCompare(b)).slice(0, 10);
+    if (!top.length) return chartEmpty('還沒有關鍵詞（新增論文時會由 AI 自動產生）');
+    // 強調只在使用者按下「標出」後才出現：這篇有的關鍵詞用青色，其他灰色
+    const can = !!cur && papers.includes(cur), mine = new Set(can ? cur.keywords.map(norm) : []);
+    const emphasis = can && this.state.kwFocus && top.some(k => mine.has(k)), max = cnt.get(top[0]).length, hov = this.state.hov;
+    const rows = top.map(k => {
+      const list = cnt.get(k), on = hov === 'k:' + k, lit = !emphasis || mine.has(k);
+      return ce('button', { key: k, onClick: () => this.setState({ kw: k, layout: 'reader', hov: null }), ...this.hover('k:' + k), 'aria-label': `${k}：${list.length} 篇，點選只看這些論文`, 'aria-describedby': on ? TIP_ID : undefined, title: k, className: 'ly-kwrow',
+        style: { display: 'grid', gridTemplateColumns: '160px minmax(0,1fr)', alignItems: 'center', gap: 10, border: 0, background: on ? '#f4f2ed' : 'transparent', borderRadius: 4, padding: '4px 6px', minHeight: 26, textAlign: 'left', position: 'relative' } },
+        ce('span', { style: { fontFamily: MONO, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, k),
+        ce('span', { style: { display: 'flex', alignItems: 'center', gap: 6, minWidth: 0 } },
+          ce('span', { style: { width: `calc(${list.length / max} * (100% - 28px))`, height: 14, background: lit ? (on ? ACC_DARK : ACC) : MUTE, borderRadius: '0 4px 4px 0', flexShrink: 0 } }),
+          ce('span', { style: { fontFamily: MONO, fontSize: 11, color: '#2c2925' } }, String(list.length))),
+        on ? chartTip(`${list.length} 篇`, k, list.slice(0, 4).map(p => `${shortName(p)} · ${p.title}`).concat(list.length > 4 ? [`…另 ${list.length - 4} 篇`] : []), null) : null);
+    });
+    const key = (color, text) => ce('span', { style: { display: 'flex', alignItems: 'center', gap: 6 } }, ce('span', { style: { width: 10, height: 10, borderRadius: 2, background: color } }), text);
+    const name = can ? shortName(cur) : '';
+    return ce('div', { style: { display: 'flex', flexDirection: 'column', gap: 2 } }, rows,
+      ce('div', { style: { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 14, marginTop: 8, fontSize: 12, color: '#625d55' } },
+        emphasis ? key(ACC, `「${name}」有的關鍵詞`) : null, emphasis ? key(MUTE, `「${name}」沒有的關鍵詞`) : null,
+        can ? ce('button', { onClick: () => this.setState(st => ({ kwFocus: !st.kwFocus })), style: { border: '1px solid #d6d0c4', background: '#fff', borderRadius: 5, padding: '3px 10px', fontSize: 12, color: '#1d1b18' } }, this.state.kwFocus ? '取消標示' : `標出「${name}」的關鍵詞`) : null));
+  }
+
   renderVals() {
     const s = this.state;
     const cur = this.find(s.sel) || null;
     const L = s.layout;
-    const papersIn = s.folder === '全部' ? s.papers : s.papers.filter(p => (p.folder || '未分類') === s.folder);
     const ql = s.q.trim().toLowerCase();
-    const filtered = !ql ? papersIn : papersIn.filter(p => [p.title, p.authors, p.journal, ...(p.tags || []), ...p.keywords, ...p.paras.map(x => x.en + x.zh)].join(' ').toLowerCase().includes(ql));
+    // 篩選三層：資料夾、關鍵詞（完全相同才算）、搜尋字（全文）
+    const match = p => (!s.kw || p.keywords.some(k => norm(k) === s.kw)) && (!ql || [p.title, p.authors, p.journal, ...(p.tags || []), ...p.keywords, ...p.paras.map(x => x.en + x.zh)].join(' ').toLowerCase().includes(ql));
+    const qAll = s.papers.filter(match);
+    const filtered = s.folder === '全部' ? qAll : qAll.filter(p => (p.folder || '未分類') === s.folder);
     const folderNames = [...new Set(s.papers.map(p => p.folder || '未分類'))];
-    const fBtn = (label, count) => { const on = s.folder === label; return { label, count, onClick: () => this.setState({ folder: label }), bg: on ? '#1d1b18' : 'transparent', color: on ? '#faf9f6' : '#1d1b18', line: on ? '#1d1b18' : '#d6d0c4' }; };
+    // 顏色跟著資料夾走：查 fslots 色槽表，改資料夾、刪除、同步或篩選都不會讓既有資料夾換色
+    const fmap = slotMap(s.papers, s.fslots).map;
+    const fSlot = f => Object.prototype.hasOwnProperty.call(fmap, f) ? fmap[f] : -1;
+    const fColor = f => fSlot(f) >= 0 ? CAT[fSlot(f)] : CAT_OTHER;
+    const fBtn = (label, count) => { const on = s.folder === label, sw = label !== '全部' && fSlot(label) >= 0; return { label, count, onClick: () => this.setState({ folder: label }), bg: on ? '#1d1b18' : 'transparent', color: on ? '#faf9f6' : '#1d1b18', line: on ? '#1d1b18' : '#d6d0c4', swatch: sw ? fColor(label) : 'transparent', swDisp: sw ? 'inline-block' : 'none', pressed: String(on) }; };
+    // 被引次數只算範圍內的論文，和總覽的串聯數字口徑一致
+    const citedIn = list => { const ids = new Set(list.map(p => p.id)), m = {}; list.forEach(o => (o.cites || []).forEach(c => { if (ids.has(c)) m[c] = (m[c] || 0) + 1; })); return id => m[id] || 0; };
     const meta = p => `${surname(p)} · ${p.journal} ${p.year}`;
     const rel = [];
     let cites = [], citedBy = [];
-    if (cur) {
+    if (cur && (L === 'reader' || L === 'graph')) {
       const kw = new Set(cur.keywords.map(norm));
       s.papers.forEach(o => {
         if (o.id === cur.id) return;
@@ -1028,7 +1290,7 @@ class Component extends DCLogic {
     }
     const noteMap = {};
     s.notes.filter(n => cur && n.paperId === cur.id).forEach(n => { (noteMap[n.para] = noteMap[n.para] || []).push(n.text); });
-    const paras = cur ? cur.paras.map((x, i) => {
+    const paras = cur && L !== 'dash' ? cur.paras.map((x, i) => {
       const busy = !!s.busy[cur.id + ':' + i], sel = s.selPara === i && L === 'reader';
       const stop = fn => e => { e && e.stopPropagation(); fn(); };
       const setHl = hl => stop(() => this.upd(cur.id, p => ({ ...p, paras: p.paras.map((y, j) => j === i ? { ...y, hl } : y) })));
@@ -1043,8 +1305,8 @@ class Component extends DCLogic {
     const missing = cur ? cur.paras.filter(x => !x.zh).length : 0;
     const doneN = cur ? cur.paras.length - missing : 0;
 
-    // graph
-    const vis = filtered;
+    // graph（只在圖譜分頁計算，總覽的滑鼠移動才不會每次重算所有連線）
+    const vis = L === 'graph' ? filtered : [];
     const n = vis.length, pos = {};
     vis.forEach((p, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / Math.max(n, 1); pos[p.id] = n === 1 ? [50, 50] : [50 + 44 * Math.cos(a), 50 + 42 * Math.sin(a)]; });
     const edges = [], labels = [];
@@ -1067,8 +1329,32 @@ class Component extends DCLogic {
     }
     const graphSvg = React.createElement('svg', { viewBox: '0 0 100 100', preserveAspectRatio: 'none', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' } },
       edges.map((e, i) => React.createElement('line', { key: i, x1: e.x1, y1: e.y1, x2: e.x2, y2: e.y2, stroke: e.stroke, strokeWidth: e.w, strokeDasharray: e.dash, strokeLinecap: 'round', vectorEffect: 'non-scaling-stroke' })));
-    const nodes = vis.map(p => { const on = cur && p.id === cur.id; const dim = cur && !on && nbr.size && !nbr.has(p.id);
-      return { x: pos[p.id][0] + '%', y: pos[p.id][1] + '%', title: p.title.length > 58 ? p.title.slice(0, 58) + '…' : p.title, meta: `${shortName(p)} · ${p.folder || ''}`, bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : '#1d1b18', op: dim ? 0.45 : 1, onClick: () => this.open(p.id) }; });
+    const visCited = citedIn(vis);
+    const nodes = vis.map(p => { const on = cur && p.id === cur.id; const dim = cur && !on && nbr.size && !nbr.has(p.id), cn = visCited(p.id);
+      // 「被引 n」用 word joiner 與不換行空白黏在一起，換行時整組移到下一行
+      return { x: pos[p.id][0] + '%', y: pos[p.id][1] + '%', title: p.title.length > 58 ? p.title.slice(0, 58) + '…' : p.title, meta: `${shortName(p)} · ${p.folder || '未分類'}${cn ? ` · 被\u2060引\u00a0${cn}` : ''}`, swatch: fColor(p.folder || '未分類'), bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : '#1d1b18', op: dim ? 0.45 : 1, onClick: () => this.open(p.id) }; });
+
+    // 1d 總覽：所有數字都以目前的資料夾與搜尋範圍計算，彼此一致
+    const ids = new Set(filtered.map(p => p.id));
+    const pTot = filtered.reduce((n, p) => n + p.paras.length, 0), pDone = filtered.reduce((n, p) => n + p.paras.filter(x => x.zh).length, 0);
+    const hlY = filtered.reduce((n, p) => n + p.paras.filter(x => x.hl === 'y').length, 0), hlB = filtered.reduce((n, p) => n + p.paras.filter(x => x.hl === 'b').length, 0);
+    const dNotes = s.notes.filter(x => ids.has(x.paperId));
+    const citeN = filtered.reduce((n, p) => n + (p.cites || []).filter(c => ids.has(c)).length, 0), manN = s.links.filter(l => ids.has(l.a) && ids.has(l.b)).length;
+    // 無條件捨去：只有全部譯完才會顯示 100%
+    const tPct = pTot ? Math.floor(pDone / pTot * 100) : 0;
+    const kpis = [
+      { label: '論文', value: `${filtered.length} 篇`, sub: `${new Set(filtered.map(p => p.folder || '未分類')).size} 個資料夾` },
+      { label: '翻譯進度', value: `${tPct}%`, sub: `已譯 ${pDone} / ${pTot} 段`, hasMeter: true, pct: tPct + '%' },
+      { label: '螢光標記', value: `${hlY + hlB} 段`, sub: `黃色 ${hlY} · 藍色 ${hlB}` },
+      { label: '筆記', value: `${dNotes.length} 則`, sub: `${new Set(dNotes.map(x => x.paperId)).size} 篇有筆記` },
+      { label: '串聯', value: `${citeN + manN} 條`, sub: `引用 ${citeN} · 手動 ${manN}` }
+    ].map(k => ({ hasMeter: false, pct: '0%', ...k }));
+    const dashCited = citedIn(filtered);
+    const dashRows = filtered.map(p => { const done = p.paras.filter(x => x.zh).length, tot = p.paras.length; return { p, r: tot ? done / tot : 0, done, tot }; })
+      .sort((a, b) => a.r - b.r || a.p.title.localeCompare(b.p.title))
+      .map(({ p, r, done, tot }) => { const f = p.folder || '未分類', sw = fSlot(f) >= 0; return { title: p.title, full: `${p.title}（${shortName(p)} · ${f}）`, swatch: sw ? fColor(f) : 'transparent', swRing: sw ? 'none' : 'inset 0 0 0 1px #bdb6a9', pct: Math.floor(r * 100) + '%', prog: `${done}/${tot}`,
+        aria: `${p.title}：已譯 ${done}/${tot} 段，螢光 ${p.paras.filter(x => x.hl).length}、筆記 ${s.notes.filter(x => x.paperId === p.id).length}、被引 ${dashCited(p.id)}。在閱讀器開啟`,
+        hl: String(p.paras.filter(x => x.hl).length), notes: String(s.notes.filter(x => x.paperId === p.id).length), cited: String(dashCited(p.id)), onClick: () => this.open(p.id, 'reader') }; });
     const efBtn = (k, label, swatch, dash) => ({ label, swatch, dash, bg: s.ef[k] ? '#fff' : 'transparent', line: s.ef[k] ? '#1d1b18' : '#d6d0c4', onClick: () => this.setState(st => ({ ef: { ...st.ef, [k]: !st.ef[k] } })) });
 
     const curNotes = cur ? s.notes.filter(x => x.paperId === cur.id).map(x => ({ text: x.text, date: x.date, where: x.para != null ? `第 ${x.para + 1} 段` : '整篇', onDelete: () => this.setState(st => ({ notes: st.notes.filter(y => y.id !== x.id), gone: [...st.gone, x.id] })) })) : [];
@@ -1076,8 +1362,15 @@ class Component extends DCLogic {
     const sugg = ['這些論文之間的傳承關係是什麼？', 'Transformer 和 ResNet 有什麼共通設計？', '整理我目前筆記與螢光標記的重點'];
 
     return {
-      layoutTabs: [['1a', '閱讀器', 'reader'], ['1b', '圖譜', 'graph'], ['1c', '對話', 'chat']].map(([id, label, k]) => ({ id, label, bg: L === k ? '#fff' : 'transparent', color: L === k ? '#1d1b18' : '#625d55', onClick: () => this.setState({ layout: k }) })),
-      isA: L === 'reader', isB: L === 'graph', isC: L === 'chat',
+      layoutTabs: [['1a', '閱讀器', 'reader'], ['1b', '圖譜', 'graph'], ['1c', '對話', 'chat'], ['1d', '總覽', 'dash']].map(([id, label, k]) => ({ id, label, bg: L === k ? '#fff' : 'transparent', color: L === k ? '#1d1b18' : '#625d55', pressed: String(L === k), onClick: () => this.setState({ layout: k, hov: null }) })),
+      isA: L === 'reader', isB: L === 'graph', isC: L === 'chat', isD: L === 'dash',
+      dashScope: `範圍：${s.folder === '全部' ? '全部資料夾' : s.folder}${s.kw ? `，關鍵詞「${s.kw}」` : ''}${ql ? `，搜尋「${s.q.trim()}」` : ''} · ${filtered.length} 篇`,
+      hasKw: !!s.kw, kwLabel: s.kw, clearKw: () => this.setState({ kw: '' }),
+      kpis, dashRows, dashEmpty: !filtered.length,
+      yearChart: L === 'dash' ? this.yearChart(filtered) : null,
+      folderChart: L === 'dash' ? this.folderChart(qAll, fColor, fSlot) : null,
+      kwChart: L === 'dash' ? this.kwChart(filtered, cur) : null,
+      kwSub: '收錄篇數最多的 10 個關鍵詞，點選即可在閱讀器只看含這個關鍵詞的論文',
       q: s.q, onQ: e => this.setState({ q: e.target.value }),
       openSettings: () => this.openSettings(), closeSettings: () => this.setState({ showSet: false }), showSet: s.showSet,
       aiMode: this.aiMode(), keyDraft: s.keyDraft, codeDraft: s.codeDraft,
@@ -1123,7 +1416,7 @@ class Component extends DCLogic {
       toggleAuto: () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = true; this.setState({ syncStatus: s.syncStatus }); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並連結帳號後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
       openAdd: () => this.setState({ showAdd: true }), closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
-      folders: [fBtn('全部', s.papers.length), ...folderNames.map(f => fBtn(f, s.papers.filter(p => (p.folder || '未分類') === f).length))],
+      folders: [fBtn('全部', qAll.length), ...folderNames.map(f => fBtn(f, qAll.filter(p => (p.folder || '未分類') === f).length))],
       folderNames, onFolder: e => cur && this.upd(cur.id, p => ({ ...p, folder: e.target.value })),
       list: filtered.map(p => ({ title: p.title, meta: meta(p), tagsText: (p.tags || []).join(' · '), prog: `譯 ${p.paras.filter(x => x.zh).length}/${p.paras.length}`, bg: cur && p.id === cur.id ? '#fff' : 'transparent', onClick: () => this.open(p.id) })),
       listEmpty: !filtered.length,
@@ -1133,7 +1426,7 @@ class Component extends DCLogic {
       cur: cur || { title: '', authors: '', journal: '', year: '', folder: '' },
       curLang: cur && cur.lang ? `原文 ${cur.lang}` : '',
       curTags: cur ? cur.tags || [] : [],
-      curKeywords: cur ? cur.keywords.map(k => ({ label: k, onClick: () => this.setState({ q: k }) })) : [],
+      curKeywords: cur ? cur.keywords.map(k => ({ label: k, onClick: () => this.setState({ kw: norm(k) }) })) : [],
       modeBtns: [['both', '對照'], ['en', '原文'], ['zh', '中文']].map(([k, label]) => ({ label, bg: s.mode === k ? '#fff' : 'transparent', onClick: () => this.setState({ mode: k }) })),
       hasMissing: missing > 0, transProg: `已譯 ${doneN}/${cur ? cur.paras.length : 0}`,
       translateAllLabel: s.tAll ? `翻譯中… ${doneN}/${cur ? cur.paras.length : 0}` : `翻譯其餘 ${missing} 段`,

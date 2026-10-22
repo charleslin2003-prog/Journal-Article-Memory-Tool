@@ -8,12 +8,17 @@
 
 課程：視覺化分析與決策應用設計（2026 秋）　設計者：林永欽
 
-## 三種工作區
+期中報告投影片：[docs/期中報告_論憶.pptx](docs/期中報告_論憶.pptx)（[PDF 版](docs/期中報告_論憶.pdf)）
 
-| 1a 閱讀器 | 1b 關聯圖譜 | 1c AI 對話 |
-|---|---|---|
-| ![閱讀器](docs/screenshots/reader.png) | ![圖譜](docs/screenshots/graph.png) | ![對話](docs/screenshots/chat.png) |
-| 原文／中文對照、螢光、段落筆記，右側列出引用與主題相關論文 | 以節點與三種線型呈現共同關鍵詞、引用、手動串聯 | 根據整個文獻庫回答，出處可點開看原文 |
+## 四種工作區
+
+| 1a 閱讀器 | 1b 關聯圖譜 |
+|---|---|
+| ![閱讀器](docs/screenshots/reader.png) | ![圖譜](docs/screenshots/graph.png) |
+| 原文／中文對照、螢光、段落筆記，右側列出引用與主題相關論文 | 以節點與三種線型呈現共同關鍵詞、引用、手動串聯；選取一篇後，無關的論文淡化 |
+| **1c AI 對話** | **1d 文獻庫總覽** |
+| ![對話](docs/screenshots/chat.png) | ![總覽](docs/screenshots/dashboard.png) |
+| 根據整個文獻庫回答，出處可點開看原文 | 關鍵數字、出版年份、資料夾組成、熱門關鍵詞、閱讀進度，點圖表即可篩選或搜尋 |
 
 ## 開始使用
 
@@ -85,11 +90,13 @@ GitHub Pages 是純靜態網站，沒有後端，因此在 Pages 上使用 AI �
 ## 檔案
 
 ```
-index.html          單一檔案網站（約 190 KB，含 React 與執行環境），由 tools/build.py 產生
+index.html          單一檔案網站（約 240 KB，含 React 與執行環境），由 tools/build.py 產生
 src/app.html        網站原始碼（版面＋程式），要改網站就改這個
 tools/build.py      把 src/app.html 打包回 index.html
 api/claude.js       Vercel Serverless Function，代為呼叫 Anthropic API
-docs/screenshots/   功能截圖
+docs/screenshots/   功能截圖（桌面四個工作區、設定、手機版）
+docs/期中報告_論憶.pptx  期中報告投影片（附講稿備註），另有 PDF 版
+docs/瀏覽器插件方案.md   做成 Chrome 插件／Google 生態工具的方案比較與路線圖
 功能說明.md          完整功能說明
 待辦事項.md          已完成與未完成工作
 ```
