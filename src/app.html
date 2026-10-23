@@ -439,24 +439,19 @@
       <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-bottom:8px">
         <span aria-hidden="true" style="width:46px;height:46px;border-radius:11px;background:#1d1b18;color:#faf9f6;display:grid;place-items:center;font-family:'Noto Serif TC',serif;font-size:25px">論</span>
         <h2 id="lunyi-login-title" style="margin:0;font-size:22px;font-weight:600">登入論憶</h2>
-        <p id="lunyi-login-desc" style="margin:0;font-size:13px;color:#625d55;line-height:1.6">選一個帳號登入就好，不用註冊，也不用另外設定密碼。</p>
+        <p id="lunyi-login-desc" style="margin:0;font-size:13px;color:#625d55;line-height:1.6">用你的 Google 帳號登入，不用註冊，也不用另外設定密碼。</p>
       </div>
       <button class="ly-loginbtn ly-autofocus" sc-camel-on-click="{{ loginGoogle }}" aria-disabled="{{ gOff }}" aria-describedby="lunyi-login-gnote" style="position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:10px 48px;border:1px solid #747775;border-radius:999px;background:#fff;color:#1f1f1f;font-size:15px;font-weight:500;opacity:{{ gOpacity }}" style-hover="background:#f6f7f8">
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' view%42ox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z'/%3E%3Cpath fill='%23FBBC05' d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E" width="20" height="20" alt="" style="position:absolute;left:16px;top:50%;transform:translateY(-50%)">
         <span>{{ gBtnLabel }}</span>
       </button>
       <div id="lunyi-login-gnote" style="font-size:12px;color:#625d55;text-align:center;line-height:1.6;margin:-4px 0 4px">{{ gBtnNote }}</div>
-      <button class="ly-loginbtn ly-autofocus" sc-camel-on-click="{{ loginOr }}" aria-describedby="lunyi-login-ornote" style="position:relative;display:flex;align-items:center;justify-content:center;width:100%;min-height:46px;padding:10px 48px;border:1px solid #747775;border-radius:999px;background:#fff;color:#1f1f1f;font-size:15px;font-weight:500" style-hover="background:#f6f7f8">
-        <span aria-hidden="true" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:6px;background:#1d1b18;color:#faf9f6;display:grid;place-items:center;font-size:13px">✦</span>
-        <span>{{ orBtnLabel }}</span>
-      </button>
-      <div id="lunyi-login-ornote" style="font-size:12px;color:#625d55;text-align:center;line-height:1.6;margin-top:-4px">AI 帳號：用你自己的模型與額度問答、翻譯</div>
       <sc-if value="{{ hasLoginMsg }}" hint-placeholder-val="{{ false }}">
         <div role="alert" style="font-size:13px;line-height:1.6;color:#7a2e12;background:#fbeee6;border:1px solid #f0d2c2;border-radius:8px;padding:10px 12px">{{ loginMsg }}<sc-if value="{{ showLoginAdmin }}" hint-placeholder-val="{{ false }}"> <button sc-camel-on-click="{{ loginAdmin }}" style="border:0;background:none;padding:0;color:oklch(0.42 0.1 200);text-decoration:underline;font-size:13px">我是網站管理者：在這台瀏覽器先試用</button></sc-if></div>
       </sc-if>
       <div aria-hidden="true" style="display:flex;align-items:center;gap:12px;color:#625d55;font-size:12px;margin:6px 0 2px"><span style="flex:1;height:1px;background:#e6e1d8"></span>或<span style="flex:1;height:1px;background:#e6e1d8"></span></div>
-      <button sc-camel-on-click="{{ closeLogin }}" style="border:1px solid #e2ddd3;background:#faf9f6;border-radius:999px;min-height:44px;padding:10px;font-size:14px;color:#37352f" style-hover="background:#f1eee8">先不登入，直接使用</button>
-      <p style="margin:6px 0 0;font-size:12px;color:#625d55;line-height:1.7;text-align:center">論憶沒有自己的帳號系統，論文存在這台電腦的瀏覽器。登入只用來連結你自己的 Google 雲端硬碟與 AI 帳號，隨時可以登出。</p>
+      <button class="ly-autofocus" sc-camel-on-click="{{ closeLogin }}" style="border:1px solid #e2ddd3;background:#faf9f6;border-radius:999px;min-height:44px;padding:10px;font-size:14px;color:#37352f" style-hover="background:#f1eee8">先不登入，直接使用</button>
+      <p style="margin:6px 0 0;font-size:12px;color:#625d55;line-height:1.7;text-align:center">論憶沒有自己的帳號系統，論文存在這台電腦的瀏覽器。登入 Google 只用來連結你自己的雲端硬碟，隨時可以登出。</p>
     </div>
   </div>
 </sc-if>
@@ -854,7 +849,7 @@ const GIST_FILE = 'lunyi-library.json';
 // 網站擁有者可在這裡填入預設的 Google OAuth 用戶端 ID，使用者就不必自己建立
 const GOOGLE_CLIENT_ID = '';
 const GSI = 'https://accounts.google.com/gsi/client';
-const G_OFF_MSG = 'Google 登入暫時還沒開放。現在可以先用 OpenRouter 登入，或不登入直接使用。';
+const G_OFF_MSG = 'Google 登入暫時還沒開放，可以先不登入直接使用，論文一樣會存在這台電腦。';
 const GAPI = 'https://www.googleapis.com';
 const G_BASE = 'openid email profile https://www.googleapis.com/auth/drive.file';
 const G_DRIVE_RO = 'https://www.googleapis.com/auth/drive.readonly';
@@ -986,7 +981,7 @@ class Component extends DCLogic {
     const firstVisit = !this.lsGet('lunyi-login-seen');
     if (firstVisit) this.lsSet('lunyi-login-seen', '1');
     // 只在真正第一次使用時跳出；存不了 localStorage 時也不跳，免得每次開都出現
-    const fresh = firstVisit && !hadLib && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
+    const fresh = firstVisit && !hadLib && !!this.gClient() && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
     this.setState({ gUser, syncTarget: this.cloudTarget(), showLogin: fresh && !gUser && !this.secGet('lunyi-or-key') && !orBack });
     if (this.gClient()) loadScript(GSI).catch(() => {});
     this.ensureOwner();
@@ -1272,8 +1267,7 @@ class Component extends DCLogic {
     if (this.state.showSet && this.state.clientDraft.trim()) this.lsSet('lunyi-g-client', this.state.clientDraft.trim());
     if (!this.gClient()) {
       if (this.state.showSet) return this.toast('請先在「進階」填入 Google OAuth 用戶端 ID');
-      // 已用 OpenRouter 登入的人不必再看訪客用的登入視窗
-      return this.secGet('lunyi-or-key') ? this.toast('Google 登入暫時還沒開放') : this.openLogin(G_OFF_MSG);
+      return this.openLogin(G_OFF_MSG);
     }
     // Google 視窗還開著（可能被主視窗蓋住）：再叫一次，讓它回到最前面
     if (this.state.loginBusy === 'google' && this._gRetry) return this._gRetry();
@@ -1325,16 +1319,6 @@ class Component extends DCLogic {
     clearTimeout(this._push); this._push = null;
     this.lsSet('lunyi-sync-auto', '');
     return true;
-  }
-  async loginOr() {
-    if (this.state.loginBusy) return;
-    if (this.secGet('lunyi-or-key')) { this.closeLogin(); return this.toast('已經用 OpenRouter 登入了'); }
-    const bad = this.orBlocked();
-    if (bad) return this.setState({ loginMsg: bad });
-    this.setState({ loginBusy: 'or', loginMsg: '' });
-    try { await this.orRedirect(); } catch (e) { this.setState({ loginMsg: '無法開始登入：' + (e && e.message || e) }); }
-    // 成功時頁面會直接跳到 OpenRouter；還在這裡代表沒有跳轉（例如取消了上傳確認）
-    setTimeout(() => this.setState({ loginBusy: '' }), 800);
   }
   async gSignOut() {
     // 先在這台電腦登出（之後關掉分頁也不會停在登入狀態），再用原本的權杖補傳最後的修改、撤銷授權
@@ -1825,7 +1809,6 @@ class Component extends DCLogic {
     const closeMenu = fn => () => { this.setState({ acctOpen: false }); fn(); };
     const acctItems = [
       g ? { label: '登出 Google', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '用 Google 登入', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
-      or ? { label: '登出 OpenRouter', note: 'AI 帳號', onClick: closeMenu(() => this.orSignOut()) } : { label: '用 OpenRouter 登入', note: 'AI 帳號', onClick: closeMenu(() => this.orSignIn()) },
       { label: '設定與備份', note: '', onClick: closeMenu(() => this.openSettings('account')) }
     ];
     const navTo = k => () => this.setState(st => ({ layout: k, hov: null, sbOpen: st.narrow ? false : st.sbOpen }));
@@ -1879,11 +1862,10 @@ class Component extends DCLogic {
     return {
       av, acctItems, acctOpen: s.acctOpen, acctAttr: String(guest ? s.showLogin : s.acctOpen), acctPopup: guest ? 'dialog' : 'false', acctTitle: guest ? '登入' : '帳號與連線',
       toggleAcct: () => guest ? this.openLogin() : this.setState(st => ({ acctOpen: !st.acctOpen })),
-      showLogin: s.showLogin, closeLogin: () => this.closeLogin(), loginGoogle: () => this.gSignIn(), loginOr: () => this.loginOr(),
+      showLogin: s.showLogin, closeLogin: () => this.closeLogin(), loginGoogle: () => this.gSignIn(),
       gOff: String(!this.gClient()), gOpacity: this.gClient() ? 1 : 0.6,
       gBtnLabel: s.loginBusy === 'google' ? '請在 Google 視窗選擇帳號…' : '繼續使用 Google',
       gBtnNote: this.gClient() ? '同步文獻庫到你的 Google 雲端硬碟，也能匯入 PDF、匯出 Google 文件' : 'Google 登入暫時還沒開放',
-      orBtnLabel: s.loginBusy === 'or' ? '正在前往 OpenRouter…' : '用 OpenRouter 登入',
       hasLoginMsg: !!s.loginMsg, loginMsg: s.loginMsg, showLoginAdmin: !this.gClient() && s.loginMsg === G_OFF_MSG, loginAdmin: () => this.openSettings('adv'),
       acctBlur: e => { const box = e.currentTarget; if (!box.contains(e.relatedTarget)) this.setState({ acctOpen: false }); },
       orListKey: e => { const opts = [...e.currentTarget.querySelectorAll('[role=option]')], i = opts.indexOf(document.activeElement); const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: opts.length - 1 }[e.key]; if (to == null || !opts.length) return; e.preventDefault(); const t = opts[Math.max(0, Math.min(opts.length - 1, to))]; opts.forEach(o => o.tabIndex = -1); t.tabIndex = 0; t.focus(); },
