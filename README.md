@@ -2,7 +2,7 @@
 
 給研究生與個人研究者用的論文管理平台。匯入論文後可以逐段翻譯成繁體中文、自動串聯相關論文、做螢光與筆記，並用 AI 查閱整個文獻庫。
 
-- 網站（GitHub Pages）：https://charleslin2003-prog.github.io/Journal-Article-Memory-Tool/
+- 網站：https://journal-article-memory-tool.vercel.app/（Vercel，推上 main 會自動更新；GitHub Pages 備用網址：https://charleslin2003-prog.github.io/Journal-Article-Memory-Tool/）
 - 功能細節：[功能說明.md](功能說明.md)
 - 進度與待辦：[待辦事項.md](待辦事項.md)
 
@@ -22,6 +22,10 @@
 | ![對話](docs/screenshots/chat.png) | ![總覽](docs/screenshots/dashboard.png) |
 | 根據整個文獻庫回答，出處可點開看原文 | 關鍵數字、出版年份、專案組成、熱門關鍵詞、閱讀進度，點圖表即可篩選或搜尋 |
 
+**專案首頁**：開一個新的研究方向就建一個專案。專案首頁有研究方向、這個專案的論文、從全部論文推薦（最多 3 篇，附原因）、推薦串聯，以及到 Google 學術找新文獻的連結；選了專案後，閱讀器、圖譜、AI 對話和總覽都只看這個專案的論文。
+
+<img src="docs/screenshots/project.png" alt="專案首頁：研究方向、這個專案的論文、從全部論文推薦、推薦串聯、找新文獻" width="720">
+
 ## 開始使用
 
 主要給桌面版 Chrome／Edge 使用（手機也能開，側欄會變成抽屜）。
@@ -29,7 +33,7 @@
 1. 開啟網站，內建 4 篇示範論文（Transformer、BERT、ResNet、GPT-3）。網站開放 Google 登入後，第一次使用會跳出「登入論憶」視窗，不用輸入帳號密碼：
    - **繼續使用 Google**：跳出 Google 的帳號選擇視窗，點自己的帳號即可（瀏覽器已登入 Google 時不必再打密碼）。登入後可以同步到雲端硬碟、匯入 PDF、匯出 Google 文件。
    - **先不登入，直接使用**：所有資料仍存在這台電腦。之後按左上角的頭像可以再打開登入視窗。
-2. 左側欄的「＋ 新增論文」上傳 PDF 或貼上文字；「專案」可以把論文分群，按 ＋ 新增專案，按 ⋯ 改名或刪除。
+2. 左側欄的「＋ 新增論文」上傳 PDF 或貼上文字。所有論文都在「全部論文」；要開一個新的研究方向時，按「專案」旁的 ＋ 建立專案，順便填研究方向，就會得到一個乾淨的專案首頁：網站會從全部論文推薦最相關的論文（最多 3 篇，附推薦原因）、建議可以串聯的論文，並產生 Google 學術的搜尋連結。同一篇論文可以放進好幾個專案。
 3. 不登入也能翻譯：沒有連結雲端 AI 時，會用瀏覽器內建的翻譯（免費、在你的電腦上執行）。
 4. 要用 AI 問答、自動辨識論文資訊、高品質翻譯：到「設定 → 進階」貼上自己的 Gemini 或 Claude API 金鑰，見下方「AI 連線」。
 5. 資料存在瀏覽器裡。換電腦前用「設定與備份 → 同步與備份 → 匯出 JSON」，到新電腦再「匯入 JSON」；或設定「雲端同步」，用 Google 雲端硬碟或 GitHub 私人 Gist 自動同步。
@@ -80,16 +84,24 @@
 
 **網站管理者要先建立一次 OAuth 用戶端 ID**，沒有它 Google 不會跳出登入視窗（登入視窗裡的 Google 按鈕會是灰的，顯示「Google 登入暫時還沒開放」）：
 
-1. 到 [Google Cloud Console](https://console.cloud.google.com) 建立專案。
-2. 「API 和服務 → 程式庫」啟用 **Google Drive API** 和 **Google Calendar API**。
-3. 「OAuth 同意畫面」（新版介面叫「Google Auth Platform」）：使用者類型選「外部」，填應用程式名稱「論憶」與信箱。
-   範圍（scopes）可加入 `drive.file`、`drive.readonly`、`calendar.events`。
-   還在「測試」狀態時，只有「測試使用者」名單裡的帳號能登入，記得把自己和要展示的帳號加進去。
-4. 「憑證 → 建立憑證 → OAuth 用戶端 ID」：類型選「網頁應用程式」，「已授權的 JavaScript 來源」加入：
-   - `https://charleslin2003-prog.github.io`
-   - Vercel 網址（有部署的話），例如 `https://你的專案.vercel.app`
-   - 本機測試用（選填）：`http://localhost:8765`
-5. 複製用戶端 ID（`….apps.googleusercontent.com`），寫進 `src/app.html` 的 `GOOGLE_CLIENT_ID`，執行 `python3 tools/build.py` 再 push。所有使用者的登入視窗就會出現可用的「繼續使用 Google」。
+1. 到 [Google Cloud Console](https://console.cloud.google.com) 建立（或選擇）一個專案。登入用不到 Vertex AI／Agent Platform，不必啟用。
+2. 「API 和服務 → 程式庫」啟用 **Google Drive API**（雲端硬碟同步、匯入 PDF、匯出 Google 文件）和 **Google Calendar API**（排入日曆）。
+3. 「API 和服務 → 憑證 → 建立憑證」：
+   1. 「您目前使用的是哪個 API？」選哪一個都可以（例如 Google Calendar API），同一個用戶端 ID 兩個 API 都能用。
+   2. 「您需要存取什麼資料？」選 **使用者資料** → 下一步。
+   3. 如果要求設定 OAuth 同意畫面：應用程式名稱填「論憶」，使用者支援電子郵件與開發人員聯絡資訊填自己的 Gmail。
+   4. 範圍（scopes）可以略過，網站用到某個功能時才會請求權限。
+   5. 「OAuth 用戶端 ID」：應用程式類型選 **網頁應用程式**，名稱隨意（例如「論憶網站」）。
+      「已授權的 JavaScript 來源」加入（只填網域，最後不要加 `/`）：
+      - `https://journal-article-memory-tool.vercel.app`
+      - `https://charleslin2003-prog.github.io`（GitHub Pages 也開著的話）
+      - 本機測試用（選填）：`http://localhost:8765`
+      「已授權的重新導向 URI」留空（這個網站用彈出視窗登入，不需要）。
+   6. 按「建立」，複製 **用戶端 ID**（`….apps.googleusercontent.com`）。用戶端密鑰（client secret）用不到，不要外流。
+4. 「Google Auth Platform → 目標對象」決定誰能登入：
+   - 維持「測試中」：只有「測試使用者」名單裡的帳號能登入（最多 100 個），課堂展示時把自己、老師、同學的 Gmail 加進去。
+   - 按「發布應用程式」：任何 Google 帳號都能登入。登入只用基本權限（`openid`、`email`、`profile`、`drive.file`），不必送審；但「從雲端硬碟匯入 PDF」（`drive.readonly`）與「排入日曆」（`calendar.events`）屬於敏感權限，送審通過前會顯示「Google 尚未驗證這個應用程式」，使用者要按「進階 → 前往論憶」才能繼續。
+5. 把用戶端 ID 寫進 `src/app.html` 的 `GOOGLE_CLIENT_ID`，執行 `python3 tools/build.py` 再 push。之後使用者不必設定任何東西，按左上角頭像 →「繼續使用 Google」→ 在 Google 的視窗點自己的帳號就登入了。
    只想自己先試的話，也可以貼到網站「設定 → 進階 → Google OAuth 用戶端 ID」（只對這台瀏覽器有效）。
 
 用戶端 ID 本來就會出現在網頁裡，可以公開，不是密碼；Google 只接受從上面登記的網址發出的登入。
@@ -110,7 +122,7 @@ index.html          單一檔案網站（約 240 KB，含 React 與執行環境�
 src/app.html        網站原始碼（版面＋程式），要改網站就改這個
 tools/build.py      把 src/app.html 打包回 index.html
 api/claude.js       Vercel Serverless Function，代為呼叫 Anthropic API
-docs/screenshots/   功能截圖（桌面四個工作區、設定、手機版）
+docs/screenshots/   功能截圖（桌面四個工作區、專案首頁、設定、手機版）
 docs/期中報告_論憶.pptx  期中報告投影片（附講稿備註），另有 PDF 版
 docs/瀏覽器插件方案.md   做成 Chrome 插件／Google 生態工具的方案比較與路線圖
 功能說明.md          完整功能說明
