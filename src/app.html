@@ -330,7 +330,7 @@
               <div style="display:flex;flex-direction:column;gap:14px;padding-top:40px">
                 <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:26px;font-weight:600">問你的文獻庫</h2>
                 <div style="font-size:14px;color:#625d55;line-height:1.7">跨論文比較、找出概念源頭、回想你讀過的重點。回答會標註出處，點選即可在右側查看原文。對話會參考整個文獻庫與你的筆記。</div>
-                <sc-if value="{{ needCloud }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;line-height:1.6;background:oklch(0.95 0.025 200);padding:10px 12px;border-radius:8px">AI 問答需要連結雲端 AI，費用算在你自己的帳號。<button sc-camel-on-click="{{ openAiSettings }}" style="border:0;padding:6px 12px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">連結 AI</button></div></sc-if>
+                <sc-if value="{{ needCloud }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;line-height:1.6;background:oklch(0.95 0.025 200);padding:10px 12px;border-radius:8px">AI 問答需要你自己的 Gemini 或 Claude API 金鑰，費用算在金鑰所屬的帳號。<button sc-camel-on-click="{{ openAdvSettings }}" style="border:0;padding:6px 12px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">設定金鑰</button></div></sc-if>
                 <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px">
                   <sc-for list="{{ suggestions }}" as="sg" hint-placeholder-count="3"><button sc-camel-on-click="{{ sg.onClick }}" style="text-align:left;border:1px solid #e2ddd3;background:#fff;border-radius:6px;padding:10px 12px;font-size:13px" style-hover="border-color:#1d1b18">{{ sg.label }}</button></sc-for>
                 </div>
@@ -524,7 +524,7 @@
             <span style="width:48px;height:48px;border-radius:10px;background:{{ av.bg }};color:#fff;display:grid;place-items:center;font-size:20px;font-weight:600;flex-shrink:0;overflow:hidden;position:relative">{{ av.initial }}<span aria-hidden="true" style="position:absolute;inset:0;background:{{ av.imgBg }}"></span></span>
             <div style="min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:600">{{ av.name }}</span><span style="font-size:12px;color:#625d55;line-height:1.6;white-space:pre-line">{{ av.detail }}</span></div>
           </div>
-          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統，登入用的是你自己的 Google 或 AI 帳號：論文資料存在這台電腦的瀏覽器；登入 Google 後可以同步到你自己的雲端硬碟，登入 AI 帳號後，AI 費用算在你自己的帳號上。</div>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統，登入用的是你自己的 Google 帳號：論文資料存在這台電腦的瀏覽器；登入 Google 後可以同步到你自己的雲端硬碟。</div>
           <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
               <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">Google 帳號</span><span style="font-size:12px;color:#625d55">{{ gStatus }}</span></div>
@@ -534,16 +534,6 @@
               </div>
             </div>
             <div style="font-size:12px;color:#625d55;line-height:1.6">用途：同步文獻庫到雲端硬碟、從雲端硬碟匯入 PDF、匯出 Google 文件、排入 Google 日曆。</div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-              <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">AI 帳號（OpenRouter）</span><span style="font-size:12px;color:#625d55">{{ orStatus }}</span></div>
-              <div style="display:flex;gap:8px">
-                <sc-if value="{{ orNotSigned }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ orSignIn }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">用 OpenRouter 登入</button></sc-if>
-                <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ goAi }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">選擇模型</button><button sc-camel-on-click="{{ orSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">登出</button></sc-if>
-              </div>
-            </div>
-            <div style="font-size:12px;color:#625d55;line-height:1.6">用途：AI 問答、自動辨識論文資訊、高品質翻譯。可選 Claude、Gemini、GPT 等模型，費用從你的 OpenRouter 額度扣。</div>
           </div>
         </sc-if>
 
@@ -559,35 +549,13 @@
             <sc-if value="{{ builtinCanEnable }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ enableBuiltin }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:12px">啟用離線翻譯</button></sc-if>
           </div>
           <div style="font-size:14px;font-weight:600;margin-top:10px">問答與自動辨識（雲端 AI）</div>
-          <div style="display:flex;flex-direction:column;gap:12px;padding:14px;background:#fff;border:1px solid {{ orLine }};border-radius:10px">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
-              <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1"><span style="font-size:15px;font-weight:600">OpenRouter</span><span style="font-size:12px;color:#625d55;line-height:1.6">用你自己的 OpenRouter 帳號登入，不必複製任何金鑰。可選 Claude、Gemini、GPT 等模型，費用從你的 OpenRouter 額度扣；沒儲值也能用免費模型。論文內容會經過 OpenRouter 再送到模型廠商。</span></div>
-              <sc-if value="{{ orNotSigned }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ orSignIn }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px;font-weight:500;white-space:nowrap">用 OpenRouter 登入</button></sc-if>
-              <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ orSignOut }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px;white-space:nowrap">登出</button></sc-if>
-            </div>
-            <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#2c2925"><input type="checkbox" checked="{{ remember }}" sc-camel-on-change="{{ onRemember }}"> 在這台電腦記住 AI 登入（取消勾選的話，關閉這個分頁或瀏覽器就要重新登入；不影響 Google 登入與同步權杖）</label>
-            <sc-if value="{{ orSigned }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:12px;color:#625d55;line-height:1.6">{{ orKeyInfo }}</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
-                <span style="font-size:12px;color:#625d55">快速選擇</span>
-                <sc-for list="{{ orPicks }}" as="pk" hint-placeholder-count="3"><button sc-camel-on-click="{{ pk.onClick }}" aria-pressed="{{ pk.pressed }}" title="{{ pk.id }}" style="border:1px solid {{ pk.line }};background:{{ pk.bg }};color:{{ pk.color }};border-radius:999px;padding:4px 11px;font-size:12px">{{ pk.label }}</button></sc-for>
-              </div>
-              <input value="{{ orModelQ }}" sc-camel-on-change="{{ onOrModelQ }}" placeholder="搜尋模型，例如 claude、gemini、gpt、free" aria-label="搜尋模型" style="padding:8px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-              <div role="listbox" aria-label="模型清單（方向鍵移動，Enter 選擇）" sc-camel-on-key-down="{{ orListKey }}" style="display:flex;flex-direction:column;max-height:240px;overflow:auto;border:1px solid #efebe4;border-radius:6px">
-                <sc-for list="{{ orModelList }}" as="om" hint-placeholder-count="4"><button role="option" aria-selected="{{ om.selected }}" sc-camel-tab-index="{{ om.tab }}" sc-camel-on-click="{{ om.onClick }}" style="text-align:left;border:0;border-bottom:1px solid #f4f2ed;background:{{ om.bg }};padding:7px 10px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline" style-hover="background:#f4f2ed"><span style="font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ om.name }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;white-space:nowrap">{{ om.price }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ om.id }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;white-space:nowrap">{{ om.ctx }}</span></button></sc-for>
-                
-              </div>
-              <sc-if value="{{ orModelEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:12px;font-size:12px;color:#625d55">{{ orModelMsg }}</div></sc-if>
-              <div style="font-size:12px;color:#625d55">使用中的模型：<span style="font-family:'IBM Plex Mono',monospace;color:#1d1b18">{{ orModel }}</span>（價格為每百萬 token 的美元，輸入／輸出，以 OpenRouter 清單為準）</div>
-            </sc-if>
-          </div>
-          <sc-if value="{{ hasOtherAi }}" hint-placeholder-val="{{ false }}">
-            <div style="font-size:12px;color:#625d55">也可以改用你在「進階」設定的金鑰：</div>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">AI 問答、自動辨識論文資訊與 AI 翻譯，需要你自己的 Google Gemini 或 Anthropic Claude API 金鑰。到 <button sc-camel-on-click="{{ goAdv }}" style="border:0;background:none;padding:0;color:oklch(0.42 0.1 200);text-decoration:underline;font-size:12px">進階</button> 貼上金鑰即可；論文內容只會送到你選的那一家，費用算在金鑰所屬的帳號。</div>
+          <sc-if value="{{ hasAiOpts }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12px;color:#625d55">使用中的 AI（可切換）：</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px">
               <sc-for list="{{ aiOpts }}" as="ao" hint-placeholder-count="2"><button sc-camel-on-click="{{ ao.onClick }}" aria-pressed="{{ ao.pressed }}" style="border:1px solid {{ ao.line }};background:{{ ao.bg }};color:{{ ao.color }};border-radius:6px;padding:6px 12px;font-size:12px">{{ ao.label }}</button></sc-for>
             </div>
           </sc-if>
-          <div style="font-size:12px;color:#625d55;line-height:1.6">想直接用自己的 Gemini 或 Claude API 金鑰？到 <button sc-camel-on-click="{{ goAdv }}" style="border:0;background:none;padding:0;color:oklch(0.42 0.1 200);text-decoration:underline;font-size:12px">進階</button> 設定。</div>
         </sc-if>
 
         <sc-if value="{{ setSync }}" hint-placeholder-val="{{ false }}">
@@ -622,7 +590,8 @@
 
         <sc-if value="{{ setAdv }}" hint-placeholder-val="{{ false }}">
           <h2 style="margin:0;font-size:20px;font-weight:600">進階</h2>
-          <div style="font-size:12px;color:#625d55;line-height:1.7">給熟悉 API 的使用者：直接使用你自己的 API 金鑰，費用算在金鑰所屬的帳號。金鑰只存在這台瀏覽器（依「AI 模型」分頁裡「在這台電腦記住 AI 登入」的設定），不會被匯出或同步。</div>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">直接使用你自己的 API 金鑰，費用算在金鑰所屬的帳號。金鑰只存在這台瀏覽器，不會被匯出或同步。</div>
+          <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#2c2925"><input type="checkbox" checked="{{ remember }}" sc-camel-on-change="{{ onRemember }}"> 在這台電腦記住金鑰（取消勾選的話，關閉這個分頁或瀏覽器就要重新貼上；不影響 Google 登入與同步權杖）</label>
           <div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">Google Gemini 金鑰</span><button sc-camel-on-click="{{ openAiStudio }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:12px">用 Google 帳號免費取得金鑰 ↗</button></div>
             <div style="font-size:12px;color:#625d55;line-height:1.6">在 Google AI Studio 按「Create API key」，複製後貼回這裡。免費層的內容可能被 Google 用來改進產品，處理未發表的稿件時請留意。</div>
@@ -661,7 +630,7 @@
   var CLAUDE_MODEL = 'claude-sonnet-5-5';
   var SITE = location.origin + location.pathname;
   function ls(k){ try { return localStorage.getItem(k) || ''; } catch(e){ return ''; } }
-  // 金鑰：勾選「在這台電腦記住 AI 登入」時存在 localStorage，否則只存在這次工作階段（sessionStorage）
+  // 金鑰：勾選「在這台電腦記住金鑰」時存在 localStorage，否則只存在這次工作階段（sessionStorage）
   function sec(k){ try { return sessionStorage.getItem(k) || localStorage.getItem(k) || ''; } catch(e){ return ''; } }
   function drop(k){ try { sessionStorage.removeItem(k); localStorage.removeItem(k); } catch(e){} }
   // 需要使用者處理（登入、換金鑰）的錯誤：通知介面打開設定的對應分頁
@@ -669,32 +638,6 @@
   function fail(msg){ return new Error(msg); }
   async function body(r){ try { return await r.json(); } catch(e){ return null; } }
   function errMsg(j, r){ return (j && j.error && (j.error.message || j.error.status)) || ('HTTP ' + r.status); }
-
-  async function openrouter(req){
-    var key = sec('lunyi-or-key');
-    if (!key) throw need('請先在「設定 → AI 模型」用 OpenRouter 帳號登入', 'ai');
-    var msgs = (req.system ? [{ role:'system', content:req.system }] : []).concat(req.messages);
-    var r;
-    try {
-      r = await fetch('https://openrouter.ai/api/v1/chat/completions', { method:'POST', headers:{ 'Authorization':'Bearer ' + key, 'Content-Type':'application/json', 'HTTP-Referer':SITE, 'X-Title':'Lunyi' },
-        // 推理模型的思考也算在 max_tokens 裡，上限太小會只回空白；只依實際用量計費
-        body: JSON.stringify({ model: ls('lunyi-or-model') || 'openrouter/free', max_tokens: Math.max(req.max_tokens || 1500, 4000), messages: msgs }) });
-    } catch(e) { throw fail('連不到 OpenRouter，請檢查網路'); }
-    var j = await body(r);
-    if (r.status === 401) { drop('lunyi-or-key'); throw need('OpenRouter 授權已失效，請重新登入', 'ai'); }
-    if (r.status === 402) {
-      var md = (j && j.error && j.error.metadata) || {};
-      if (md.reason === 'weight_exceeds_budget') throw fail('這次請求超過你目前額度能一次處理的量：請改選較便宜的模型，或到 openrouter.ai 儲值');
-      if (md.reason === 'in_flight_budget_exhausted') throw fail('OpenRouter 額度暫時被進行中的請求占滿，請稍後再試');
-      throw fail(md.limit_source === 'openrouter_key_limit' ? '這次授權設定的花費上限已用完，請到 OpenRouter 調高上限或重新登入' : 'OpenRouter 額度不足：請到 openrouter.ai 儲值，或在設定改選免費模型');
-    }
-    if (r.status === 429) throw fail('OpenRouter 請求太頻繁（免費模型每分鐘與每天都有次數上限），請稍後再試');
-    if (!r.ok) throw fail('OpenRouter：' + errMsg(j, r));
-    var c = j && j.choices && j.choices[0];
-    if (!c || !c.message) throw fail('OpenRouter 沒有回傳內容，請換一個模型再試');
-    if (!c.message.content && c.finish_reason === 'length') throw fail('回應在產生內容前就達到長度上限，請換一個模型或縮短內容');
-    return c.message.content || '';
-  }
 
   async function gemini(req){
     var key = sec('lunyi-gemini-key');
@@ -740,22 +683,21 @@
     if (req.system) b.system = req.system;
     var r;
     try { r = await fetch('api/claude', { method:'POST', headers:{ 'content-type':'application/json', 'x-lunyi-code': ls('lunyi-code') }, body: JSON.stringify(b) }); }
-    catch(e) { throw need('還沒連結雲端 AI：請在「設定 → AI 模型」用 OpenRouter 登入', 'ai'); }
-    if (r.status === 404 || r.status === 405 || r.status === 501) throw need('還沒連結雲端 AI：請在「設定 → AI 模型」用 OpenRouter 登入', 'ai');
+    catch(e) { throw need('還沒設定雲端 AI：請到「設定 → 進階」貼上 Gemini 或 Claude 金鑰', 'adv'); }
+    if (r.status === 404 || r.status === 405 || r.status === 501) throw need('還沒設定雲端 AI：請到「設定 → 進階」貼上 Gemini 或 Claude 金鑰', 'adv');
     if (r.status === 401) throw need('網站存取碼錯誤，請到「設定 → 進階」輸入', 'adv');
     var j = await body(r);
     if (!r.ok) throw fail('HTTP ' + r.status);
     return (j && j.content || []).filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('');
   }
 
-  // 目前用哪一個雲端 AI：使用者選的優先；沒選過時依序看 OpenRouter 登入、Claude 金鑰、Gemini 金鑰
+  // 目前用哪一個雲端 AI：使用者選的優先；沒選過時依序看 Claude 金鑰、Gemini 金鑰
   // 使用者選定的服務沒有憑證時不默默改用另一把付費金鑰，只退回執行環境內建 AI 或「未連結」
   function provider(){
     var p = ls('lunyi-ai');
-    var has = { openrouter: sec('lunyi-or-key'), gemini: sec('lunyi-gemini-key'), claude: sec('lunyi-apikey') };
+    var has = { gemini: sec('lunyi-gemini-key'), claude: sec('lunyi-apikey') };
     if (p && p !== 'native') return has[p] ? p : (native ? 'native' : '');
     if (native) return 'native';
-    if (sec('lunyi-or-key')) return 'openrouter';
     if (sec('lunyi-apikey')) return 'claude';
     if (sec('lunyi-gemini-key')) return 'gemini';
     return '';
@@ -765,7 +707,6 @@
   window.claude = { complete: async function(req){
     if (typeof req === 'string') req = { messages:[{ role:'user', content:req }] };
     var p = provider();
-    if (p === 'openrouter') return openrouter(req);
     if (p === 'gemini') return gemini(req);
     if (p === 'native' && native) return native.complete(req);
     var key = sec('lunyi-apikey');
@@ -804,10 +745,8 @@ function slotMap(names, fslots) {
   });
   return { map, changed };
 }
-// OpenRouter 的快速選擇（只顯示模型清單裡實際存在的；價格與可用性以 OpenRouter 清單為準）
-const OR_PICKS = [['免費', 'openrouter/free'], ['平衡', 'google/gemini-3.8-flash'], ['品質', 'anthropic/claude-sonnet-5.5'], ['省錢', 'anthropic/claude-haiku-5.5']];
 // 會被「在這台電腦記住 AI 登入」影響存放位置的機密資料
-const SECRETS = ['lunyi-or-key', 'lunyi-apikey', 'lunyi-gemini-key'];
+const SECRETS = ['lunyi-apikey', 'lunyi-gemini-key'];
 // 瀏覽器內建翻譯（Translator API，桌面版 Chrome 138 起）：免費、在使用者電腦上執行，只能翻譯
 const HAS_TR = typeof self !== 'undefined' && 'Translator' in self;
 const trCache = new Map();
@@ -948,9 +887,9 @@ class Component extends DCLogic {
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
       linkTarget: '', linkNote: '', toast: '', ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
       gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
-      projects: Array.isArray(d.projects) ? d.projects : [], projAt: d.projAt || {}, projDel: d.projDel || {}, orKeyErr: '', projOpen: d.papers[0] ? { [d.papers[0].folder || '未分類']: true } : {}, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
+      projects: Array.isArray(d.projects) ? d.projects : [], projAt: d.projAt || {}, projDel: d.projDel || {}, projOpen: d.papers[0] ? { [d.papers[0].folder || '未分類']: true } : {}, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
       sbOpen: window.innerWidth >= 1100, narrow: window.innerWidth <= 900, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
-      showLogin: false, loginMsg: '', loginBusy: '', orModels: null, orModelErr: '', orModelQ: '', orModelPick: '', orKey: null, remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '' };
+      showLogin: false, loginMsg: '', loginBusy: '', remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '' };
   }
   componentDidMount() {
     this._ps = this.state;
@@ -966,8 +905,10 @@ class Component extends DCLogic {
     this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); };
     window.addEventListener('pointerdown', this._down);
     try { const t = sessionStorage.getItem('lunyi-gh-token'); if (t && !localStorage.getItem('lunyi-gh-token')) { localStorage.setItem('lunyi-gh-token', t); sessionStorage.removeItem('lunyi-gh-token'); } } catch (e) {}
-    const orBack = new URLSearchParams(location.search).has('code'); // orCallback() 會同步清掉網址列的 ?code，要先記下
-    this.orCallback();
+    // 已不再使用 OpenRouter：清掉之前登入留下的資料
+    ['lunyi-or-key', 'lunyi-or-model'].forEach(k => { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch (e) {} });
+    try { sessionStorage.removeItem('lunyi-or-pkce'); sessionStorage.removeItem('lunyi-or-models'); } catch (e) {}
+    if (this.lsGet('lunyi-ai') === 'openrouter') this.lsSet('lunyi-ai', '');
     // 沒選雲端 AI 時，看看同站有沒有 Vercel 後端（GitHub Pages 回 404，後端對 GET 回 405）
     if (!this.provider() && window.__lunyiShim && !/github\.io$/.test(location.hostname) && location.protocol !== 'file:') fetch('api/claude').then(r => { if (r.status === 405) { this._backend = true; this.forceUpdate(); } }).catch(() => {});
     if (!document.getElementById('lunyi-fonts')) {
@@ -982,7 +923,7 @@ class Component extends DCLogic {
     if (firstVisit) this.lsSet('lunyi-login-seen', '1');
     // 只在真正第一次使用時跳出；存不了 localStorage 時也不跳，免得每次開都出現
     const fresh = firstVisit && !hadLib && !!this.gClient() && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
-    this.setState({ gUser, syncTarget: this.cloudTarget(), showLogin: fresh && !gUser && !this.secGet('lunyi-or-key') && !orBack });
+    this.setState({ gUser, syncTarget: this.cloudTarget(), showLogin: fresh && !gUser });
     if (this.gClient()) loadScript(GSI).catch(() => {});
     this.ensureOwner();
     // 其他分頁登入、登出或換帳號：更新頭像；自動同步被關掉時取消這裡排著的上傳（每次上傳也會再檢查帳號）
@@ -1023,11 +964,10 @@ class Component extends DCLogic {
     const t = tab || this.state.setTab || 'account';
     this.setState({ showSet: true, setTab: t, acctOpen: false, showLogin: false, loginMsg: '', loginBusy: '', keyDraft: this.secGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.secGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
       gemKeyDraft: this.secGet('lunyi-gemini-key'), gemModelDraft: this.lsGet('lunyi-gemini-model'), claudeModelDraft: this.lsGet('lunyi-claude-model'), clientDraft: this.gClient(), syncTarget: this.cloudTarget(), gemMsg: '', claudeMsg: '' });
-    if (t === 'ai') this.loadAiInfo();
   }
   aiMode() {
     const p = this.provider(), tr = this.useBuiltin() ? '翻譯用瀏覽器內建' : '';
-    const ai = p === 'openrouter' ? `OpenRouter（${this.lsGet('lunyi-or-model') || 'openrouter/free'}）` : p === 'gemini' ? `Google Gemini 金鑰（${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}）`
+    const ai = p === 'gemini' ? `Google Gemini 金鑰（${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}）`
       : p === 'claude' ? `Claude 金鑰（${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}）` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '尚未連結雲端 AI';
     return [ai, tr].filter(Boolean).join('；');
   }
@@ -1576,8 +1516,7 @@ class Component extends DCLogic {
   }
   provider() { return window.__lunyiAi ? window.__lunyiAi.provider() : ''; }
   hasCloud() { return !!this.provider() || !!this._backend; }
-  goTab(k) { this.setState({ setTab: k }); if (k === 'ai') this.loadAiInfo(); }
-  loadAiInfo() { if (this.secGet('lunyi-or-key')) { this.loadOrModels(); this.loadOrKeyInfo(); } }
+  goTab(k) { this.setState({ setTab: k }); }
 
   // ---- 專案（側欄的分群；論文的 folder 欄位就是所屬專案）----
   // 側欄顯示順序：使用者建立的專案在前；色槽分配則讓「有論文的專案」優先
@@ -1662,87 +1601,6 @@ class Component extends DCLogic {
     catch (e) { this.setState({ builtinState: '' }); this.toast(e.message || '無法啟用內建翻譯'); }
   }
 
-  // ---- OpenRouter 登入（OAuth PKCE，純前端，不需要後端或 client_id）----
-  orBlocked() {
-    if (this.state.tAll) return '翻譯進行中，完成後再登入';
-    if (location.protocol === 'file:' || !window.isSecureContext || !(window.crypto && crypto.subtle)) return '請用 https 網址（例如 GitHub Pages 上的論憶）開啟，才能登入 OpenRouter';
-    return '';
-  }
-  async orSignIn() {
-    const bad = this.orBlocked();
-    if (bad) return this.toast(bad);
-    try { await this.orRedirect(); } catch (e) { this.toast('無法開始登入：' + (e && e.message || e)); }
-  }
-  async orRedirect() {
-    if (this._push && this.syncOn()) {
-      clearTimeout(this._push); this._push = null;
-      if (!(await this.pushCloud(true)) && !window.confirm('最近的修改還沒上傳到雲端，現在登入可能讓這些修改被雲端的舊版本蓋掉。仍要繼續嗎？')) return;
-    }
-    const b64u = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-    const verifier = b64u(crypto.getRandomValues(new Uint8Array(32)));
-    const challenge = b64u(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier)));
-    const st = b64u(crypto.getRandomValues(new Uint8Array(16)));
-    try { sessionStorage.setItem('lunyi-or-pkce', JSON.stringify({ verifier, state: st })); } catch (e) {}
-    location.href = 'https://openrouter.ai/auth?' + new URLSearchParams({ callback_url: location.origin + location.pathname, code_challenge: challenge, code_challenge_method: 'S256', key_label: 'Lunyi 論憶', state: st });
-  }
-  async orCallback() {
-    const q = new URLSearchParams(location.search), code = q.get('code');
-    if (!code) return;
-    let pk = null;
-    try { pk = JSON.parse(sessionStorage.getItem('lunyi-or-pkce') || 'null'); sessionStorage.removeItem('lunyi-or-pkce'); } catch (e) {}
-    history.replaceState(null, '', location.pathname + location.hash);
-    if (!pk) return this.toast('登入流程中斷了（可能是在另一個分頁完成授權），請再按一次「用 OpenRouter 登入」');
-    if (q.get('state') && q.get('state') !== pk.state) return this.toast('登入驗證失敗，請重新登入');
-    this.toast('正在完成 OpenRouter 登入…');
-    try {
-      const r = await fetch('https://openrouter.ai/api/v1/auth/keys', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, code_verifier: pk.verifier, code_challenge_method: 'S256' }) });
-      let j = null;
-      try { j = await r.json(); } catch (e) {}
-      if (!r.ok || !j || typeof j.key !== 'string') throw new Error((j && j.error && j.error.message) || 'HTTP ' + r.status);
-      this.secSet('lunyi-or-key', j.key);
-      this.lsSet('lunyi-ai', 'openrouter');
-      this.toast('已用 OpenRouter 登入，請選擇要用的模型');
-      this.openSettings('ai');
-    } catch (e) { this.toast('OpenRouter 登入失敗（' + e.message + '），請再試一次'); }
-  }
-  orSignOut() {
-    this.secSet('lunyi-or-key', '');
-    if (this.lsGet('lunyi-ai') === 'openrouter') this.lsSet('lunyi-ai', '');
-    this.setState({ orKey: null, orKeyErr: '' });
-    this.toast('已登出 OpenRouter。若要撤銷授權，請到 OpenRouter 的 Keys 頁面刪除「Lunyi 論憶」', 'https://openrouter.ai/settings/keys');
-  }
-  pickOrModel(id) { this.lsSet('lunyi-or-model', id); this.lsSet('lunyi-ai', 'openrouter'); this.setState({ orModelPick: id }); this.toast(`已改用 ${id}`); }
-  async loadOrModels() {
-    if (this._orLoading || (this.state.orModels && this.state.orModels.length)) return;
-    this._orLoading = true;
-    try {
-      let list = null;
-      try { const c = JSON.parse(sessionStorage.getItem('lunyi-or-models') || 'null'); if (c && Date.now() - c.t < 864e5) list = c.list; } catch (e) {}
-      if (!list) {
-        const r = await fetch('https://openrouter.ai/api/v1/models');
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        const j = await r.json();
-        list = (j.data || []).filter(m => m && m.id && !/:batch$/.test(m.id)).map(m => ({ id: m.id, name: m.name || m.id, ctx: m.context_length || 0, inP: Number(m.pricing && m.pricing.prompt) || 0, outP: Number(m.pricing && m.pricing.completion) || 0 }));
-        try { sessionStorage.setItem('lunyi-or-models', JSON.stringify({ t: Date.now(), list })); } catch (e) {}
-      }
-      this.setState({ orModels: list, orModelErr: '' });
-    } catch (e) { this.setState({ orModels: [], orModelErr: '無法載入模型清單（' + e.message + '），稍後再開一次設定' }); }
-    this._orLoading = false;
-  }
-  async loadOrKeyInfo() {
-    const key = this.secGet('lunyi-or-key');
-    if (!key) return;
-    this.setState({ orKeyErr: '' });
-    try {
-      const r = await fetch('https://openrouter.ai/api/v1/key', { headers: { Authorization: 'Bearer ' + key } });
-      if (r.status === 401) { this.secSet('lunyi-or-key', ''); this.setState({ orKey: null }); return this.toast('OpenRouter 授權已失效，請重新登入'); }
-      if (!r.ok) return this.setState({ orKeyErr: `無法取得帳戶資訊（HTTP ${r.status}），稍後再試` });
-      const d = (await r.json()).data || null;
-      this.setState({ orKey: d, orKeyErr: '' });
-      if (d && d.is_free_tier && !this.lsGet('lunyi-or-model')) this.lsSet('lunyi-or-model', 'openrouter/free');
-    } catch (e) { this.setState({ orKeyErr: '無法取得帳戶資訊（網路錯誤），稍後再試' }); }
-  }
-
   // ---- 進階：自備 API 金鑰（存檔前先驗證）----
   async saveGem() {
     const key = this.state.gemKeyDraft.trim(), model = this.state.gemModelDraft.trim();
@@ -1795,17 +1653,16 @@ class Component extends DCLogic {
 
   // ---- 側欄、帳號選單與設定視窗要用的值 ----
   shellVals(s, L, cur, qAll, fSlot, fColor, ql) {
-    const p = this.provider(), or = !!this.secGet('lunyi-or-key'), g = s.gUser;
-    const orModel = this.lsGet('lunyi-or-model') || 'openrouter/free';
-    const aiShort = p === 'openrouter' ? `OpenRouter · ${orModel}` : p === 'gemini' ? `Gemini 金鑰 · ${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}` : p === 'claude' ? `Claude 金鑰 · ${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '';
+    const p = this.provider(), g = s.gUser;
+    const aiShort = p === 'gemini' ? `Gemini 金鑰 · ${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}` : p === 'claude' ? `Claude 金鑰 · ${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '';
     // 頭像：登入 Google 時用 Google 名稱與照片，否則顯示訪客；顏色由名稱決定
-    const name = g ? g.name : or ? '論憶使用者' : '訪客';
+    const name = g ? g.name : '訪客';
     const hue = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);
     // 頭像照片用 CSS 背景顯示：範本初次渲染時才不會先送出網址是 {{ … }} 的圖片請求
     const pic = g && /^https:\/\//.test(g.picture || '') ? g.picture.replace(/["'()\\]/g, encodeURIComponent) : '';
     const av = { name, initial: [...name][0] || '訪', bg: `oklch(0.5 0.09 ${hue})`, imgBg: pic ? `center / cover no-repeat url("${pic}")` : 'transparent',
-      sub: g ? g.email || '已登入 Google' : or ? 'AI 帳號已登入' : '按此登入', detail: `Google：${g ? g.email || '已登入' : '未登入'}\nAI：${aiShort || '未設定'}` };
-    const guest = !g && !or;
+      sub: g ? g.email || '已登入 Google' : '按此登入', detail: `Google：${g ? g.email || '已登入' : '未登入'}\nAI：${aiShort || '未設定'}` };
+    const guest = !g;
     const closeMenu = fn => () => { this.setState({ acctOpen: false }); fn(); };
     const acctItems = [
       g ? { label: '登出 Google', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '用 Google 登入', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
@@ -1840,23 +1697,12 @@ class Component extends DCLogic {
     const tm = this.trMode();
     const trOpts = [['auto', '自動（建議）', '有連結雲端 AI 時用 AI 翻譯；沒有時改用瀏覽器內建翻譯，免登入也能翻。'],
       ['builtin', '瀏覽器內建翻譯', HAS_TR ? '免費、免登入，在你的電腦上執行；只能翻譯，不會保留專有名詞原文，也不會刻意使用台灣學術用語。' : '這個瀏覽器不支援（需要桌面版 Chrome 138 以上）。'],
-      ['ai', '雲端 AI 翻譯', '用下方連結的 AI 翻譯：品質較好，使用台灣學術用語，專有名詞會保留原文。']]
+      ['ai', '雲端 AI 翻譯', '用你在「進階」設定的 Gemini 或 Claude 金鑰翻譯：品質較好，使用台灣學術用語，專有名詞會保留原文。']]
       .map(([k, label, desc]) => { const on = tm === k; return { label, desc, on, checked: String(on), line: on ? '#1d1b18' : '#e2ddd3', bg: on ? '#fff' : 'transparent', dot: on ? '#1d1b18' : '#fff', dotLine: on ? '#1d1b18' : '#bdb6a9', onClick: () => { this.lsSet('lunyi-tr-engine', k === 'auto' ? '' : k); this.setState({ trEngine: k }); } }; });
     const builtinStatus = !HAS_TR ? '這個瀏覽器不支援（需要桌面版 Chrome 138 以上）' : s.builtinState || (trCache.size ? '已啟用，可離線使用' : '尚未啟用：第一次使用要下載語言包，只需要一次');
-    const k = s.orKey;
-    const orKeyInfo = k ? [`已用 $${Number(k.usage || 0).toFixed(2)}`, k.limit != null ? `這次授權的上限 $${k.limit}` : '這次授權沒有設花費上限', k.is_free_tier ? '尚未儲值，只能用免費模型' : '', k.free_model_daily_requests && k.free_model_daily_requests.remaining != null ? `今天免費模型還能用 ${k.free_model_daily_requests.remaining} 次` : ''].filter(Boolean).join('・') : s.orKeyErr || '帳戶資訊載入中…';
-    const models = s.orModels || [], hasModel = id => !s.orModels || !s.orModels.length || models.some(m => m.id === id);
     const pill = on => ({ bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : '#1d1b18', line: on ? '#1d1b18' : '#d6d0c4' });
-    const orPicks = OR_PICKS.filter(([, id]) => hasModel(id)).map(([label, id]) => ({ label, id, pressed: String(orModel === id), ...pill(orModel === id), onClick: () => this.pickOrModel(id) }));
-    const mq = s.orModelQ.trim().toLowerCase();
-    const price = m => m.inP < 0 || m.outP < 0 ? '依路由計價' : !m.inP && !m.outP ? '免費' : `$${(m.inP * 1e6).toFixed(2)}／$${(m.outP * 1e6).toFixed(2)}`;
-    const ctxText = c => !c ? '' : c >= 1e6 ? `${+(c / 1e6).toFixed(1)}M context` : `${Math.round(c / 1000)}K context`;
-    const orModelList = models.filter(m => !mq || (m.id + ' ' + m.name).toLowerCase().includes(mq)).slice(0, 80)
-      .map(m => ({ id: m.id, name: m.name, price: price(m), ctx: ctxText(m.ctx), selected: String(m.id === orModel), bg: m.id === orModel ? 'oklch(0.95 0.025 200)' : 'transparent', onClick: () => this.pickOrModel(m.id) }));
-    const selIdx = Math.max(0, orModelList.findIndex(m => m.selected === 'true'));
-    orModelList.forEach((m, i) => { m.tab = i === selIdx ? 0 : -1; });
     const native = !!(window.__lunyiAi && window.__lunyiAi.hasNative);
-    const aiOpts = [or && ['openrouter', 'OpenRouter'], this.secGet('lunyi-gemini-key') && ['gemini', 'Gemini 金鑰'], (this.secGet('lunyi-apikey') || native) && ['claude', native && !this.secGet('lunyi-apikey') ? '執行環境內建 AI' : 'Claude 金鑰']]
+    const aiOpts = [this.secGet('lunyi-gemini-key') && ['gemini', 'Gemini 金鑰'], (this.secGet('lunyi-apikey') || native) && ['claude', native && !this.secGet('lunyi-apikey') ? '執行環境內建 AI' : 'Claude 金鑰']]
       .filter(Boolean).map(([kk, label]) => { const on = p === kk || (kk === 'claude' && p === 'native'); return { label, pressed: String(on), ...pill(on), onClick: () => { this.lsSet('lunyi-ai', kk); this.toast(`已改用 ${label}`); this.forceUpdate(); } }; });
     const trName = { auto: '自動', builtin: '瀏覽器內建', ai: '雲端 AI' }[tm];
     return {
@@ -1868,7 +1714,6 @@ class Component extends DCLogic {
       gBtnNote: this.gClient() ? '同步文獻庫到你的 Google 雲端硬碟，也能匯入 PDF、匯出 Google 文件' : 'Google 登入暫時還沒開放',
       hasLoginMsg: !!s.loginMsg, loginMsg: s.loginMsg, showLoginAdmin: !this.gClient() && s.loginMsg === G_OFF_MSG, loginAdmin: () => this.openSettings('adv'),
       acctBlur: e => { const box = e.currentTarget; if (!box.contains(e.relatedTarget)) this.setState({ acctOpen: false }); },
-      orListKey: e => { const opts = [...e.currentTarget.querySelectorAll('[role=option]')], i = opts.indexOf(document.activeElement); const to = { ArrowDown: i + 1, ArrowUp: i - 1, Home: 0, End: opts.length - 1 }[e.key]; if (to == null || !opts.length) return; e.preventDefault(); const t = opts[Math.max(0, Math.min(opts.length - 1, to))]; opts.forEach(o => o.tabIndex = -1); t.tabIndex = 0; t.focus(); },
       addHint: this.hasCloud() ? '以下欄位可留空，會由 AI 自動辨識。儲存後自動擷取關鍵詞、比對引用、與現有論文串聯並翻譯成繁中。' : '目前沒有連結雲端 AI：請自行填寫標題等欄位（留空會用檔名）。儲存後會用瀏覽器內建翻譯翻成繁中；連結 AI 後可自動辨識標題與關鍵詞、串聯相關論文。',
       layoutTabs, projTree, crumbs,
       allProj: { count: String(qAll.length), pressed: String(s.folder === '全部'), bg: s.folder === '全部' ? '#e2ddd3' : 'transparent', onClick: () => this.setState({ folder: '全部' }) },
@@ -1880,18 +1725,14 @@ class Component extends DCLogic {
       onNewProjKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.addProj(); } else if (e.key === 'Escape') { e.stopPropagation(); this.setState({ newProjOpen: false }, () => this.focusSoon('#lunyi-newproj-btn')); } },
       renameDraft: s.renameDraft, onRenameDraft: e => this.setState({ renameDraft: e.target.value }),
       aiChip: aiShort ? `AI：${aiShort}` : HAS_TR ? '內建翻譯・按此連結 AI' : '連結 AI', aiDot: aiShort ? ACC : '#bdb6a9',
-      aiChipTitle: `翻譯：${trName}；問答與自動辨識：${aiShort || '尚未連結'}`, openAiSettings: () => this.openSettings('ai'), needCloud: !aiShort,
+      aiChipTitle: `翻譯：${trName}；問答與自動辨識：${aiShort || '尚未連結'}`, openAiSettings: () => this.openSettings('ai'), openAdvSettings: () => this.openSettings('adv'), needCloud: !aiShort,
       openSettings: () => this.openSettings('account'), setTabs,
       setAccount: s.setTab === 'account', setAi: s.setTab === 'ai', setSync: s.setTab === 'sync', setAdv: s.setTab === 'adv',
-      goAi: () => this.goTab('ai'), goAdv: () => this.goTab('adv'),
+      goAdv: () => this.goTab('adv'),
       gStatus: g ? `已登入：${g.name}${g.email ? `（${g.email}）` : ''}` : this.gClient() ? '尚未登入 Google' : '網站尚未開放 Google 登入：管理者要在程式的 GOOGLE_CLIENT_ID 填入 OAuth 用戶端 ID',
-      orSigned: or, orNotSigned: !or, orStatus: or ? `已登入・使用 ${orModel}` : '尚未登入', orLine: or ? ACC : '#e2ddd3',
-      orSignIn: () => this.orSignIn(), orSignOut: () => this.orSignOut(), orKeyInfo, orPicks, orModel,
-      orModelQ: s.orModelQ, onOrModelQ: e => this.setState({ orModelQ: e.target.value }),
-      orModelList, orModelEmpty: !orModelList.length, orModelMsg: s.orModels == null ? '載入模型清單中…' : s.orModelErr || '沒有符合的模型',
       remember: s.remember, onRemember: e => this.setRemember(!!e.target.checked),
       trOpts, builtinStatus, builtinCanEnable: HAS_TR && !trCache.size, enableBuiltin: () => this.enableBuiltin(),
-      aiOpts, hasOtherAi: aiOpts.length > (or ? 1 : 0),
+      aiOpts, hasAiOpts: aiOpts.length > 0,
       openAiStudio: () => window.open('https://aistudio.google.com/apikey', '_blank', 'noopener'),
       openClaudeConsole: () => window.open('https://platform.claude.com/settings/keys', '_blank', 'noopener'),
       saveGem: () => this.saveGem(), clearGem: () => this.clearGem(), gemMsg: s.gemMsg,
