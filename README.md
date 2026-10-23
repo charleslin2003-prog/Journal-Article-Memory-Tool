@@ -100,12 +100,12 @@
    6. 按「建立」，複製 **用戶端 ID**（`….apps.googleusercontent.com`）。用戶端密鑰（client secret）用不到，不要外流。
 4. 「Google Auth Platform → 目標對象」決定誰能登入：
    - 維持「測試中」：只有「測試使用者」名單裡的帳號能登入（最多 100 個），課堂展示時把自己、老師、同學的 Gmail 加進去。
-   - 按「發布應用程式」：任何 Google 帳號都能登入。登入只用基本權限（`openid`、`email`、`profile`、`drive.file`），不必送審；但「從雲端硬碟匯入 PDF」（`drive.readonly`）與「排入日曆」（`calendar.events`）屬於敏感權限，送審通過前會顯示「Google 尚未驗證這個應用程式」，使用者要按「進階 → 前往論憶」才能繼續。
+   - 按「發布應用程式」：任何 Google 帳號都能登入。登入只用基本權限（`openid`、`email`、`profile`、`drive.file`），不必送審；但「排入日曆」（`calendar.events`）是敏感權限、「從雲端硬碟匯入 PDF」（`drive.readonly`）是受限權限：通過 Google 驗證前，使用這兩個功能會顯示「Google 尚未驗證這個應用程式」（要按「進階 → 前往論憶」），而且最多只能有 100 位新使用者授權。受限權限的驗證比敏感權限嚴格。
 5. 把用戶端 ID 寫進 `src/app.html` 的 `GOOGLE_CLIENT_ID`，執行 `python3 tools/build.py` 再 push。之後使用者不必設定任何東西，按左上角頭像 →「繼續使用 Google」→ 在 Google 的視窗點自己的帳號就登入了。
    只想自己先試的話，也可以貼到網站「設定 → 進階 → Google OAuth 用戶端 ID」（只對這台瀏覽器有效）。
 
 用戶端 ID 本來就會出現在網頁裡，可以公開，不是密碼；Google 只接受從上面登記的網址發出的登入。
-應用程式維持「測試」狀態時，只有加入測試使用者名單的帳號能登入，Google 也會顯示「未經驗證的應用程式」提示，這是正常的；要開放給所有人需送 Google 審查。
+應用程式維持「測試」狀態時，只有加入測試使用者名單的帳號能登入，Google 也會顯示「未經驗證的應用程式」提示，這是正常的。只用基本權限（登入、雲端硬碟同步、匯出文件）發布後不必送審；要讓所有人都能使用匯入 PDF 與排入日曆，才需要送 Google 驗證。
 
 各功能用到的權限（第一次使用該功能時才會請求）：
 
@@ -118,11 +118,11 @@
 ## 檔案
 
 ```
-index.html          單一檔案網站（約 240 KB，含 React 與執行環境），由 tools/build.py 產生
+index.html          單一檔案網站（約 370 KB，含 React 與執行環境），由 tools/build.py 產生
 src/app.html        網站原始碼（版面＋程式），要改網站就改這個
 tools/build.py      把 src/app.html 打包回 index.html
 api/claude.js       Vercel Serverless Function，代為呼叫 Anthropic API
-docs/screenshots/   功能截圖（桌面四個工作區、專案首頁、設定、手機版）
+docs/screenshots/   功能截圖（桌面四個工作區、專案首頁、設定、登入視窗、手機版）
 docs/期中報告_論憶.pptx  期中報告投影片（附講稿備註），另有 PDF 版
 docs/瀏覽器插件方案.md   做成 Chrome 插件／Google 生態工具的方案比較與路線圖
 功能說明.md          完整功能說明
