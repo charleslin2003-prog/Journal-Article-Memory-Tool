@@ -727,7 +727,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-size:14px;font-weight:600">Google Gemini 金鑰</span><button sc-camel-on-click="{{ openAiStudio }}" style="border:1px solid #d6d0c4;padding:6px 12px;border-radius:6px;background:#fff;font-size:12px">用 Google 帳號免費取得金鑰 ↗</button></div>
             <div style="font-size:12px;color:#625d55;line-height:1.6">在 Google AI Studio 按「Create API key」，複製後貼回這裡。免費層的內容可能被 Google 用來改進產品，處理未發表的稿件時請留意。</div>
             <input type="password" value="{{ gemKeyDraft }}" sc-camel-on-change="{{ onGemKeyDraft }}" placeholder="Gemini API 金鑰" aria-label="Gemini API 金鑰" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
-            <input value="{{ gemModelDraft }}" sc-camel-on-change="{{ onGemModelDraft }}" placeholder="模型名稱（預設 gemini-2.5-flash）" aria-label="Gemini 模型名稱" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
+            <input value="{{ gemModelDraft }}" sc-camel-on-change="{{ onGemModelDraft }}" placeholder="模型名稱（預設 gemini-3.8-flash）" aria-label="Gemini 模型名稱" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none">
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button sc-camel-on-click="{{ saveGem }}" style="border:0;padding:7px 14px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存並使用 Gemini</button><button sc-camel-on-click="{{ clearGem }}" style="border:1px solid #d6d0c4;padding:7px 14px;border-radius:6px;background:#fff;font-size:12px">清除</button><span style="font-size:12px;color:#625d55">{{ gemMsg }}</span></div>
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
@@ -773,7 +773,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   async function gemini(req){
     var key = sec('lunyi-gemini-key');
     if (!key) throw need('已選擇 Gemini，請到「設定 → 進階」貼上 Gemini 金鑰', 'adv');
-    var model = ls('lunyi-gemini-model') || 'gemini-2.5-flash';
+    var model = ls('lunyi-gemini-model') || 'gemini-3.8-flash';
     var payload = { contents: req.messages.map(function(m){ return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: typeof m.content === 'string' ? m.content : JSON.stringify(m.content) }] }; }) };
     if (req.system) payload.systemInstruction = { parts: [{ text: req.system }] };
     var r;
@@ -781,6 +781,8 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
     catch(e) { throw fail('連不到 Gemini，請檢查網路'); }
     var j = await body(r);
     if (r.status === 400 && /API_KEY_INVALID|api.?key/i.test(JSON.stringify(j || ''))) throw need('Gemini 金鑰無效，請到「設定 → 進階」重新貼上', 'adv');
+    // 2026-09 起新金鑰不能用 2.5 系列模型，錯誤會長得像金鑰類型不對
+    if (r.status === 401 && /ACCESS_TOKEN_TYPE_UNSUPPORTED/.test(JSON.stringify(j || ''))) throw need('這把金鑰不能使用模型「' + model + '」，請到「設定 → 進階」把模型名稱清空（預設 gemini-3.8-flash）', 'adv');
     if (r.status === 403) throw need('Gemini 拒絕這把金鑰（可能被封鎖或缺少限制），請到 AI Studio 重新建立', 'adv');
     if (r.status === 404) throw need('找不到 Gemini 模型「' + model + '」，請到「設定 → 進階」修改', 'adv');
     if (r.status === 429) throw fail('Gemini 免費額度暫時用完，請稍後再試');
@@ -810,7 +812,8 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   }
 
   async function backend(req){
-    var b = { model: CLAUDE_MODEL, max_tokens: Math.min(req.max_tokens || 1500, 4000), messages: req.messages };
+    // Claude 5.x 預設會先思考，思考也算在 max_tokens 裡；上限放寬（伺服器端另有上限），只依實際用量計費
+    var b = { model: CLAUDE_MODEL, max_tokens: Math.max(req.max_tokens || 1500, 8000), messages: req.messages };
     if (req.system) b.system = req.system;
     var r;
     try { r = await fetch('api/claude', { method:'POST', headers:{ 'content-type':'application/json', 'x-lunyi-code': ls('lunyi-code') }, body: JSON.stringify(b) }); }
@@ -818,8 +821,11 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
     if (r.status === 404 || r.status === 405 || r.status === 501) throw need('還沒設定雲端 AI：請到「設定 → 進階」貼上 Gemini 或 Claude 金鑰', 'adv');
     if (r.status === 401) throw need('網站存取碼錯誤，請到「設定 → 進階」輸入', 'adv');
     var j = await body(r);
-    if (!r.ok) throw fail('HTTP ' + r.status);
-    return (j && j.content || []).filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('');
+    // 502 是 Anthropic 拒絕了請求（儲值用完、到了每月上限、金鑰沒綁工作區等），把原因顯示出來給管理者看
+    if (!r.ok) throw fail('網站後端 AI：' + errMsg(j, r));
+    var out = (j && j.content || []).filter(function(c){ return c.type === 'text'; }).map(function(c){ return c.text; }).join('');
+    if (!out && j && j.stop_reason === 'max_tokens') throw fail('Claude 的回應被截斷，請縮短內容');
+    return out;
   }
 
   // 目前用哪一個雲端 AI：使用者選的優先；沒選過時依序看 Claude 金鑰、Gemini 金鑰
@@ -1116,7 +1122,7 @@ class Component extends DCLogic {
     try { sessionStorage.removeItem('lunyi-or-pkce'); sessionStorage.removeItem('lunyi-or-models'); } catch (e) {}
     if (this.lsGet('lunyi-ai') === 'openrouter') this.lsSet('lunyi-ai', '');
     // 沒選雲端 AI 時，看看同站有沒有 Vercel 後端（GitHub Pages 回 404，後端對 GET 回 405）
-    if (!this.provider() && window.__lunyiShim && !/github\.io$/.test(location.hostname) && location.protocol !== 'file:') fetch('api/claude').then(r => { if (r.status === 405) { this._backend = true; this.forceUpdate(); } }).catch(() => {});
+    if (!this.provider()) this.probeBackend();
     if (!document.getElementById('lunyi-fonts')) {
       const l = document.createElement('link');
       l.id = 'lunyi-fonts'; l.rel = 'stylesheet';
@@ -1206,7 +1212,7 @@ class Component extends DCLogic {
   }
   aiMode() {
     const p = this.provider(), tr = this.useBuiltin() ? '翻譯用瀏覽器內建' : '';
-    const ai = p === 'gemini' ? `Google Gemini 金鑰（${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}）`
+    const ai = p === 'gemini' ? `Google Gemini 金鑰（${this.lsGet('lunyi-gemini-model') || 'gemini-3.8-flash'}）`
       : p === 'claude' ? `Claude 金鑰（${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}）` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '尚未連結雲端 AI';
     return [ai, tr].filter(Boolean).join('；');
   }
@@ -1709,10 +1715,10 @@ class Component extends DCLogic {
       if (!paras.length) return this.toast('請貼上內文');
       full = paras.join('\n\n');
     }
-    let meta = {};
+    let meta = {}, aiErr = '';
     if (this.hasCloud()) {
       this.setState({ importStatus: 'AI 正在辨識標題、關鍵詞…' });
-      try { meta = J(await window.claude.complete({ system: SYS_META, messages: [{ role: 'user', content: full.slice(0, 6000) }], max_tokens: 800 })) || {}; } catch (e) {}
+      try { meta = J(await window.claude.complete({ system: SYS_META, messages: [{ role: 'user', content: full.slice(0, 6000) }], max_tokens: 800 })) || {}; } catch (e) { aiErr = e.message || 'AI 沒有回應'; }
     }
     const id = 'p' + Date.now().toString(36);
     const paper = { id, title: f.title || meta.title || (s.pdf && s.pdf.name.replace(/\.pdf$/i, '')) || '未命名論文', authors: f.authors || meta.authors || '', journal: f.journal || meta.journal || '', year: f.year || String(meta.year || ''),
@@ -1725,7 +1731,7 @@ class Component extends DCLogic {
     this.setState(st => ({ papers: [...st.papers.map(o => citedBy.includes(o.id) ? { ...o, cites: [...(o.cites || []), id] } : o), paper], sel: id, selPara: null, showAdd: false, form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '', layout: 'reader', folder: this.inScope(st.folder)(paper) ? st.folder : '全部', projOpen: { ...st.projOpen, [paper.folder]: true }, projects: [...new Set([...st.projects, ...paper.projects])],
       projAt: { ...st.projAt, ...Object.fromEntries(paper.projects.filter(x => (st.projDel[x] || 0) >= (st.projAt[x] || 0) && st.projDel[x]).map(x => [x, Date.now()])) } }));
     const rel = paper.keywords.length ? s.papers.filter(o => o.keywords.some(k => paper.keywords.includes(norm(k)))).length : 0;
-    this.toast(this.hasCloud() ? `已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用` : '已儲存。連結雲端 AI 後可自動辨識標題與關鍵詞、串聯相關論文');
+    this.toast(aiErr ? `已儲存，但 AI 沒有辨識出標題與關鍵詞：${aiErr}` : this.hasCloud() ? `已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用` : '已儲存。連結雲端 AI 後可自動辨識標題與關鍵詞、串聯相關論文', null, aiErr ? 9000 : undefined);
     if (this.props.autoTranslate !== false) setTimeout(() => this.translateAll(id), 50);
   }
 
@@ -1777,6 +1783,11 @@ class Component extends DCLogic {
   }
   provider() { return window.__lunyiAi ? window.__lunyiAi.provider() : ''; }
   hasCloud() { return !!this.provider() || !!this._backend; }
+  // 網站後端（Vercel 上的 api/claude）：沒設定金鑰時回 404，有設定時 GET 回 405
+  probeBackend() {
+    if (!window.__lunyiShim || /github\.io$/.test(location.hostname) || location.protocol === 'file:') return Promise.resolve(false);
+    return fetch('api/claude').then(r => { if (r.status === 405 && !this._backend) { this._backend = true; this.forceUpdate(); } return !!this._backend; }).catch(() => !!this._backend);
+  }
   goTab(k) { this.setState({ setTab: k }); }
 
   // ---- 專案（論文的 projects 陣列；同一篇可以屬於多個專案）----
@@ -1904,8 +1915,16 @@ class Component extends DCLogic {
   clearGem() { this.secSet('lunyi-gemini-key', ''); if (this.lsGet('lunyi-ai') === 'gemini') this.lsSet('lunyi-ai', ''); this.setState({ gemKeyDraft: '', gemMsg: '已清除' }); }
   async saveClaude() {
     const key = this.state.keyDraft.trim(), model = this.state.claudeModelDraft.trim(), code = this.state.codeDraft.trim();
+    if (code && !/^[\x21-\x7e]+$/.test(code)) return this.setState({ claudeMsg: '存取碼只能用半形英文字母、數字和符號，不能有中文、全形字或空白' });
     this.lsSet('lunyi-code', code);
-    if (!key) { this.secSet('lunyi-apikey', ''); if (this.lsGet('lunyi-ai') === 'claude') this.lsSet('lunyi-ai', ''); return this.setState({ claudeMsg: code ? '已儲存存取碼（使用網站後端）' : '請先貼上金鑰' }); }
+    if (!key) {
+      this.secSet('lunyi-apikey', ''); if (this.lsGet('lunyi-ai') === 'claude') this.lsSet('lunyi-ai', '');
+      if (!code) return this.setState({ claudeMsg: '請先貼上金鑰' });
+      if (this.provider() === 'gemini') return this.setState({ claudeMsg: '已儲存存取碼，但這台瀏覽器會優先使用 Gemini 金鑰；要改用網站後端，請先在 Gemini 卡片按「清除」' });
+      this.setState({ claudeMsg: '確認網站後端…' });
+      const ok = await this.probeBackend();
+      return this.setState({ claudeMsg: ok ? '已儲存存取碼（使用網站後端）' : '已儲存存取碼，但這個網址沒有網站後端 AI：請改用 journal-article-memory-tool.vercel.app，或請管理者確認後端已開啟' });
+    }
     this.setState({ claudeMsg: '驗證中…' });
     try {
       const r = await fetch('https://api.anthropic.com/v1/models?limit=1', { headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' } });
@@ -1944,7 +1963,7 @@ class Component extends DCLogic {
   // ---- 側欄、帳號選單與設定視窗要用的值 ----
   shellVals(s, L, cur, qAll, fSlot, fColor, ql) {
     const p = this.provider(), g = s.gUser;
-    const aiShort = p === 'gemini' ? `Gemini 金鑰 · ${this.lsGet('lunyi-gemini-model') || 'gemini-2.5-flash'}` : p === 'claude' ? `Claude 金鑰 · ${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '';
+    const aiShort = p === 'gemini' ? `Gemini 金鑰 · ${this.lsGet('lunyi-gemini-model') || 'gemini-3.8-flash'}` : p === 'claude' ? `Claude 金鑰 · ${this.lsGet('lunyi-claude-model') || 'claude-sonnet-5-5'}` : p === 'native' ? '執行環境內建 AI' : this._backend ? '網站後端 AI' : '';
     // 頭像：登入 Google 時用 Google 名稱與照片，否則顯示訪客；顏色由名稱決定
     const name = g ? g.name : '訪客';
     const hue = [...name].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 7);

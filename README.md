@@ -10,6 +10,8 @@
 
 期中報告投影片：[docs/期中報告_論憶.pptx](docs/期中報告_論憶.pptx)（[PDF 版](docs/期中報告_論憶.pdf)）
 
+管理者操作手冊（開放 Google 登入、讓所有人都有 AI，每一步要貼什麼、按什麼）：[docs/管理者操作手冊_論憶.pptx](docs/管理者操作手冊_論憶.pptx)（[PDF 版](docs/管理者操作手冊_論憶.pdf)）
+
 ## 四種工作區
 
 介面仿照 Notion：左側欄是帳號（頭像）、搜尋、設定、四個工作區與專案樹，上方是目前位置（專案／論文）與 AI 狀態。
@@ -62,11 +64,13 @@
 ### 部署到 Vercel（金鑰放在伺服器）
 
 1. 用 GitHub 登入 [Vercel](https://vercel.com) → Add New → Project → Import 這個 repo → Deploy（設定維持預設）。
-2. Project → Settings → Environment Variables 加入：
-   - `ANTHROPIC_API_KEY`：必填
-   - `LUNYI_ACCESS_CODE`：建議設定。設定後，使用者要在「設定 → 進階」填入相同存取碼才能用 AI，避免金鑰被陌生人消耗
+2. Project → Settings → Environment Variables 加入（Type 選 Secret，Environments 選 Production）：
+   - `ANTHROPIC_API_KEY`：必填。在 Claude Console 建立金鑰時一定要選工作區（workspace），沒綁工作區的金鑰會被拒絕
+   - `LUNYI_ACCESS_CODE`：建議設定，只用半形英數字與符號。設定後，使用者要在「設定 → 進階」填入相同存取碼才能用 AI，避免金鑰被陌生人消耗
    - `LUNYI_MODEL`：選填，預設 `claude-sonnet-5-5`
-3. 重新部署（Redeploy）。
+3. 重新部署（Redeploy）。打開 `https://journal-article-memory-tool.vercel.app/api/claude`，看到 `{"error":"POST only"}` 就代表後端已開啟。
+
+完整的圖文步驟見 [管理者操作手冊](docs/管理者操作手冊_論憶.pdf)。
 
 後端程式在 [`api/claude.js`](api/claude.js)。
 
@@ -124,6 +128,7 @@ tools/build.py      把 src/app.html 打包回 index.html
 api/claude.js       Vercel Serverless Function，代為呼叫 Anthropic API
 docs/screenshots/   功能截圖（桌面四個工作區、專案首頁、設定、登入視窗、手機版）
 docs/期中報告_論憶.pptx  期中報告投影片（附講稿備註），另有 PDF 版
+docs/管理者操作手冊_論憶.pptx  管理者操作手冊：Google 登入與網站後端 AI 的設定步驟，另有 PDF 版
 docs/瀏覽器插件方案.md   做成 Chrome 插件／Google 生態工具的方案比較與路線圖
 功能說明.md          完整功能說明
 待辦事項.md          已完成與未完成工作

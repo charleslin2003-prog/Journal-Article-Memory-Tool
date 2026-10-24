@@ -23,7 +23,8 @@ module.exports = async (req, res) => {
   }
   const body = {
     model: process.env.LUNYI_MODEL || 'claude-sonnet-5-5',
-    max_tokens: Math.min(Number(b.max_tokens) || 1500, 4000),
+    // Claude 5.x 預設會先思考，思考也算在 max_tokens 裡：至少 8000，最多 16000（只依實際用量計費）
+    max_tokens: Math.min(Math.max(Number(b.max_tokens) || 1500, 8000), 16000),
     messages: b.messages,
   };
   if (typeof b.system === 'string') body.system = b.system;
