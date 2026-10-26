@@ -1,9 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant-TW">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>論憶｜期刊論文記憶庫</title>
-  <meta name="description" content="研究生的期刊論文記憶庫：多語翻譯、關聯圖譜、AI 問答">
+  <meta name="description" content="研究生的期刊論文記憶庫：外文論文中英對照閱讀、關聯圖譜、AI 問答與文獻比較矩陣，資料存在自己的瀏覽器。">
+  <link rel="canonical" href="https://journal-article-memory-tool.vercel.app/">
+  <meta name="theme-color" content="#1d1b18">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="論憶">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:title" content="論憶｜期刊論文記憶庫">
+  <meta property="og:description" content="外文論文中英對照閱讀、關聯圖譜、AI 問答與文獻比較矩陣，資料存在自己的瀏覽器。">
+  <meta property="og:url" content="https://journal-article-memory-tool.vercel.app/">
+  <meta property="og:image" content="https://journal-article-memory-tool.vercel.app/og.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="論憶：研究生的期刊論文記憶庫。左邊是名稱與功能（多語翻譯對照、關聯圖譜、AI 問答、文獻比較矩陣、筆記與螢光），右邊是文獻比較矩陣的畫面。">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="論憶｜期刊論文記憶庫">
+  <meta name="twitter:description" content="外文論文中英對照閱讀、關聯圖譜、AI 問答與文獻比較矩陣，資料存在自己的瀏覽器。">
+  <meta name="twitter:image" content="https://journal-article-memory-tool.vercel.app/og.png">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2216%22 fill=%22%231d1b18%22/%3E%3Ctext x=%2250%22 y=%2270%22 text-anchor=%22middle%22 font-size=%2260%22 fill=%22%23faf9f6%22%3E%E8%AB%96%3C/text%3E%3C/svg%3E">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,13 +34,13 @@
   <noscript>
     <style>#__bundler_loading { display: none; }</style>
     <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
-      This page requires JavaScript to display.
+      論憶需要開啟 JavaScript 才能使用。
     </div>
   </noscript>
 </head>
 <body>
   <div id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" sc-camel-view-box="0 0 100 100"><rect width="100" height="100" fill="#1d1b18"></rect><text x="50" y="64" text-anchor="middle" font-size="40" fill="#faf9f6" font-family="serif">論</text></svg></div>
-  <div id="__bundler_loading">Unpacking...</div>
+  <div id="__bundler_loading">載入中…</div>
 
   <script>
     
@@ -62,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
     const templateEl = document.querySelector('script[type="__bundler/template"]');
     if (!manifestEl || !templateEl) {
-      setStatus('Error: missing bundle data');
+      setStatus('載入失敗：找不到網頁內容');
       console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
       return;
     }
@@ -213,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     const uuids = Object.keys(manifest);
-    setStatus('Unpacking ' + uuids.length + ' assets...');
+    setStatus('載入中…（' + uuids.length + ' 個檔案）');
 
     await Promise.all(uuids.map(async (uuid) => {
       const entry = manifest[uuid];
@@ -278,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // consumers read these Blobs directly. Survives the swap like the error sink.
     window.__resourceBlobs = resourceBlobs;
 
-    setStatus('Rendering...');
+    setStatus('準備畫面…');
     // Page uuids have no blob here — they ride inside about:blank#<uuid>
     // frame markers the pass below resolves after the swap.
     for (const uuid of uuids) {
@@ -361,7 +379,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       window.Babel.transformScriptTags();
     }
   } catch (err) {
-    setStatus('Error unpacking: ' + err.message);
+    setStatus('載入失敗：' + err.message);
     console.error('Bundle unpack error:', err);
   }
 });
