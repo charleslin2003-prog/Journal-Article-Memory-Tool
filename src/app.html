@@ -14,12 +14,25 @@
 .ly-root[data-sb="false"] .ly-sb{visibility:hidden}
 .ly-boot-t{animation:lyfade .2s .4s both}@keyframes lyfade{from{opacity:0}to{opacity:1}}
 .ly-sbrow{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;border-radius:6px;padding:5px 8px;font-size:14px;color:#37352f;text-align:left;min-height:30px}
-.ly-sbrow:hover{background:#e3ded5!important}
+.ly-sbrow:not([data-sel="true"]):not([aria-current="page"]):hover{background:rgba(29,27,24,0.05)!important}
+.ly-scope{display:flex;align-items:center;border-radius:6px;min-height:30px}
+.ly-scope:hover{background:rgba(29,27,24,0.05)}
+.ly-scopebtn{color:#37352f}.ly-scopebtn[data-virt="true"]{color:#625d55}
+.ly-sbrow[data-sel="true"],.ly-scope[data-sel="true"]{background:#e2ddd3}
+.ly-sbrow[data-sel="true"]:hover,.ly-scope[data-sel="true"]:hover{background:#dcd6cb}
+.ly-sbrow[data-sel="true"],.ly-scope[data-sel="true"] .ly-scopebtn{font-weight:600;color:#1d1b18}
+.ly-tabs{display:flex;align-items:stretch;align-self:stretch;gap:2px;min-width:0;flex-shrink:0}
+.ly-tab{border:0;border-top:2px solid transparent;border-bottom:2px solid transparent;background:transparent;padding:0 10px;font-size:13px;color:#625d55;white-space:nowrap}
+.ly-tab:hover{color:#1d1b18;background:rgba(29,27,24,0.04)}
+.ly-tab[aria-current="page"]{color:#1d1b18;font-weight:600;border-bottom-color:oklch(0.45 0.1 200)}
+.ly-tab:focus-visible{outline-offset:-2px!important}
+.ly-sb .ly-darkbtn:focus-visible{outline-offset:2px}
+.ly-paperrow{font-size:13px;padding:4px 8px 4px 4px;min-height:26px;gap:6px}
+.ly-toprow{display:contents}
 .ly-search::placeholder{color:#625d55}
 .ly-sbrow:focus-visible,.ly-sb button:focus-visible{outline:2px solid oklch(0.45 0.1 200);outline-offset:-2px}
 .ly-loginbtn:focus-visible,.ly-login button:focus-visible{outline:2px solid oklch(0.45 0.1 200);outline-offset:2px}
 input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid oklch(0.45 0.1 200)!important;outline-offset:1px}
-.ly-sbrow:focus-within{box-shadow:inset 0 0 0 2px oklch(0.45 0.1 200)}
 label:focus-within{outline:2px solid oklch(0.45 0.1 200);outline-offset:2px}
 button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outline-offset:2px}
 .ly-file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
@@ -53,7 +66,7 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 .ly-mxadd{opacity:0;color:#625d55}.ly-mxc:hover .ly-mxadd,.ly-mxc:focus-visible .ly-mxadd{opacity:1}
 .ly-mxclamp{-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .ly-mxt2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ly-mxside mark,.ly-mxin mark{background:oklch(0.94 0.07 95);color:inherit}
+.ly-mxside mark,.ly-mxin mark{background:oklch(0.95 0.03 200);color:inherit;text-decoration:underline;text-decoration-color:oklch(0.45 0.1 200);text-underline-offset:3px}
 .ly-mxcard{display:block;width:100%;min-height:44px;text-align:left;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:10px 12px;font-size:13px;color:#1d1b18}
 .ly-mxcard[data-st="ai"],.ly-mxcard[data-st="na-ai"]{border:1px dashed oklch(0.45 0.1 200)}
 .ly-mxcard[data-st="warn"]{border:1px dashed #7a2e12;background:#fbeee6}
@@ -66,8 +79,20 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 .ly-root{display:block!important;height:auto!important;min-height:100vh}
 .ly-sb{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);z-index:30;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,0.18)}
 .ly-root[data-sb="true"] .ly-sb{transform:none}
-.ly-mainwrap{min-height:100vh;grid-template-rows:44px auto!important}
-.ly-top{position:sticky;top:0;z-index:5}
+.ly-mainwrap{min-height:100vh;grid-template-rows:auto auto!important}
+.ly-topwrap{position:sticky;top:0;z-index:5}
+.ly-top{flex-wrap:wrap;padding:0 8px!important;row-gap:0!important}
+.ly-top .ly-toprow{display:flex;align-items:center;gap:8px;flex:1 1 100%;min-width:0;min-height:44px}
+.ly-top .ly-tabs{flex:1 1 100%;margin:0 -8px;padding:0 4px;border-top:1px solid #efebe4;overflow-x:auto;scrollbar-width:none}
+html{scroll-padding-top:calc(var(--ly-toph,96px) + 8px)}
+.ly-tab{flex:1 0 auto;min-height:40px;padding:0 8px}
+.ly-scopechip{min-height:36px}
+.ly-scope{min-height:40px}
+.ly-addbtn,.ly-search{min-height:40px!important}.ly-search{font-size:16px!important}
+.ly-fbar{padding:6px 10px!important;flex-wrap:nowrap!important;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}.ly-fbar>*{flex-shrink:0}
+.ly-fbar button{position:relative;max-width:62vw!important}.ly-fbar button::before{content:"";position:absolute;inset:-8px -2px}
+.ly-scopebtn{align-self:stretch}.ly-scope>button{min-height:40px}
+.ly-projchips{flex:1 1 100%}
 .ly-cols3,.ly-cols2{display:flex!important;flex-direction:column}
 .ly-main,.ly-gmain{overflow:visible!important}
 .ly-side{border-left:0!important;border-top:1px solid #e2ddd3;overflow:visible!important}
@@ -92,17 +117,17 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
 .ly-sb button[aria-label$="的選項"],#lunyi-newproj-btn,.ly-sb button[aria-label="收合側欄"]{width:36px!important;height:36px!important}
 .ly-setclose{position:sticky!important;top:0!important;align-self:flex-end;margin-bottom:-30px;z-index:2;background:#faf9f6!important}
-.ly-homein{padding:22px 16px 60px!important}
 .ly-rec{grid-template-columns:minmax(0,1fr)!important}
 }
 @media (max-width:480px){
-.ly-crumb0,.ly-crumbsep{display:none!important}
+.ly-scopelbl{display:none}
 .ly-setnav .ly-sbrow>span[aria-hidden]{display:none}.ly-setnav .ly-sbrow{padding:5px 8px}
 }</style>
 </helmet>
 
 <div class="ly-root" data-sb="{{ sbAttr }}" data-ov="{{ ovAttr }}" style="height:100vh;display:grid;grid-template-columns:{{ sbCols }};min-height:0">
   <a href="#" class="ly-skip" sc-camel-on-click="{{ skipToMain }}">跳到內容</a>
+  <a href="#" class="ly-skip" sc-camel-on-click="{{ skipToTabs }}">跳到檢視分頁</a>
   <aside class="ly-sb" aria-label="側欄" style="background:#f1eee8;border-right:1px solid #e2ddd3;display:flex;flex-direction:column;min-height:0;min-width:0;overflow:hidden">
     <div class="ly-acct" sc-camel-on-blur="{{ acctBlur }}" style="padding:8px 8px 4px;position:relative">
       <button id="lunyi-acct-btn" class="ly-sbrow" sc-camel-on-click="{{ toggleAcct }}" aria-controls="lunyi-acct-menu" aria-haspopup="{{ acctPopup }}" aria-expanded="{{ acctAttr }}" title="{{ acctTitle }}" style="gap:9px;padding:6px 8px">
@@ -117,137 +142,99 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
         </div>
       </sc-if>
     </div>
-    <div style="padding:0 8px 6px;display:flex;flex-direction:column;gap:1px">
-      <label class="ly-sbrow" style="cursor:text"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">⌕</span><input class="ly-search" sc-camel-on-change="{{ onQ }}" sc-camel-on-key-down="{{ onQKey }}" placeholder="搜尋論文" aria-label="搜尋標題、作者、關鍵詞、內文" style="flex:1;min-width:0;border:0;background:transparent;font-size:14px;outline:none;padding:0"><sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearQ }}" aria-label="清除搜尋" title="清除搜尋" style="border:0;background:transparent;color:#625d55;font-size:12px;width:22px;height:22px;border-radius:4px;flex-shrink:0" style-hover="background:#e3ded5">✕</button></sc-if></label>
-      <button class="ly-sbrow" sc-camel-on-click="{{ openSettings }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">⚙</span>設定與備份</button>
-      <button class="ly-sbrow" sc-camel-on-click="{{ openAdd }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">＋</span>新增論文</button>
+    <div style="padding:4px 8px 8px;display:flex;flex-direction:column;gap:8px">
+      <button id="lunyi-add-btn" class="ly-addbtn ly-darkbtn" sc-camel-on-click="{{ openAdd }}" style="display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:34px;border:0;border-radius:7px;background:#1d1b18;color:#faf9f6;font-size:14px;font-weight:500" style-hover="background:#3a3731"><span aria-hidden="true">＋</span><span>新增論文</span></button>
+      <div class="ly-searchbox" style="position:relative">
+        <span aria-hidden="true" style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#625d55;font-size:14px;pointer-events:none">⌕</span>
+        <input class="ly-search" sc-camel-on-change="{{ onQ }}" sc-camel-on-key-down="{{ onQKey }}" placeholder="搜尋論文" aria-label="搜尋標題、作者、關鍵詞、內文" style="display:block;width:100%;min-width:0;min-height:34px;border:1px solid #d6d0c4;border-radius:7px;background:#fff;font-size:14px;padding:5px 32px 5px 28px">
+        <sc-if value="{{ hasQ }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearQ }}" aria-label="清除搜尋" title="清除搜尋" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#625d55;font-size:12px;width:26px;height:26px;border-radius:4px" style-hover="background:rgba(29,27,24,0.08)">✕</button></sc-if>
+      </div>
     </div>
-    <nav aria-label="工作區" style="padding:6px 8px;border-top:1px solid #e6e1d8;display:flex;flex-direction:column;gap:1px">
-      <sc-for list="{{ layoutTabs }}" as="t" hint-placeholder-count="4"><button class="ly-sbrow" sc-camel-on-click="{{ t.onClick }}" aria-current="{{ t.current }}" title="{{ t.tip }}" style="background:{{ t.bg }};font-weight:{{ t.weight }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">{{ t.icon }}</span><span style="flex:1">{{ t.label }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55">{{ t.id }}</span></button></sc-for>
-    </nav>
-    <div style="flex:1;min-height:0;overflow:auto;padding:8px 8px 10px;border-top:1px solid #e6e1d8">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 8px">
+    <div style="flex:1;min-height:0;overflow:auto;padding:6px 8px 10px;border-top:1px solid #e6e1d8">
+      <button class="ly-sbrow" data-scope="全部" data-sel="{{ allProj.sel }}" aria-current="{{ allProj.current }}" sc-camel-on-click="{{ allProj.onClick }}" title="全部論文"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55;font-weight:400">≡</span><span style="flex:1">全部論文</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;font-weight:400">{{ allProj.count }}</span></button>
+      <sc-if value="{{ noHits }}" hint-placeholder-val="{{ false }}"><div role="status" style="font-size:12px;color:#625d55;padding:4px 8px 6px">{{ noHitsText }}</div></sc-if>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 8px 2px">
         <span style="font-size:12px;font-weight:600;color:#625d55">專案</span>
-        <button id="lunyi-newproj-btn" sc-camel-on-click="{{ startNewProj }}" title="新增專案" aria-label="新增專案" style="border:0;background:transparent;border-radius:4px;width:24px;height:24px;font-size:15px;color:#625d55;line-height:1" style-hover="background:#e3ded5">＋</button>
+        <button id="lunyi-newproj-btn" sc-camel-on-click="{{ startNewProj }}" title="新增專案" aria-label="新增專案" style="border:0;background:transparent;border-radius:4px;width:24px;height:24px;font-size:15px;color:#625d55;line-height:1" style-hover="background:rgba(29,27,24,0.08)">＋</button>
       </div>
       <sc-if value="{{ newProjOpen }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex;flex-direction:column;gap:4px;padding:2px 4px 6px">
           <input value="{{ newProj }}" sc-camel-on-change="{{ onNewProj }}" sc-camel-on-key-down="{{ onNewProjKey }}" placeholder="專案名稱，例如：碩論文獻回顧" aria-label="新專案名稱" style="min-width:0;padding:5px 8px;border:1px solid #d6d0c4;border-radius:5px;font-size:13px;background:#fff;outline:none">
           <input value="{{ newProjDir }}" sc-camel-on-change="{{ onNewProjDir }}" sc-camel-on-key-down="{{ onNewProjKey }}" placeholder="研究方向（選填）：transformer、預訓練" aria-label="研究方向（選填）" style="min-width:0;padding:5px 8px;border:1px solid #d6d0c4;border-radius:5px;font-size:12px;background:#fff;outline:none">
           <sc-if value="{{ newProjForOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:#37352f;line-height:1.4">{{ newProjForText }}</div></sc-if>
-          <div style="display:flex;align-items:center;gap:6px"><span style="flex:1;font-size:11px;color:#625d55;line-height:1.4">填了研究方向，會從全部論文推薦相關的論文</span><button sc-camel-on-click="{{ addProj }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:5px;padding:4px 10px;font-size:12px;white-space:nowrap">建立</button></div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="flex:1;font-size:11px;color:#625d55;line-height:1.4">填了研究方向，會從全部論文推薦相關的論文</span><button class="ly-darkbtn" sc-camel-on-click="{{ addProj }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:5px;padding:4px 10px;font-size:12px;white-space:nowrap">建立</button></div>
         </div>
       </sc-if>
-      <button class="ly-sbrow" sc-camel-on-click="{{ allProj.onClick }}" aria-pressed="{{ allProj.pressed }}" style="background:{{ allProj.bg }}"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">≡</span><span style="flex:1">全部論文</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ allProj.count }}</span></button>
-      <sc-if value="{{ noHits }}" hint-placeholder-val="{{ false }}"><div role="status" style="font-size:12px;color:#625d55;padding:4px 8px 6px">{{ noHitsText }}</div></sc-if>
       <sc-for list="{{ projTree }}" as="pj" hint-placeholder-count="2">
         <div>
-          <div style="display:flex;align-items:center;border-radius:6px;background:{{ pj.bg }}">
-            <button sc-camel-on-click="{{ pj.onToggle }}" aria-expanded="{{ pj.openAttr }}" aria-label="{{ pj.toggleLabel }}" style="border:0;background:transparent;width:26px;height:28px;flex-shrink:0;font-size:9px;color:#625d55;border-radius:4px" style-hover="background:#e3ded5"><span style="display:inline-block;transform:rotate({{ pj.rot }})">▶</span></button>
-            <button sc-camel-on-click="{{ pj.onSelect }}" aria-pressed="{{ pj.pressed }}" title="{{ pj.name }}" style="flex:1;min-width:0;border:0;background:transparent;display:flex;align-items:center;gap:7px;padding:5px 2px;text-align:left;font-size:14px;color:#37352f">
-              <span style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:{{ pj.swatch }};box-shadow:{{ pj.ring }}"></span>
+          <div class="ly-scope" data-sel="{{ pj.sel }}">
+            <button sc-camel-on-click="{{ pj.onToggle }}" aria-expanded="{{ pj.openAttr }}" aria-label="{{ pj.toggleLabel }}" style="border:0;background:transparent;width:26px;height:28px;flex-shrink:0;font-size:9px;color:#625d55;border-radius:4px" style-hover="background:rgba(29,27,24,0.08)"><span style="display:inline-block;transform:rotate({{ pj.rot }})">▶</span></button>
+            <button class="ly-scopebtn" data-scope="{{ pj.name }}" data-virt="{{ pj.virtAttr }}" sc-camel-on-click="{{ pj.onSelect }}" aria-current="{{ pj.current }}" title="{{ pj.name }}" style="flex:1;min-width:0;border:0;background:transparent;display:flex;align-items:center;gap:7px;padding:5px 2px;text-align:left;font-size:14px">
+              <sc-if value="{{ pj.real }}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:{{ pj.swatch }};box-shadow:{{ pj.ring }}"></span></sc-if>
+              <sc-if value="{{ pj.virt }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width:10px;height:6px;margin-top:3px;flex-shrink:0;border:1.5px solid #8a8479;border-top:0;border-radius:0 0 2px 2px"></span></sc-if>
               <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ pj.name }}</span>
             </button>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;padding:0 2px">{{ pj.count }}</span>
-            <sc-if value="{{ pj.menuable }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ pj.onMenu }}" aria-label="{{ pj.menuLabel }}" aria-expanded="{{ pj.menuAttr }}" title="改名或刪除" style="border:0;background:transparent;width:24px;height:26px;flex-shrink:0;color:#625d55;font-size:14px;border-radius:4px" style-hover="background:#e3ded5">⋯</button></sc-if><sc-if value="{{ pj.virt }}" hint-placeholder-val="{{ false }}"><span style="width:24px;flex-shrink:0"></span></sc-if>
+            <sc-if value="{{ pj.menuable }}" hint-placeholder-val="{{ true }}"><button sc-camel-on-click="{{ pj.onMenu }}" aria-label="{{ pj.menuLabel }}" aria-expanded="{{ pj.menuAttr }}" title="改名、複製 BibTeX 或刪除" style="border:0;background:transparent;width:24px;height:26px;flex-shrink:0;color:#625d55;font-size:14px;border-radius:4px" style-hover="background:rgba(29,27,24,0.08)">⋯</button></sc-if><sc-if value="{{ pj.virt }}" hint-placeholder-val="{{ false }}"><span style="width:24px;flex-shrink:0"></span></sc-if>
           </div>
           <sc-if value="{{ pj.menuOpen }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-wrap:wrap;gap:4px;padding:4px 4px 6px 22px">
               <input value="{{ renameDraft }}" sc-camel-on-change="{{ onRenameDraft }}" sc-camel-on-key-down="{{ pj.onRenameKey }}" aria-label="新的專案名稱" style="flex:1 1 100%;min-width:0;padding:5px 8px;border:1px solid #d6d0c4;border-radius:5px;font-size:13px;background:#fff;outline:none">
-              <button sc-camel-on-click="{{ pj.onRename }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:5px;padding:4px 10px;font-size:12px">改名</button>
+              <button class="ly-darkbtn" sc-camel-on-click="{{ pj.onRename }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:5px;padding:4px 10px;font-size:12px">改名</button>
+              <button sc-camel-on-click="{{ pj.onBib }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:5px;padding:4px 10px;font-size:12px">{{ pj.bibLabel }}</button>
               <button sc-camel-on-click="{{ pj.onDelete }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:5px;padding:4px 10px;font-size:12px;color:oklch(0.5 0.15 25)">刪除專案</button>
             </div>
           </sc-if>
           <sc-if value="{{ pj.open }}" hint-placeholder-val="{{ false }}">
             <div style="display:flex;flex-direction:column;gap:1px;padding:1px 0 4px 22px">
-              <sc-for list="{{ pj.papers }}" as="pp" hint-placeholder-count="2"><button class="ly-sbrow" sc-camel-on-click="{{ pp.onClick }}" title="{{ pp.full }}" aria-current="{{ pp.current }}" style="background:{{ pp.bg }};font-size:13px;padding:4px 8px;min-height:26px"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Noto Serif TC',serif">{{ pp.title }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;flex-shrink:0">{{ pp.prog }}</span></button></sc-for>
+              <sc-for list="{{ pj.papers }}" as="pp" hint-placeholder-count="2"><button class="ly-sbrow ly-paperrow" sc-camel-on-click="{{ pp.onClick }}" title="{{ pp.full }}"><span aria-hidden="true" style="width:6px;height:6px;border-radius:50%;flex-shrink:0;background:{{ pp.dot }}"></span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Noto Serif TC',serif;font-weight:{{ pp.weight }};color:{{ pp.color }}">{{ pp.title }}</span><span class="ly-sr">{{ pp.sr }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55;flex-shrink:0">{{ pp.prog }}</span></button></sc-for>
               <sc-if value="{{ pj.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55;padding:4px 8px">{{ pj.emptyText }}</div></sc-if>
             </div>
           </sc-if>
         </div>
       </sc-for>
-      <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 8px 0"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;display:inline-flex;align-items:center;gap:6px">關鍵詞 <span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></div></sc-if>
     </div>
-    <div style="border-top:1px solid #e2ddd3;padding:8px 10px 8px 14px;font-size:11px;color:#625d55;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px">
-      <span style="font-family:'IBM Plex Mono',monospace;flex:1 1 100%;min-width:0;line-height:1.5">{{ stats }}</span>
-      <button sc-camel-on-click="{{ exportAllBib }}" title="{{ bibTitle }}" style="border:0;background:none;font-size:11px;color:#625d55;text-decoration:underline;padding:4px 0;white-space:nowrap;margin-right:auto">{{ bibLabel }}</button>
-      <button sc-camel-on-click="{{ closeSb }}" title="收合側欄" aria-label="收合側欄" style="border:0;background:transparent;border-radius:4px;width:24px;height:24px;color:#625d55" style-hover="background:#e3ded5">«</button>
+    <div style="border-top:1px solid #e2ddd3;padding:6px 8px 8px;display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;align-items:center;gap:4px">
+        <button class="ly-sbrow" sc-camel-on-click="{{ openBackup }}" style="flex:1;width:auto"><span aria-hidden="true" style="width:18px;text-align:center;color:#625d55">⚙</span>設定與備份</button>
+        <button sc-camel-on-click="{{ closeSb }}" title="收合側欄" aria-label="收合側欄" style="border:0;background:transparent;border-radius:4px;width:28px;height:28px;color:#625d55;flex-shrink:0" style-hover="background:rgba(29,27,24,0.08)">«</button>
+      </div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;line-height:1.5;padding:2px 8px 0">{{ stats }}</span>
     </div>
   </aside>
   <sc-if value="{{ sbScrim }}" hint-placeholder-val="{{ false }}"><div sc-camel-on-click="{{ closeSb }}" aria-hidden="true" style="position:fixed;inset:0;background:rgba(29,27,24,0.3);z-index:29"></div></sc-if>
-  <div class="ly-mainwrap" style="display:grid;grid-template-rows:44px minmax(0,1fr);min-height:0;min-width:0">
-    <header class="ly-top" style="display:flex;align-items:center;gap:8px;padding:0 14px;border-bottom:1px solid #e2ddd3;background:#faf9f6;min-width:0">
+  <div class="ly-mainwrap" style="display:grid;grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr);min-height:0;min-width:0">
+    <div class="ly-topwrap" style="min-width:0">
+    <header class="ly-top" style="display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-bottom:1px solid #e2ddd3;background:#faf9f6;min-width:0">
+      <div class="ly-toprow">
       <sc-if value="{{ showSbBtn }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ openSb }}" aria-label="開啟側欄" title="開啟側欄" style="border:0;background:transparent;border-radius:5px;width:30px;height:30px;font-size:16px;flex-shrink:0" style-hover="background:#ece8e0">☰</button></sc-if>
-      <nav aria-label="目前位置" style="display:flex;align-items:center;gap:2px;min-width:0;font-size:13px;overflow:hidden">
-        <sc-for list="{{ crumbs }}" as="cb" hint-placeholder-count="2"><span aria-hidden="true" class="{{ cb.sepCls }}" style="color:#bdb6a9;display:{{ cb.sepDisp }}">/</span><sc-if value="{{ cb.btn }}" hint-placeholder-val="{{ false }}"><button class="{{ cb.cls }}" sc-camel-on-click="{{ cb.onClick }}" title="{{ cb.title }}" style="border:0;background:transparent;border-radius:4px;padding:3px 6px;color:{{ cb.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:{{ cb.max }}" style-hover="background:#ece8e0">{{ cb.label }}</button></sc-if><sc-if value="{{ cb.txt }}" hint-placeholder-val="{{ true }}"><span class="{{ cb.cls }}" aria-current="{{ cb.cur }}" title="{{ cb.title }}" style="padding:3px 6px;color:{{ cb.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:{{ cb.max }}">{{ cb.label }}</span></sc-if></sc-for>
-      </nav>
+      <button id="lunyi-scope-btn" class="ly-scopechip" sc-camel-on-click="{{ scopeChip.onClick }}" title="{{ scopeChip.title }}" aria-label="{{ scopeChip.aria }}" style="display:flex;align-items:center;gap:6px;min-width:0;max-width:260px;flex:0 1 auto;border:1px solid #e2ddd3;background:#fff;border-radius:6px;padding:3px 9px;font-size:13px;white-space:nowrap" style-hover="border-color:#bdb6a9">
+        <span class="ly-scopelbl" style="font-size:11px;color:#625d55">範圍</span>
+        <sc-if value="{{ scopeChip.real }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width:9px;height:9px;border-radius:2px;flex-shrink:0;background:{{ scopeChip.swatch }};box-shadow:{{ scopeChip.ring }}"></span></sc-if>
+        <sc-if value="{{ scopeChip.virt }}" hint-placeholder-val="{{ false }}"><span aria-hidden="true" style="width:10px;height:6px;margin-top:3px;flex-shrink:0;border:1.5px solid #8a8479;border-top:0;border-radius:0 0 2px 2px"></span></sc-if>
+        <span style="overflow:hidden;text-overflow:ellipsis;font-weight:600;min-width:0">{{ scopeChip.name }}</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;flex-shrink:0">{{ scopeChip.count }}</span>
+      </button>
+      <sc-if value="{{ tabsInline }}" hint-placeholder-val="{{ true }}"><nav class="ly-tabs" aria-label="工作區">
+        <sc-for list="{{ layoutTabs }}" as="t" hint-placeholder-count="5"><button class="ly-tab" sc-camel-on-click="{{ t.onClick }}" aria-current="{{ t.current }}">{{ t.label }}</button></sc-for>
+      </nav></sc-if>
       <div style="flex:1"></div>
       <sc-if value="{{ hasSaveErr }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ showSaveErr }}" title="{{ saveErr }}" style="border:1px solid #f0d2c2;background:#fbeee6;color:#7a2e12;border-radius:999px;padding:4px 11px;font-size:12px;white-space:nowrap;flex-shrink:0">⚠ 尚未儲存</button></sc-if>
       <button sc-camel-on-click="{{ openAiSettings }}" title="{{ aiChipTitle }}" style="border:1px solid #e2ddd3;background:#fff;border-radius:999px;padding:4px 11px;font-size:12px;display:flex;align-items:center;gap:7px;white-space:nowrap;min-width:84px;max-width:320px;flex-shrink:1" style-hover="border-color:#bdb6a9"><span style="width:8px;height:8px;border-radius:50%;background:{{ aiDot }};flex-shrink:0"></span><span style="overflow:hidden;text-overflow:ellipsis">{{ aiChip }}</span></button>
-    </header>
-
-  <sc-if value="{{ isH }}" hint-placeholder-val="{{ false }}">
-    <main class="ly-main" style="min-height:0;overflow:auto;background:#faf9f6">
-      <div class="ly-homein" style="max-width:940px;margin:0 auto;padding:40px 44px 80px;display:flex;flex-direction:column;gap:28px">
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:12px;color:#625d55;display:flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:2px;background:{{ home.swatch }};box-shadow:{{ home.ring }}"></span>專案</div>
-          <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-size:30px;line-height:1.3;font-weight:600;overflow-wrap:anywhere">{{ home.name }}</h1>
-          <label style="display:flex;flex-direction:column;gap:6px;margin-top:6px">
-            <span style="font-size:13px;font-weight:600">研究方向</span>
-            <input id="lunyi-proj-dir" value="{{ projDir }}" sc-camel-on-change="{{ onProjDir }}" sc-camel-on-key-down="{{ onProjDirKey }}" sc-camel-on-blur="{{ saveProjDir }}" placeholder="例如：transformer、預訓練、低資源翻譯（用逗號或空白分開）" style="padding:10px 12px;border:1px solid #d6d0c4;border-radius:6px;background:#fff;font-size:14px;outline:none">
-            <span style="font-size:12px;color:#625d55;line-height:1.6">{{ home.dirHint }}</span>
-          </label>
-        </div>
-
-        <section aria-labelledby="lunyi-h-papers" style="display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;align-items:center;gap:10px"><h2 id="lunyi-h-papers" style="margin:0;font-size:16px;font-weight:600">這個專案的論文</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#625d55">{{ home.count }}</span><div style="flex:1"></div><button sc-camel-on-click="{{ openMatrix }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">用比較矩陣比較</button><button sc-camel-on-click="{{ openAdd }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">＋ 新增論文到這個專案</button></div>
-          <sc-for list="{{ home.papers }}" as="hp" hint-placeholder-count="2">
-            <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:10px 12px">
-              <button sc-camel-on-click="{{ hp.onOpen }}" title="{{ hp.title }}" style="flex:1;min-width:0;border:0;background:transparent;text-align:left;padding:0;display:flex;flex-direction:column;gap:3px" style-hover="color:oklch(0.42 0.1 200)"><span style="font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hp.title }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ hp.meta }}</span></button>
-              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;white-space:nowrap">{{ hp.prog }}</span>
-              <button sc-camel-on-click="{{ hp.onLeave }}" aria-label="{{ hp.leaveLabel }}" title="{{ hp.leaveLabel }}" style="border:1px solid #e2ddd3;background:transparent;border-radius:5px;padding:4px 9px;font-size:12px;color:#625d55;white-space:nowrap" style-hover="border-color:#bdb6a9">移出</button>
-            </div>
-          </sc-for>
-          <sc-if value="{{ home.noPapers }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7;background:#fff;border:1px dashed #d6d0c4;border-radius:8px;padding:14px 16px">這是一個乾淨的新專案。從下方的推薦把論文加進來，或按「新增論文到這個專案」。論文仍會留在「全部論文」，同一篇可以放進好幾個專案。</div></sc-if>
-        </section>
-
-        <section aria-labelledby="lunyi-h-recs" style="display:flex;flex-direction:column;gap:8px">
-          <div><h2 id="lunyi-h-recs" style="margin:0;font-size:16px;font-weight:600">從全部論文推薦</h2><div style="font-size:12px;color:#625d55;margin-top:3px">依研究方向、專案裡論文的關鍵詞與引用，找出還沒加入、最相關的{{ home.recN }}</div></div>
-          <div class="ly-rec" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
-            <sc-for list="{{ home.recs }}" as="rc" hint-placeholder-count="0">
-              <div style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0">
-                <button sc-camel-on-click="{{ rc.onOpen }}" title="在全部論文中開啟" style="border:0;background:transparent;text-align:left;padding:0;font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;line-height:1.4" style-hover="color:oklch(0.42 0.1 200)">{{ rc.title }}</button>
-                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ rc.meta }}</span>
-                <div style="display:flex;flex-direction:column;gap:3px"><sc-for list="{{ rc.why }}" as="w" hint-placeholder-count="1"><span style="font-size:12px;color:oklch(0.36 0.09 200);line-height:1.5">・{{ w }}</span></sc-for></div>
-                <div style="flex:1"></div>
-                <button sc-camel-on-click="{{ rc.onJoin }}" aria-label="{{ rc.joinLabel }}" style="align-self:flex-start;border:0;background:#1d1b18;color:#faf9f6;border-radius:6px;padding:5px 12px;font-size:12px">加入專案</button>
-              </div>
-            </sc-for>
-          </div>
-          <sc-if value="{{ home.noRecs }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7">{{ home.recEmpty }}</div></sc-if>
-        </section>
-
-        <section aria-labelledby="lunyi-h-links" style="display:flex;flex-direction:column;gap:8px">
-          <div><h2 id="lunyi-h-links" style="margin:0;font-size:16px;font-weight:600">推薦串聯</h2><div style="font-size:12px;color:#625d55;margin-top:3px">專案裡有共同關鍵詞或引用關係、但還沒手動串聯的論文；加入後會出現在閱讀器的串聯面板與圖譜</div></div>
-          <sc-for list="{{ home.links }}" as="lk" hint-placeholder-count="0">
-            <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:10px 12px">
-              <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:13px;line-height:1.5"><span style="font-family:'Noto Serif TC',serif;font-weight:600">{{ lk.a }}</span><span style="color:#625d55"> ↔ </span><span style="font-family:'Noto Serif TC',serif;font-weight:600">{{ lk.b }}</span></span><span style="font-size:12px;color:#625d55">{{ lk.note }}</span></div>
-              <button sc-camel-on-click="{{ lk.onAdd }}" style="border:1px solid #1d1b18;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px;white-space:nowrap">加入串聯</button>
-            </div>
-          </sc-for>
-          <sc-if value="{{ home.noLinks }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7">{{ home.linkEmpty }}</div></sc-if>
-        </section>
-
-        <section aria-labelledby="lunyi-h-search" style="display:flex;flex-direction:column;gap:8px">
-          <div><h2 id="lunyi-h-search" style="margin:0;font-size:16px;font-weight:600">找新文獻</h2><div style="font-size:12px;color:#625d55;margin-top:3px">用研究方向的關鍵詞到 Google 學術搜尋還沒收錄的論文。按下才會在新分頁開啟，網站不會傳送你的資料。</div></div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px">
-            <sc-for list="{{ home.searches }}" as="sr" hint-placeholder-count="0"><a href="{{ sr.href }}" target="_blank" rel="noopener" style="border:1px solid #d6d0c4;background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;text-decoration:none;color:#1d1b18">{{ sr.label }} ↗</a></sc-for>
-          </div>
-          <sc-if value="{{ home.noSearch }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55">填寫研究方向後，這裡會出現搜尋連結。</div></sc-if>
-        </section>
       </div>
-    </main>
-  </sc-if>
+      <sc-if value="{{ tabsBelow }}" hint-placeholder-val="{{ false }}"><nav class="ly-tabs" aria-label="工作區">
+        <sc-for list="{{ layoutTabs }}" as="t" hint-placeholder-count="5"><button class="ly-tab" sc-camel-on-click="{{ t.onClick }}" aria-current="{{ t.current }}">{{ t.label }}</button></sc-for>
+      </nav></sc-if>
+    </header>
+    <sc-if value="{{ fbarOn }}" hint-placeholder-val="{{ false }}">
+      <div class="ly-fbar" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;padding:6px 14px;border-bottom:1px solid #e2ddd3;background:oklch(0.97 0.012 200);font-size:12px">
+        <span style="color:#37352f;font-weight:500">篩選中</span>
+        <sc-if value="{{ fbarHasQ }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ fbarClearQ }}" title="清除搜尋" aria-label="{{ fbarQAria }}" style="border:1px solid oklch(0.45 0.1 200);background:#fff;color:oklch(0.36 0.09 200);border-radius:999px;padding:2px 10px;font-size:12px;display:inline-flex;align-items:center;gap:6px;max-width:100%;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">搜尋「{{ fbarQ }}」</span><span aria-hidden="true">✕</span></button></sc-if>
+        <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ fbarClearKw }}" title="取消關鍵詞篩選" aria-label="{{ fbarKwAria }}" style="border:1px solid oklch(0.45 0.1 200);background:#fff;color:oklch(0.36 0.09 200);border-radius:999px;padding:2px 10px;font-size:12px;display:inline-flex;align-items:center;gap:6px;max-width:100%;min-width:0"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">關鍵詞「<span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>」</span><span aria-hidden="true">✕</span></button></sc-if>
+        <span style="color:#625d55">{{ fbarCount }}</span>
+      </div>
+    </sc-if>
+    </div>
 
   <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
     <div class="ly-cols2" style="display:grid;grid-template-columns:{{ readerCols }};min-height:0">
@@ -263,7 +250,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
           <article class="ly-article" style="max-width:1000px;margin:0 auto;padding:34px 44px 96px">
             <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#625d55;letter-spacing:0.03em">
               <span>{{ curMeta }}</span><span>{{ curLang }}</span>
-              <span style="display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;font-family:'Noto Sans TC',sans-serif;letter-spacing:0">
+              <span class="ly-projchips" style="display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;font-family:'Noto Sans TC',sans-serif;letter-spacing:0">
                 <sc-for list="{{ curProj }}" as="cp" hint-placeholder-count="1"><span style="display:inline-flex;align-items:center;gap:4px;border:1px solid #e2ddd3;background:#fff;border-radius:4px;padding:1px 1px 1px 6px;font-size:11px;color:#37352f"><span style="width:7px;height:7px;border-radius:2px;background:{{ cp.swatch }};box-shadow:{{ cp.ring }}"></span>{{ cp.name }}<button sc-camel-on-click="{{ cp.onRemove }}" aria-label="{{ cp.rmLabel }}" title="{{ cp.rmLabel }}" style="border:0;background:transparent;color:#625d55;font-size:10px;padding:1px 4px;border-radius:3px" style-hover="background:#ece8e0">✕</button></span></sc-for>
                 <sc-raw-select value="{{ joinVal }}" sc-camel-on-change="{{ onJoinCur }}" title="加入專案" aria-label="加入專案" style="border:1px dashed #bdb6a9;background:transparent;border-radius:4px;font-size:11px;padding:1px 3px;color:#625d55">
                   <option value="">＋ 加入專案</option>
@@ -430,13 +417,6 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
               <button sc-camel-on-click="{{ ef.onClick }}" aria-pressed="{{ ef.pressed }}" title="{{ ef.title }}" style="border:1px solid {{ ef.line }};background:{{ ef.bg }};color:{{ ef.color }};border-radius:5px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;text-decoration:{{ ef.deco }}"><span style="width:18px;height:0;border-top:2px {{ ef.dash }} {{ ef.swatch }};opacity:{{ ef.op }}"></span>{{ ef.label }}</button>
             </sc-for>
           </div>
-          <div style="flex:1"></div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">
-            <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
-            <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
-              <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}</button>
-            </sc-for>
-          </div>
         </div>
         <div class="ly-graph" style="position:relative;margin:36px 110px 56px">
           {{ graphSvg }}
@@ -507,7 +487,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
                 <div style="font-size:14px;line-height:1.85;white-space:pre-wrap;color:#2c2925"><sc-for list="{{ x.segs }}" as="sg" hint-placeholder-count="1"><span>{{ sg.text }}</span><sc-if value="{{ sg.isRef }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ sg.onClick }}" style="border:0;background:oklch(0.93 0.035 200);color:oklch(0.34 0.09 200);border-radius:3px;padding:0 5px;margin:0 2px;font-family:'IBM Plex Mono',monospace;font-size:11px">{{ sg.label }}</button></sc-if></sc-for></div>
               </div>
             </sc-for>
-            <sc-if value="{{ asking }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:oklch(0.45 0.1 200)">正在翻閱文獻庫…</div></sc-if>
+            <sc-if value="{{ asking }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:oklch(0.45 0.1 200)">{{ askingText }}</div></sc-if>
             <div class="ly-sr" role="status" aria-live="polite">{{ chatLive }}</div>
           </div>
         </div>
@@ -520,6 +500,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
       </main>
       <aside class="ly-side" style="border-left:1px solid #e2ddd3;overflow:auto;padding:22px 22px 60px;display:flex;flex-direction:column;gap:12px">
         <div style="font-size:11px;color:#625d55;letter-spacing:0.06em">來源原文</div>
+        <sc-if value="{{ curOutOn }}" hint-placeholder-val="{{ false }}"><div role="note" style="font-size:12px;line-height:1.6;color:#37352f;background:#f1eee8;border-radius:6px;padding:7px 10px">{{ curOutText }}</div></sc-if>
         <sc-if value="{{ hasPaper }}" hint-placeholder-val="{{ true }}">
           <h3 style="margin:0;font-family:'Noto Serif TC',serif;font-size:18px;line-height:1.35;font-weight:600">{{ cur.title }}</h3>
           <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ cur.authors }} · {{ cur.journal }} {{ cur.year }}</div>
@@ -537,20 +518,28 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   </sc-if>
 
   <sc-if value="{{ isD }}" hint-placeholder-val="{{ false }}">
-    <main class="ly-main ly-dash" style="min-height:0;overflow:auto;background:#faf9f6;padding:24px 32px 64px">
+    <main class="ly-main ly-dash" style="min-height:0;min-width:0;overflow:auto;background:#faf9f6;padding:24px 32px 64px">
       <div style="max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
-        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
-          <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">文獻庫總覽</h2>
-          <span style="font-size:12px;color:#625d55">{{ dashScope }}</span>
-          <button sc-camel-on-click="{{ openMatrix }}" style="border:0;background:none;padding:2px 0;font-size:12px;color:oklch(0.42 0.1 200);text-decoration:underline">比較矩陣 →</button>
-          <div style="flex:1"></div>
-          <div style="display:flex;flex-wrap:wrap;gap:5px">
-            <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
-            <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
-              <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;opacity:0.65">{{ f.count }}</span></button>
-            </sc-for>
+        <sc-if value="{{ dashPlain }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">{{ dashTitle }}</h2>
+            <span style="font-size:12px;color:#625d55">{{ dashCount }}</span>
+            <div style="flex:1"></div>
+            <button sc-camel-on-click="{{ exportAllBib }}" title="{{ bibTitle }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">{{ bibLabel }}</button>
           </div>
-        </div>
+        </sc-if>
+        <sc-if value="{{ dashProj }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:12px;color:#625d55;display:flex;align-items:center;gap:7px"><span style="width:10px;height:10px;border-radius:2px;background:{{ home.swatch }};box-shadow:{{ home.ring }}"></span>專案總覽</div>
+            <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-size:28px;line-height:1.3;font-weight:600;overflow-wrap:anywhere">{{ home.name }}</h1>
+            <label style="display:flex;flex-direction:column;gap:6px;margin-top:4px;max-width:760px">
+              <span style="font-size:13px;font-weight:600">研究方向</span>
+              <input id="lunyi-proj-dir" value="{{ projDir }}" sc-camel-on-change="{{ onProjDir }}" sc-camel-on-key-down="{{ onProjDirKey }}" sc-camel-on-blur="{{ saveProjDir }}" placeholder="例如：transformer、預訓練、低資源翻譯（用逗號或空白分開）" style="padding:10px 12px;border:1px solid #d6d0c4;border-radius:6px;background:#fff;font-size:14px;outline:none">
+              <span style="font-size:12px;color:#625d55;line-height:1.6">{{ home.dirHint }}</span>
+            </label>
+          </div>
+        </sc-if>
+        <sc-if value="{{ dashStats }}" hint-placeholder-val="{{ true }}">
         <div class="ly-kpis" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
           <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="5">
             <div style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0">
@@ -561,13 +550,63 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             </div>
           </sc-for>
         </div>
+        </sc-if>
+        <sc-if value="{{ dashProj }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:28px;margin:8px 0 12px">
+            <section aria-labelledby="lunyi-h-papers" style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:8px 10px;flex-wrap:wrap"><h2 id="lunyi-h-papers" style="margin:0;font-size:16px;font-weight:600">這個專案的論文</h2><span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#625d55">{{ home.count }}</span><div style="flex:1"></div><button sc-camel-on-click="{{ exportAllBib }}" title="{{ bibTitle }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">{{ bibLabel }}</button><button sc-camel-on-click="{{ openMatrix }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">用比較矩陣比較</button><button sc-camel-on-click="{{ openAdd }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">＋ 新增論文到這個專案</button></div>
+              <sc-for list="{{ home.papers }}" as="hp" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:10px 12px">
+                  <button sc-camel-on-click="{{ hp.onOpen }}" title="{{ hp.title }}" style="flex:1;min-width:0;border:0;background:transparent;text-align:left;padding:0;display:flex;flex-direction:column;gap:3px" style-hover="color:oklch(0.42 0.1 200)"><span style="font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ hp.title }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ hp.meta }}</span></button>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;white-space:nowrap">{{ hp.prog }}</span>
+                  <button sc-camel-on-click="{{ hp.onLeave }}" aria-label="{{ hp.leaveLabel }}" title="{{ hp.leaveLabel }}" style="border:1px solid #e2ddd3;background:transparent;border-radius:5px;padding:4px 9px;font-size:12px;color:#625d55;white-space:nowrap" style-hover="border-color:#bdb6a9">移出</button>
+                </div>
+              </sc-for>
+              <sc-if value="{{ home.noPapers }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7;background:#fff;border:1px dashed #d6d0c4;border-radius:8px;padding:14px 16px">這是一個乾淨的新專案。從下方的推薦把論文加進來，或按「新增論文到這個專案」。論文仍會留在「全部論文」，同一篇可以放進好幾個專案。</div></sc-if>
+              <sc-if value="{{ home.noMatch }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7">這個專案沒有符合目前搜尋或關鍵詞的論文；清除上方的篩選就會列出全部。</div></sc-if>
+            </section>
+            <section aria-labelledby="lunyi-h-recs" style="display:flex;flex-direction:column;gap:8px">
+              <div><h2 id="lunyi-h-recs" style="margin:0;font-size:16px;font-weight:600">從全部論文推薦</h2><div style="font-size:12px;color:#625d55;margin-top:3px">依研究方向、專案裡論文的關鍵詞與引用，找出還沒加入、最相關的{{ home.recN }}</div></div>
+              <div class="ly-rec" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+                <sc-for list="{{ home.recs }}" as="rc" hint-placeholder-count="0">
+                  <div style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0">
+                    <button sc-camel-on-click="{{ rc.onOpen }}" title="在全部論文中開啟" style="border:0;background:transparent;text-align:left;padding:0;font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;line-height:1.4" style-hover="color:oklch(0.42 0.1 200)">{{ rc.title }}</button>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ rc.meta }}</span>
+                    <div style="display:flex;flex-direction:column;gap:3px"><sc-for list="{{ rc.why }}" as="w" hint-placeholder-count="1"><span style="font-size:12px;color:oklch(0.36 0.09 200);line-height:1.5">・{{ w }}</span></sc-for></div>
+                    <div style="flex:1"></div>
+                    <button sc-camel-on-click="{{ rc.onJoin }}" aria-label="{{ rc.joinLabel }}" style="align-self:flex-start;border:0;background:#1d1b18;color:#faf9f6;border-radius:6px;padding:5px 12px;font-size:12px">加入專案</button>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ home.noRecs }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7">{{ home.recEmpty }}</div></sc-if>
+            </section>
+            <section aria-labelledby="lunyi-h-search" style="display:flex;flex-direction:column;gap:8px">
+              <div><h2 id="lunyi-h-search" style="margin:0;font-size:16px;font-weight:600">找新文獻</h2><div style="font-size:12px;color:#625d55;margin-top:3px">用研究方向的關鍵詞到 Google 學術搜尋還沒收錄的論文。按下才會在新分頁開啟，網站不會傳送你的資料。</div></div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">
+                <sc-for list="{{ home.searches }}" as="sr" hint-placeholder-count="0"><a href="{{ sr.href }}" target="_blank" rel="noopener" style="border:1px solid #d6d0c4;background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;text-decoration:none;color:#1d1b18">{{ sr.label }} ↗</a></sc-for>
+              </div>
+              <sc-if value="{{ home.noSearch }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55">填寫研究方向後，這裡會出現搜尋連結。</div></sc-if>
+            </section>
+            <section aria-labelledby="lunyi-h-links" style="display:flex;flex-direction:column;gap:8px">
+              <div><h2 id="lunyi-h-links" style="margin:0;font-size:16px;font-weight:600">推薦串聯</h2><div style="font-size:12px;color:#625d55;margin-top:3px">專案裡有共同關鍵詞或引用關係、但還沒手動串聯的論文；加入後會出現在閱讀器的串聯面板與圖譜</div></div>
+              <sc-for list="{{ home.links }}" as="lk" hint-placeholder-count="0">
+                <div style="display:flex;align-items:center;gap:12px;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:10px 12px">
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:13px;line-height:1.5"><span style="font-family:'Noto Serif TC',serif;font-weight:600">{{ lk.a }}</span><span style="color:#625d55"> ↔ </span><span style="font-family:'Noto Serif TC',serif;font-weight:600">{{ lk.b }}</span></span><span style="font-size:12px;color:#625d55">{{ lk.note }}</span></div>
+                  <button sc-camel-on-click="{{ lk.onAdd }}" style="border:1px solid #1d1b18;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px;white-space:nowrap">加入串聯</button>
+                </div>
+              </sc-for>
+              <sc-if value="{{ home.noLinks }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:#625d55;line-height:1.7">{{ home.linkEmpty }}</div></sc-if>
+            </section>
+          </div>
+        </sc-if>
+        <sc-if value="{{ dashStats }}" hint-placeholder-val="{{ true }}">
         <div class="ly-dash-grid" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px">
           <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
             <div><div style="font-size:14px;font-weight:500">出版年份</div><div style="font-size:12px;color:#625d55;margin-top:2px">每年收錄幾篇，看出文獻集中在哪個時期</div></div>
             {{ yearChart }}
           </section>
           <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
-            <div><div style="font-size:14px;font-weight:500">專案組成</div><div style="font-size:12px;color:#625d55;margin-top:2px">點色塊或列表可篩選；同一專案在圖譜和側欄用同一顏色</div></div>
+            <div><div style="font-size:14px;font-weight:500">專案組成</div><div style="font-size:12px;color:#625d55;margin-top:2px">點色塊或列表可切換範圍到該專案，再點一次回到全部論文；同一專案在圖譜和側欄用同一顏色</div></div>
             {{ folderChart }}
           </section>
           <section style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0">
@@ -593,6 +632,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             </div>
           </section>
         </div>
+        </sc-if>
       </div>
     </main>
   </sc-if>
@@ -602,14 +642,6 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
         <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
           <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
             <h2 id="lunyi-mx-title" style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">文獻比較矩陣</h2>
-            <span style="font-size:12px;color:#625d55">{{ dashScope }}</span>
-            <div style="flex:1"></div>
-            <div style="display:flex;flex-wrap:wrap;gap:5px">
-              <sc-if value="{{ hasKw }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ clearKw }}" title="取消關鍵詞篩選" style="border:1px solid oklch(0.45 0.1 200);background:oklch(0.95 0.025 200);color:oklch(0.36 0.09 200);border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="font-family:'IBM Plex Mono',monospace">{{ kwLabel }}</span>✕</button></sc-if>
-              <sc-for list="{{ folders }}" as="f" hint-placeholder-count="3">
-                <button sc-camel-on-click="{{ f.onClick }}" aria-pressed="{{ f.pressed }}" style="border:1px solid {{ f.line }};background:{{ f.bg }};color:{{ f.color }};border-radius:5px;padding:3px 9px;font-size:12px;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px"><span style="display:{{ f.swDisp }};width:8px;height:8px;border-radius:2px;background:{{ f.swatch }}"></span>{{ f.label }}<span style="font-family:'IBM Plex Mono',monospace;opacity:0.65">{{ f.count }}</span></button>
-              </sc-for>
-            </div>
           </div>
           <div class="ly-tools" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
             <div role="group" aria-label="檢視方式" style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px">
@@ -705,6 +737,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
         <textarea value="{{ form.text }}" sc-camel-on-change="{{ onF.text }}" rows="9" placeholder="貼上摘要或段落（任何語言，以空行分段）…" style="padding:11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-family:'Noto Serif TC',Georgia,serif;font-size:13px;line-height:1.7;resize:vertical;outline:none"></textarea>
       </sc-if>
       <div style="font-size:12px;color:#625d55;line-height:1.6">{{ addHint }}</div>
+      <sc-if value="{{ addProjOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:12.5px;line-height:1.6;color:#37352f;background:#fff;border:1px solid #e2ddd3;border-radius:6px;padding:7px 10px">會加入專案「{{ addProjName }}」；要放到別的專案就修改下方的「專案」欄，清空就不放進專案。</div></sc-if>
       <input value="{{ form.title }}" sc-camel-on-change="{{ onF.title }}" placeholder="標題" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:14px;outline:none">
       <div class="ly-form4" style="display:grid;grid-template-columns:1.6fr 1.3fr 0.7fr 1fr;gap:8px">
         <input value="{{ form.authors }}" sc-camel-on-change="{{ onF.authors }}" placeholder="作者" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
@@ -1387,7 +1420,7 @@ class Component extends DCLogic {
       linkTarget: '', linkNote: '', toast: '', toastAct: '', chatLive: '', editMeta: null, intro: !this.lsGet('lunyi-intro-seen'), ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
       gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
       projects: [...new Set([...(Array.isArray(d.projects) ? d.projects : []), ...d.papers.flatMap(projOf)])].filter(RESERVED), projAt: d.projAt || {}, projDel: d.projDel || {}, projOpen: d.papers[0] ? { [projOf(d.papers[0])[0] || NOPROJ]: true } : {}, projMeta: d.projMeta && typeof d.projMeta === 'object' ? d.projMeta : {}, projDir: '', newProjDir: '', newProjFor: null, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
-      sbOpen: window.innerWidth >= 1100, narrow: window.innerWidth <= 900, wide: window.innerWidth >= 1100, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
+      sbOpen: matchMedia('(min-width:1100px)').matches, narrow: matchMedia('(max-width:900px)').matches, wide: matchMedia('(min-width:1100px)').matches, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
       showLogin: false, loginMsg: '', loginBusy: '', remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '', mxCols: null, boot: 'pending', bootSlow: false, bootMsg: '', bootAtStart: false, saveErr: '', storeInfo: null, persistBusy: false, ...this.mxInitState() };
   }
   // 比較矩陣的畫面狀態；檢視方式、排序、概念來源與匯出選項記在這台裝置
@@ -1405,7 +1438,7 @@ class Component extends DCLogic {
     this._needKey = e => { const d = e.detail || {}; this.toast((typeof d === 'string' ? d : d.msg) || '需要連結 AI'); this.openSettings(d.tab || 'ai'); };
     window.addEventListener('lunyi-need-key', this._needKey);
     // 視窗變窄時側欄改成浮動抽屜
-    this._rs = () => { const n = window.innerWidth <= 900, w = window.innerWidth >= 1100; if (n !== this.state.narrow || w !== this.state.wide) this.setState({ narrow: n, wide: w, sbOpen: w }); };
+    this._rs = () => { const n = matchMedia('(max-width:900px)').matches, w = matchMedia('(min-width:1100px)').matches; if (n !== this.state.narrow || w !== this.state.wide) this.setState({ narrow: n, wide: w, sbOpen: w }); };
     window.addEventListener('resize', this._rs);
     this._rsL = () => { if (this.state.layout === 'graph') this.fitLabels(); };
     window.addEventListener('resize', this._rsL);
@@ -1465,11 +1498,14 @@ class Component extends DCLogic {
     };
     window.addEventListener('storage', this._store);
     window.lunyiFlush = () => this.flushAll();
+    this.watchTop();
     this.boot();
   }
+  watchTop() { const t = document.querySelector('.ly-topwrap'); if (this._ro || !t || !window.ResizeObserver) return; this._ro = new ResizeObserver(() => document.documentElement.style.setProperty('--ly-toph', Math.ceil(t.getBoundingClientRect().height) + 'px')); this._ro.observe(t); }
   // 執行環境只傳 prevProps，不傳 prevState，上一個 state 要自己記
   componentDidUpdate(pp) {
     const s = this.state, ps = this._ps || s;
+    const hadNote = !!this._note;
     this._ps = s;
     if (pp.layout !== this.props.layout && this.props.layout) this.setState({ layout: this.props.layout });
     if (pp.defaultMode !== this.props.defaultMode && this.props.defaultMode) this.setState({ mode: this.props.defaultMode });
@@ -1481,10 +1517,16 @@ class Component extends DCLogic {
     else if (this._shownPrev !== undefined && this._shown !== this._shownPrev) { this.clearNote(); if (s.selPara != null) this.setState({ selPara: null }); }
     this._shownPrev = this._shown;
     // 閱讀器因為範圍改顯示另一篇：把它當成目前的論文，回到全部論文時才不會又跳回去
-    if (this._adopt) { const id = this._adopt; this._adopt = null; this.setState({ sel: id }); }
+    if (this._adopt) {
+      const id = this._adopt, old = this.find(s.sel), y = this.find(id); this._adopt = null; this.setState({ sel: id });
+      // 換了範圍（或換了範圍後回到閱讀器）：原本那篇不在這個範圍，閱讀器改顯示別篇，要明白說
+      if (old && y && (ps.folder !== s.folder || ps.layout !== s.layout)) { const cut = t => t.length > 26 ? t.slice(0, 25) + '…' : t; this.toast(`「${cut(old.title)}」不在「${this.scopeName(s.folder)}」裡，閱讀器改顯示「${cut(y.title)}」${hadNote ? '；還沒存的筆記草稿已清除' : ''}`, '', 6000); }
+    }
     // 筆記框切分頁或工作區回來會重新出現成空白，把草稿放回去
     { const t = document.querySelector('textarea.ly-note'); if (t && t !== this._noteEl) { this._noteEl = t; if (this._note) t.value = this._note; } }
-    if (ps.projMeta !== s.projMeta && s.layout === 'home') { const od = ((ps.projMeta || {})[s.folder] || {}).dir || '', nd = ((s.projMeta || {})[s.folder] || {}).dir || ''; if (nd !== od && String(s.projDir || '').trim() === od) this.setState({ projDir: nd }); }
+    // 換範圍時，總覽的研究方向輸入框換成那個專案的
+    if (ps.folder !== s.folder) { const d = ((s.projMeta || {})[s.folder] || {}).dir || ''; if (s.projDir !== d) this.setState({ projDir: d }); }
+    else if (ps.projMeta !== s.projMeta && this.isProj(s.folder)) { const od = ((ps.projMeta || {})[s.folder] || {}).dir || '', nd = ((s.projMeta || {})[s.folder] || {}).dir || ''; if (nd !== od && String(s.projDir || '').trim() === od) this.setState({ projDir: nd }); }
     if (s.layout === 'graph') { cancelAnimationFrame(this._fitL); this._fitL = requestAnimationFrame(() => this.fitLabels()); }
     if (ps.q !== s.q) { const i = document.querySelector('input.ly-search'); if (i && i.value !== s.q) i.value = s.q; }
     // 只是重新讀出別的分頁存的內容（這裡沒有其他修改）：不必再上傳
@@ -1493,6 +1535,8 @@ class Component extends DCLogic {
     if (libChanged && !fromDb && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) { if (this._needPull) this.pullThenPush(); else this.autoPush(); } }, 3000); }
     if (ps.papers !== s.papers || ps.projects !== s.projects || ps.projDel !== s.projDel) this.ensureSlots();
     this.syncFocus(ps, s);
+    // 寬度跨過 900px 時分頁換成另一份（手機排在第二行）：原本在分頁上的焦點放回目前的分頁
+    if (ps.narrow !== s.narrow) { const a = document.activeElement; if (!a || a === document.body) this.focusSoon('nav.ly-tabs [aria-current="page"]'); }
     // 手機：開了側欄或視窗時多一筆瀏覽紀錄，按返回鍵會先關掉它，而不是離開網站
     const ov = st => !!(st.acctOpen || st.showLogin || st.showSet || st.showAdd || st.org || (!st.wide && st.sbOpen));
     if (s.narrow && ov(s) && !this._ovPushed) { try { history.pushState({ lunyiOv: 1 }, ''); this._ovPushed = true; } catch (e) {} }
@@ -1847,7 +1891,7 @@ class Component extends DCLogic {
     const { map, changed } = slotMap(this.slotNames(), this.state.fslots);
     if (changed) this.setState({ fslots: map });
   }
-  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('beforeunload', this._bu); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
+  componentWillUnmount() { if (this._ro) this._ro.disconnect(); window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('beforeunload', this._bu); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
   lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
   lsSet(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
   openSettings(tab) {
@@ -2307,7 +2351,17 @@ class Component extends DCLogic {
   toast(msg, link, ms) { if (this._toastFn && Date.now() < (this._undoUntil || 0)) return this.setState({ toast: `${msg}；${this._actMsg || ''}`, toastLink: link || '' }); this._toastFn = null; this.setState({ toast: msg, toastLink: link || '', toastAct: '' }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: '', toastLink: '' }), ms || (link ? 9000 : 2600)); }
   find(id) { return this.state.papers.find(p => p.id === id); }
   upd(id, fn) { this.setState(s => ({ papers: s.papers.map(p => p.id === id ? fn(p) : p) })); }
-  open(id, layout) { const p = this.find(id); this.setState(s => ({ projOpen: p ? { ...s.projOpen, [projOf(p).includes(s.folder) ? s.folder : projOf(p)[0] || NOPROJ]: true } : s.projOpen, sel: id, selPara: null, noteDraft: '', layout: layout || (s.layout === 'home' ? 'reader' : s.layout), hov: null, folder: p && !this.inScope(s.folder)(p) ? '全部' : s.folder })); }
+  // 打開一篇論文。不在目前範圍的論文要換範圍才看得到（換成點的那個專案，否則全部論文），換了就明白說；
+  // AI 對話例外：範圍決定 AI 讀哪些論文，不跟著換，右側照樣顯示原文
+  open(id, layout, nm) {
+    const s = this.state, p = this.find(id), L = layout || s.layout;
+    const folder = !p || L === 'chat' || this.inScope(s.folder)(p) ? s.folder : nm && this.inScope(nm)(p) ? nm : '全部';
+    // 記下在 AI 對話裡特地打開的範圍外論文：離開對話時照樣顯示它（見 navTo）
+    this._chatOut = L === 'chat' && p && !this.inScope(s.folder)(p) ? id : null;
+    this.setState(st => ({ projOpen: p ? { ...st.projOpen, [nm && this.inScope(nm)(p) ? nm : projOf(p).includes(folder) ? folder : projOf(p)[0] || NOPROJ]: true } : st.projOpen, sel: id, selFrom: nm || null, selPara: null, noteDraft: '', layout: L, hov: null, folder }));
+    if (folder !== s.folder) this.toast(`這篇不在「${this.scopeName(s.folder)}」裡，已切換範圍到「${this.scopeName(folder)}」`);
+  }
+  scopeName(f) { return f === '全部' || !f ? '全部論文' : f; }
   async copy(text, label) {
     try { await navigator.clipboard.writeText(text); } catch (e) { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
     this.toast(`已複製 ${label}`);
@@ -2432,16 +2486,18 @@ class Component extends DCLogic {
     }
     const id = 'p' + Date.now().toString(36);
     const paper = { id, title: f.title || meta.title || (s.pdf && s.pdf.name.replace(/\.pdf$/i, '')) || '未命名論文', authors: f.authors || meta.authors || '', journal: f.journal || meta.journal || '', year: f.year || String(meta.year || ''),
-      projects: [(f.folder.trim() !== '全部' && f.folder.trim() !== NOPROJ && f.folder.trim()) || (s.folder !== '全部' && s.folder !== NOPROJ ? s.folder : '')].filter(Boolean), lang: meta.language || '', tags: Array.isArray(meta.tags) ? meta.tags.slice(0, 3) : [], keywords: (() => { const u = [...new Set(String(f.keywords || '').split(/[,，、;；]/).map(norm).filter(Boolean))]; return (u.length ? u : Array.isArray(meta.keywords) ? [...new Set(meta.keywords.map(norm).filter(Boolean))] : []).slice(0, 8); })(),
+      projects: [f.folder.trim() !== '全部' && f.folder.trim() !== NOPROJ && f.folder.trim()].filter(Boolean), lang: meta.language || '', tags: Array.isArray(meta.tags) ? meta.tags.slice(0, 3) : [], keywords: (() => { const u = [...new Set(String(f.keywords || '').split(/[,，、;；]/).map(norm).filter(Boolean))]; return (u.length ? u : Array.isArray(meta.keywords) ? [...new Set(meta.keywords.map(norm).filter(Boolean))] : []).slice(0, 8); })(),
       paras: paras.map(en => ({ en, zh: '' })), cites: [], refText: (refs || '').slice(0, 20000), head: (head || '').slice(0, 3000) };
     Object.assign(paper, normProj(paper));
     const low = (full + ' ' + refs).toLowerCase(), tkey = paper.title.toLowerCase().slice(0, 50);
     paper.cites = s.papers.filter(o => o.title.length > 12 && low.includes(o.title.toLowerCase().slice(0, 50))).map(o => o.id);
     const citedBy = tkey.length > 12 ? s.papers.filter(o => o.refText && o.refText.toLowerCase().includes(tkey)).map(o => o.id) : [];
-    this.setState(st => ({ papers: [...st.papers.map(o => citedBy.includes(o.id) ? { ...o, cites: [...(o.cites || []), id] } : o), paper], sel: id, selPara: null, showAdd: false, form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '', layout: 'reader', folder: this.inScope(st.folder)(paper) ? st.folder : '全部', projOpen: { ...st.projOpen, [paper.folder]: true }, projects: [...new Set([...st.projects, ...paper.projects])],
+    // 存到目前範圍以外的專案：換到它所在的專案（沒有專案就是全部論文），提示裡說明
+    const f0 = this.state.folder, moveTo = this.inScope(f0)(paper) ? f0 : paper.projects[0] || '全部', moved = moveTo !== f0 ? `；已切換範圍到「${this.scopeName(moveTo)}」` : '';
+    this.setState(st => ({ papers: [...st.papers.map(o => citedBy.includes(o.id) ? { ...o, cites: [...(o.cites || []), id] } : o), paper], sel: id, selPara: null, showAdd: false, form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '', layout: 'reader', folder: moveTo, projOpen: { ...st.projOpen, [paper.folder]: true }, projects: [...new Set([...st.projects, ...paper.projects])],
       projAt: { ...st.projAt, ...Object.fromEntries(paper.projects.filter(x => (st.projDel[x] || 0) >= (st.projAt[x] || 0) && st.projDel[x]).map(x => [x, Date.now()])) } }));
     const rel = paper.keywords.length ? s.papers.filter(o => o.keywords.some(k => paper.keywords.includes(norm(k)))).length : 0;
-    this.toast(aiErr ? `已儲存，但 AI 沒有辨識出標題與關鍵詞：${aiErr}` : this.hasCloud() ? `已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用` : '已儲存。連結雲端 AI 後可自動辨識標題與關鍵詞、串聯相關論文', null, aiErr ? 9000 : undefined);
+    this.toast((aiErr ? `已儲存，但 AI 沒有辨識出標題與關鍵詞：${aiErr}` : this.hasCloud() ? `已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用` : '已儲存。連結雲端 AI 後可自動辨識標題與關鍵詞、串聯相關論文') + moved, null, aiErr || moved ? 9000 : undefined);
     if (this.props.autoTranslate !== false) setTimeout(() => this.translateAll(id), 50);
   }
 
@@ -2531,7 +2587,8 @@ class Component extends DCLogic {
       if (ids.length) this.organize(ids);
       return;
     }
-    this.setState({ ask: '', asking: true, layout: 'chat' });
+    this._askScope = s.folder;
+    this.setState({ ask: '', asking: true, askScope: s.folder, layout: 'chat' });
     // 選了專案時，只把這個專案的論文交給 AI；對話紀錄也依專案分開
     const scope = s.folder, inScope = this.inScope(scope), pool = s.papers.filter(inScope), poolIds = new Set(pool.map(p => p.id));
     const ctx = pool.map(p => {
@@ -2545,11 +2602,17 @@ class Component extends DCLogic {
     try {
       a = await window.claude.complete({ system: SYS_ASK, max_tokens: 1500, messages: [{ role: 'user', content: `以下是我的文獻庫：\n\n${ctx}\n\n我手動建立的串聯：\n${links || '無'}` }, { role: 'assistant', content: '了解，我會只根據這些內容回答並標註出處。' }, ...hist, { role: 'user', content: q }] });
     } catch (e) {
+      const sc = this._askScope || scope; this._askScope = null;
+      // 等回答時換了範圍：問題不放進現在這個範圍的輸入框，提示可以切回去重問
+      if (this.state.folder !== sc) { this.setState({ asking: false }); if (!e || e.code !== 'NO_KEY') this.toastGo(`「${this.scopeName(sc)}」的問題沒有回答成功：${(e && e.message) || '請稍後再試'}`, '切回去重問', () => this.setState({ folder: sc, layout: 'chat', hov: null, ask: q }, () => this.focusSoon('.ly-askbar textarea'))); return; }
       this.setState({ asking: false, ask: q });
       if (!e || e.code !== 'NO_KEY') this.toast('問答失敗：' + (e && e.message || '請稍後再試'));
       return;
     }
-    this.setState(st => ({ asking: false, qa: [...st.qa, { q, a, proj: scope }], chatLive: 'AI 已回答：' + String(a).replace(/\[p\w+\]/g, '').slice(0, 60) }));
+    const sc = this._askScope || scope, away = this.state.folder !== sc; this._askScope = null;
+    this.setState(st => ({ asking: false, qa: [...st.qa, { q, a, proj: sc }], chatLive: away ? '' : 'AI 已回答：' + String(a).replace(/\[p\w+\]/g, '').slice(0, 60) }));
+    // 等回答時換了範圍：回答留在原本範圍的對話，提示可以切回去看
+    if (away) this.toastGo(`AI 已在「${this.scopeName(sc)}」的對話回答`, '切回去看', () => this.setState({ folder: sc, layout: 'chat', hov: null }, () => this.focusSoon('.ly-askbar textarea')));
   }
 
   segs(a) {
@@ -2589,11 +2652,30 @@ class Component extends DCLogic {
   projectNames() { return [...new Set([...this.liveProjects(), ...this.state.papers.flatMap(projOf)])]; }
   slotNames() { return [...new Set([...this.state.papers.flatMap(projOf), ...this.liveProjects()])]; }
   focusSoon(sel) { setTimeout(() => { const el = typeof sel === 'function' ? sel() : document.querySelector(sel); if (el && el.focus) el.focus(); }, 30); }
-  projBtn(name) { return [...document.querySelectorAll('aside.ly-sb button[aria-pressed]')].find(b => b.title === name); }
-  // 在 AI 對話分頁點論文時留在對話（右側顯示原文），其他分頁切到閱讀器
+  projBtn(name) { return [...document.querySelectorAll('aside.ly-sb button[data-scope]')].find(b => b.dataset.scope === name); }
   // 目前範圍（全部／某個專案／未分類）的篩選條件
   inScope(scope) { return scope === '全部' || !scope ? () => true : scope === NOPROJ ? p => !projOf(p).length : p => projOf(p).includes(scope); }
-  openPaper(id) { const p = this.find(id); this.setState(s => ({ sel: id, selPara: null, noteDraft: '', layout: s.layout === 'chat' ? 'chat' : 'reader', hov: null, sbOpen: s.wide ? s.sbOpen : false, folder: p && !this.inScope(s.folder)(p) ? '全部' : s.folder })); }
+  // 側欄點論文：在閱讀器打開；在 AI 對話時留在對話（右側顯示原文）
+  openPaper(id, nm) { this.open(id, this.state.layout === 'chat' ? 'chat' : 'reader', nm); if (!this.state.wide) this.setState({ sbOpen: false }); }
+  // 換範圍（全部論文、專案或未分類）：檢視不變；手機上順便關掉抽屜
+  setScope(nm) {
+    this._chatOut = null;
+    this.setState(st => ({ folder: nm, hov: null, projMenu: null, projOpen: nm === '全部' ? st.projOpen : { ...st.projOpen, [nm]: true }, sbOpen: st.wide ? st.sbOpen : false }));
+  }
+  // 一般的動作提示（不是復原刪除）；復原提示還在時不蓋掉它
+  toastGo(msg, label, fn, ms = 8000) { if (this._toastFn && Date.now() < (this._undoUntil || 0)) return this.toast(msg); this._undoUntil = 0; this._toastFn = fn; this.setState({ toast: msg, toastLink: '', toastAct: label }); clearTimeout(this._t); this._t = setTimeout(() => { this._toastFn = null; this.setState({ toast: '', toastAct: '' }); }, ms); }
+  // 篩選列的 ✕ 按下後篩選列會消失：焦點移到還在的另一個條件，或目前的檢視分頁
+  fbarRefocus() { this.focusSoon(() => document.querySelector('.ly-fbar button') || document.querySelector('nav.ly-tabs [aria-current="page"]') || document.querySelector('#lunyi-scope-btn')); }
+  // 上方的範圍按鈕：到側欄換範圍（側欄收著或在手機上時先打開），焦點放在目前的範圍
+  pickScope() {
+    const row = () => document.querySelector('aside.ly-sb [data-scope][aria-current="true"]') || this.projBtn('全部');
+    if (this.state.wide && this.state.sbOpen) return this.focusSoon(row);
+    this._sbRet = this.state.wide ? null : '#lunyi-scope-btn'; this._sbFocus = row;
+    this.setState({ sbOpen: true }, () => this.focusSoon(row));
+  }
+  // 打開新增論文視窗：選了專案時預填這個專案；上次是自動填的就換成目前的專案，使用者自己打的才保留
+  openAddDlg() { const s = this.state; if (!s.showSet && !s.showAdd && !s.showLogin) this._retFocus = document.activeElement; this.setState(st => { const typed = st.form.folder && st.form.folder !== this._autoFolder ? st.form.folder : '', want = this.isProj(st.folder) ? st.folder : ''; this._autoFolder = typed ? null : want; return { showAdd: true, acctOpen: false, sbOpen: st.wide ? st.sbOpen : false, form: { ...st.form, folder: typed || want } }; }); }
+  copyBibList(list, what, empty) { if (!list.length) return this.toast(empty || '這個範圍沒有論文'); this.copy(list.map(p => this.bib(p)).join('\n\n'), `${what} ${list.length} 篇 BibTeX`); }
   isProj(nm) { return !!nm && nm !== '全部' && nm !== NOPROJ; }
   checkProjName(n) {
     if (!n) return '請輸入專案名稱';
@@ -2608,11 +2690,11 @@ class Component extends DCLogic {
     const now = Date.now(), pid = this.state.newProjFor, pp = pid && this.find(pid);
     this.setState(st => ({ projects: [...st.projects, n], projAt: { ...st.projAt, [n]: now }, projMeta: { ...st.projMeta, [n]: { dir, at: now } }, newProj: '', newProjDir: '', newProjOpen: false, newProjFor: null, projOpen: { ...st.projOpen, [n]: true },
       papers: pp ? st.papers.map(p => p.id === pid ? normProj({ ...p, projects: [...projOf(p), n] }) : p) : st.papers,
-      folder: n, layout: 'home', projDir: dir, sbOpen: st.wide ? st.sbOpen : false }), () => this.focusSoon(dir ? () => this.projBtn(n) : '#lunyi-proj-dir'));
+      folder: n, layout: 'dash', projDir: dir, sbOpen: st.wide ? st.sbOpen : false }), () => this.focusSoon(dir ? () => this.projBtn(n) : '#lunyi-proj-dir'));
     this.toast(pp ? `已建立專案「${n}」並加入「${pp.title}」` : dir ? `已建立專案「${n}」，下方推薦了相關的論文` : `已建立專案「${n}」，填寫研究方向就能推薦相關論文`);
   }
-  // 打開專案首頁
-  openProject(nm) { this.setState(st => ({ folder: nm, layout: 'home', projDir: ((st.projMeta || {})[nm] || {}).dir || '', projOpen: { ...st.projOpen, [nm]: true }, hov: null, sbOpen: st.wide ? st.sbOpen : false })); }
+  // 打開專案的總覽（研究方向、論文、推薦）
+  openProject(nm) { this.setState(st => ({ folder: nm, layout: 'dash', projDir: ((st.projMeta || {})[nm] || {}).dir || '', projOpen: { ...st.projOpen, [nm]: true }, hov: null, sbOpen: st.wide ? st.sbOpen : false })); }
   setDir(nm, dir) { const d = String(dir || '').trim(); if (((this.state.projMeta || {})[nm] || {}).dir === d) return; this.setState(st => ({ projMeta: { ...st.projMeta, [nm]: { dir: d, at: Date.now() } } })); }
   joinProj(id, nm) { this.upd(id, p => normProj({ ...p, projects: [...projOf(p), nm] })); const p = this.find(id); this.toast(`已把「${p ? p.title : '論文'}」加入「${nm}」`); }
   leaveProj(id, nm) { this.upd(id, p => normProj({ ...p, projects: projOf(p).filter(x => x !== nm) })); const p = this.find(id); this.toast(`已把「${p ? p.title : '論文'}」移出「${nm}」，論文仍在全部論文`); }
@@ -2622,6 +2704,7 @@ class Component extends DCLogic {
     const bad = this.checkProjName(n);
     if (bad) return this.toast(bad);
     this.dropUndo();
+    if (this._askScope === old) this._askScope = n;
     this.setState(st => {
       // 顏色跟著專案走：色槽一起改名
       const fslots = { ...st.fslots };
@@ -2630,7 +2713,7 @@ class Component extends DCLogic {
       const now = Date.now();
       return { projects, fslots, projAt: { ...st.projAt, [n]: now }, projDel: { ...st.projDel, [old]: now }, papers: st.papers.map(p => projOf(p).includes(old) ? normProj({ ...p, projects: projOf(p).map(x => x === old ? n : x) }) : p), folder: st.folder === old ? n : st.folder, projMenu: null, projOpen: { ...st.projOpen, [n]: !!st.projOpen[old] },
         projMeta: (() => { const m = { ...st.projMeta }; if (m[old]) { m[n] = { ...m[old], at: now }; delete m[old]; } return m; })(),
-        qa: st.qa.map(x => x.proj === old ? { ...x, proj: n } : x) };
+        qa: st.qa.map(x => x.proj === old ? { ...x, proj: n } : x), askScope: st.askScope === old ? n : st.askScope };
     }, () => this.focusSoon(() => this.projBtn(n)));
     this.toast(`已改名為「${n}」`);
   }
@@ -2639,10 +2722,11 @@ class Component extends DCLogic {
     const qn = this.state.qa.filter(x => x.proj === name).length;
     if (!window.confirm((k ? `刪除專案「${name}」？裡面的 ${k} 篇論文仍會留在「全部論文」，不會被刪除。` : `刪除專案「${name}」？`) + (qn ? `這個專案的 ${qn} 則 AI 對話會移到「全部論文」。` : ''))) return;
     this.dropUndo();
+    if (this._askScope === name) this._askScope = '全部';
     this.setState(st => ({ projects: st.projects.filter(x => x !== name), projDel: { ...st.projDel, [name]: Date.now() }, papers: st.papers.map(p => projOf(p).includes(name) ? normProj({ ...p, projects: projOf(p).filter(x => x !== name) }) : p),
-      folder: st.folder === name ? '全部' : st.folder, layout: st.folder === name && st.layout === 'home' ? 'reader' : st.layout, projMenu: null, projMeta: (() => { const m = { ...st.projMeta }; delete m[name]; return m; })(),
+      folder: st.folder === name ? '全部' : st.folder, projMenu: null, projMeta: (() => { const m = { ...st.projMeta }; delete m[name]; return m; })(),
       // 這個專案的 AI 對話移到「全部論文」，不會隱藏起來，也不會在重建同名專案時又冒出來
-      qa: st.qa.map(x => x.proj === name ? { ...x, proj: '全部' } : x) }), () => this.focusSoon('#lunyi-newproj-btn'));
+      qa: st.qa.map(x => x.proj === name ? { ...x, proj: '全部' } : x), askScope: st.askScope === name ? '全部' : st.askScope }), () => this.focusSoon('#lunyi-newproj-btn'));
     this.toast(`已刪除專案「${name}」`);
   }
 
@@ -2750,9 +2834,10 @@ class Component extends DCLogic {
       const el = this._retFocus; this._retFocus = null;
       this.focusSoon(() => el && el.isConnected && el.offsetParent !== null ? el : document.querySelector(s.sbOpen && !s.narrow ? '#lunyi-acct-btn' : 'button[aria-label="開啟側欄"]') || document.querySelector('#lunyi-acct-btn'));
     }
-    if (!s.wide && s.sbOpen && !ps.sbOpen && !modal) this.focusSoon('#lunyi-acct-btn');
+    if (!s.wide && s.sbOpen && !ps.sbOpen && !modal) { const f = this._sbFocus; this._sbFocus = null; this.focusSoon(f || '#lunyi-acct-btn'); }
     // 抽屜關掉時焦點如果還在抽屜裡（或掉到 body），移到「開啟側欄」
-    if (!s.wide && ps.sbOpen && !s.sbOpen && !modal) this.focusSoon(() => { const a = document.activeElement; return !a || a === document.body || a.closest('.ly-sb') ? document.querySelector('button[aria-label="開啟側欄"]') : null; });
+    // 從上方範圍按鈕打開的抽屜，關掉後回到那個按鈕
+    if (!s.wide && ps.sbOpen && !s.sbOpen && !modal) { const r = this._sbRet; this._sbRet = null; this.focusSoon(() => { const a = document.activeElement; return !a || a === document.body || a.closest('.ly-sb') ? (r && document.querySelector(r)) || document.querySelector('button[aria-label="開啟側欄"]') : null; }); }
   }
 
   // ---- 側欄、帳號選單與設定視窗要用的值 ----
@@ -2770,33 +2855,41 @@ class Component extends DCLogic {
     const closeMenu = fn => () => { this.setState({ acctOpen: false }); fn(); };
     const acctItems = [
       g ? { label: '登出 Google', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '用 Google 登入', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
-      { label: '設定與備份', note: '', onClick: closeMenu(() => this.openSettings('account')) }
+      { label: '帳號與設定', note: '', onClick: closeMenu(() => this.openSettings('account')) }
     ];
-    const navTo = k => () => this.setState(st => ({ layout: k, hov: null, sbOpen: st.wide ? st.sbOpen : false }));
-    const layoutTabs = [['1a', '閱讀器', 'reader', '▤'], ['1b', '關聯圖譜', 'graph', '◎'], ['1c', 'AI 對話', 'chat', '✦'], ['1d', '文獻庫總覽', 'dash', '▦'], ['1e', '比較矩陣', 'matrix', '▥']]
-      .map(([id, label, k, icon]) => ({ id, label, icon, tip: `工作區 ${id}：${label}`, current: L === k ? 'page' : 'false', bg: L === k ? '#e2ddd3' : 'transparent', weight: L === k ? 600 : 400, onClick: navTo(k) }));
+    // 上方的五個檢視分頁：換檢視不換範圍，也不換目前的論文
+    const navTo = k => () => { const st = this.state, p = this.find(st.sel);
+      // 在 AI 對話看的是範圍外的論文：到別的檢視照樣顯示這篇，範圍跟著換（open 會說明），不會悄悄換成另一篇
+      if (st.layout === 'chat' && k !== 'chat' && p && this._chatOut === p.id && !this.inScope(st.folder)(p)) return this.open(p.id, k, st.selFrom);
+      this.setState({ layout: k, hov: null }); };
+    const layoutTabs = [['dash', '總覽'], ['reader', '閱讀器'], ['graph', '關聯圖譜'], ['matrix', '比較矩陣'], ['chat', 'AI 對話']]
+      .map(([k, label]) => ({ label, current: L === k ? 'page' : 'false', onClick: navTo(k) }));
     const qIds = new Set(qAll.map(x => x.id)), searching = !!(ql || s.kw);
-    const treeNames = [...this.projectNames(), ...(s.papers.some(p => !projOf(p).length) ? [NOPROJ] : [])];
+    const treeNames = [...this.projectNames(), ...(s.papers.some(p => !projOf(p).length) || s.folder === NOPROJ ? [NOPROJ] : [])];
+    // 目前論文的圓點只標一個分支：剛才點的那個專案，否則是目前範圍、或它的第一個專案
+    const branches = p => projOf(p).length ? projOf(p) : [NOPROJ];
+    const curKey = cur ? (branches(cur).includes(s.selFrom) ? s.selFrom : branches(cur).includes(s.folder) ? s.folder : branches(cur)[0]) : null;
     const projTree = treeNames.map(nm => {
       const virt = nm === NOPROJ, inProj = s.papers.filter(this.inScope(nm)), vis = inProj.filter(x => qIds.has(x.id));
       const open = searching ? s.projOpen[nm] !== false && vis.length > 0 : !!s.projOpen[nm], sel = s.folder === nm, has = fSlot(nm) >= 0;
       return { name: nm, count: String(searching ? vis.length : inProj.length), open, openAttr: String(open), rot: open ? '90deg' : '0deg', toggleLabel: `${open ? '收合' : '展開'}「${nm}」`,
-        pressed: String(sel), bg: sel ? '#e2ddd3' : 'transparent', swatch: has ? fColor(nm) : 'transparent', ring: has ? 'none' : 'inset 0 0 0 1px #bdb6a9',
+        sel: String(sel), current: sel ? 'true' : 'false', virt, real: !virt, virtAttr: String(virt), swatch: has ? fColor(nm) : 'transparent', ring: has ? 'none' : 'inset 0 0 0 1px #bdb6a9',
         onToggle: () => this.setState(st => ({ projOpen: { ...st.projOpen, [nm]: !open } })),
-        onSelect: () => virt ? this.setState(st => ({ folder: NOPROJ, layout: st.layout === 'home' ? 'reader' : st.layout, projOpen: { ...st.projOpen, [nm]: true }, sbOpen: st.wide ? st.sbOpen : false })) : this.openProject(nm),
-        menuable: !virt, virt,
+        onSelect: () => this.setScope(nm),
+        menuable: !virt,
         menuOpen: s.projMenu === nm, menuAttr: String(s.projMenu === nm), menuLabel: `「${nm}」的選項`,
         onMenu: () => this.setState(st => ({ projMenu: st.projMenu === nm ? null : nm, renameDraft: nm }), () => this.state.projMenu === nm && this.focusSoon(() => { const i = document.querySelector('input[aria-label="新的專案名稱"]'); i && i.select(); return i; })),
         onRename: () => this.renameProj(nm), onDelete: () => this.deleteProj(nm),
+        bibLabel: `複製 BibTeX（${inProj.length} 篇）`, onBib: () => { this.setState({ projMenu: null }, () => this.focusSoon(() => { const b = this.projBtn(nm); return b && b.parentElement.querySelector('button[aria-label$="的選項"]'); })); this.copyBibList(inProj, `「${nm}」`, `「${nm}」還沒有論文`); },
         onRenameKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.renameProj(nm); } else if (e.key === 'Escape') { e.stopPropagation(); this.setState({ projMenu: null }, () => this.focusSoon(() => { const b = this.projBtn(nm); return b && b.parentElement.querySelector('button[aria-label$="的選項"]'); })); } },
-        papers: vis.map(x => { const on = !!cur && cur.id === x.id; return { title: x.title, full: `${x.title}（${shortName(x)}，已譯 ${x.paras.filter(y => y.zh).length}/${x.paras.length} 段）`, prog: `譯 ${x.paras.filter(y => y.zh).length}/${x.paras.length}`, current: on ? 'page' : 'false', bg: on && (L === 'reader' || L === 'chat') ? '#e2ddd3' : 'transparent', onClick: () => { if (!this.inScope(this.state.folder)(x)) this.setState({ folder: nm }); this.openPaper(x.id); } }; }),
-        empty: !vis.length, emptyText: inProj.length ? '沒有符合搜尋的論文' : virt ? '還沒有論文' : '還沒有論文：點專案名稱打開首頁，從推薦加入' };
+        papers: vis.map(x => { const on = !!cur && cur.id === x.id && nm === curKey, done = x.paras.filter(y => y.zh).length, tot = x.paras.length;
+          return { title: x.title, full: `${x.title}（${shortName(x)}，已譯 ${done}/${tot} 段）`, prog: done < tot ? `待譯 ${tot - done}` : '', dot: on ? ACC : 'transparent', weight: on ? 600 : 400, color: on ? '#1d1b18' : '#37352f', sr: on ? '（目前論文）' : '', onClick: () => this.openPaper(x.id, nm) }; }),
+        empty: !vis.length, emptyText: inProj.length ? '沒有符合搜尋的論文' : virt ? '還沒有論文' : '還沒有論文：到「總覽」從推薦加入' };
     });
-    const viewName = { reader: '閱讀器', graph: '關聯圖譜', chat: 'AI 對話', dash: '文獻庫總覽', matrix: '比較矩陣' }[L];
-    // 第一段是範圍（專案可以點回專案首頁），第二段是目前的論文或工作區
-    const scopeName = s.folder === '全部' ? '全部論文' : s.folder, toHome = this.isProj(s.folder) ? () => this.openProject(s.folder) : null;
-    const crumbs = (L === 'home' ? [[s.folder, null, '420px']] : [[scopeName, toHome, '220px'], [L === 'reader' && cur ? cur.title : viewName, null, '560px']])
-      .map(([label, onClick, max], i, a) => { const last = i === a.length - 1, btn = !!onClick && !last; return { label, title: label, onClick, max, btn, txt: !btn, cls: a.length > 1 && i === 0 ? 'ly-crumb0' : '', sepCls: i === 1 ? 'ly-crumbsep' : '', cur: last ? 'page' : 'false', sepDisp: i ? 'inline' : 'none', color: last ? '#1d1b18' : '#625d55' }; });
+    // 上方的範圍按鈕：目前在看哪些論文；按了到側欄換
+    const scopeLbl = this.scopeName(s.folder), nIn = qAll.filter(this.inScope(s.folder)).length, sHas = fSlot(s.folder) >= 0;
+    const scopeChip = { name: scopeLbl, count: `${nIn} 篇`, real: this.isProj(s.folder), virt: s.folder === NOPROJ, swatch: sHas ? fColor(s.folder) : 'transparent', ring: sHas ? 'none' : 'inset 0 0 0 1px #bdb6a9',
+      title: '換範圍：在側欄選全部論文、專案或未分類', aria: `目前範圍：${scopeLbl}，${nIn} 篇${searching ? '符合篩選' : ''}。按此到側欄換範圍`, onClick: () => this.pickScope() };
     // 設定視窗
     const setTabs = [['account', '我的帳號', '◉'], ['ai', 'AI 模型', '✦'], ['sync', '同步與備份', '⇅'], ['adv', '進階', '⌘']]
       .map(([k, label, icon]) => ({ label, icon, current: s.setTab === k ? 'page' : 'false', bg: s.setTab === k ? '#e2ddd3' : 'transparent', weight: s.setTab === k ? 600 : 400, onClick: () => this.goTab(k) }));
@@ -2821,18 +2914,19 @@ class Component extends DCLogic {
       hasLoginMsg: !!s.loginMsg, loginMsg: s.loginMsg, showLoginAdmin: !this.gClient() && s.loginMsg === G_OFF_MSG, loginAdmin: () => this.openSettings('adv'),
       acctBlur: e => { const box = e.currentTarget; if (!box.contains(e.relatedTarget)) this.setState({ acctOpen: false }); },
       addHint: this.hasCloud() ? '以下欄位可留空，會由 AI 自動辨識。儲存後自動擷取關鍵詞、比對引用、與現有論文串聯並翻譯成繁中。' : '目前沒有連結雲端 AI：請自行填寫標題等欄位（留空會用檔名）。儲存後會用瀏覽器內建翻譯翻成繁中；連結 AI 後可自動辨識標題與關鍵詞、串聯相關論文。',
-      layoutTabs, projTree, crumbs,
-      allProj: { count: String(qAll.length), pressed: String(s.folder === '全部'), bg: s.folder === '全部' ? '#e2ddd3' : 'transparent', onClick: () => this.setState(st => ({ folder: '全部', layout: st.layout === 'home' ? 'reader' : st.layout })) },
+      layoutTabs, projTree, scopeChip,
+      allProj: { count: String(qAll.length), sel: String(s.folder === '全部'), current: s.folder === '全部' ? 'true' : 'false', onClick: () => this.setScope('全部') },
       sbAttr: String(s.sbOpen), sbCols: !s.wide ? 'minmax(0,1fr)' : s.sbOpen ? '256px minmax(0,1fr)' : '0px minmax(0,1fr)', ovAttr: String(!s.wide && !s.narrow),
       sbScrim: !s.wide && s.sbOpen, showSbBtn: !s.wide || !s.sbOpen,
-      openSb: () => this.setState({ sbOpen: true }, () => this.focusSoon('#lunyi-acct-btn')), closeSb: () => this.setState({ sbOpen: false, acctOpen: false }, () => this.focusSoon('button[aria-label="開啟側欄"]')),
+      openSb: () => { this._sbRet = null; this.setState({ sbOpen: true }, () => this.focusSoon('#lunyi-acct-btn')); },
+      closeSb: () => { const r = this._sbRet; this._sbRet = null; this.setState({ sbOpen: false, acctOpen: false }, () => this.focusSoon(r || 'button[aria-label="開啟側欄"]')); },
       startNewProj: () => this.setState(st => ({ newProjOpen: !st.newProjOpen, newProj: '', newProjDir: '', newProjFor: null }), () => this.state.newProjOpen && this.focusSoon('input[aria-label="新專案名稱"]')), newProjOpen: s.newProjOpen, newProj: s.newProj,
       onNewProj: e => this.setState({ newProj: e.target.value }), addProj: () => this.addProj(),
       onNewProjKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.addProj(); } else if (e.key === 'Escape') { e.stopPropagation(); this.setState({ newProjOpen: false, newProjFor: null }, () => this.focusSoon('#lunyi-newproj-btn')); } },
       renameDraft: s.renameDraft, onRenameDraft: e => this.setState({ renameDraft: e.target.value }),
-      aiChip: aiShort ? `AI：${aiShort}` : s.narrow ? '設定 AI' : HAS_TR ? '內建翻譯・按此設定 AI' : '設定 AI', aiDot: aiShort ? ACC : '#bdb6a9',
+      aiChip: aiShort ? `AI：${s.narrow ? aiShort.split(' ')[0] : aiShort}` : s.narrow ? '設定 AI' : HAS_TR ? '內建翻譯・按此設定 AI' : '設定 AI', aiDot: aiShort ? ACC : '#bdb6a9',
       aiChipTitle: `翻譯：${trName}；問答與自動辨識：${aiShort || '尚未連結'}`, openAiSettings: () => this.openSettings(aiShort ? 'ai' : 'adv'), openAdvSettings: () => this.openSettings('adv'), needCloud: !aiShort,
-      openSettings: () => this.openSettings('account'), setTabs,
+      openSettings: () => this.openSettings('account'), openBackup: () => this.openSettings('sync'), setTabs,
       setAccount: s.setTab === 'account', setAi: s.setTab === 'ai', setSync: s.setTab === 'sync', setAdv: s.setTab === 'adv',
       goAdv: () => this.goTab('adv'),
       gStatus: g ? `已登入：${g.name}${g.email ? `（${g.email}）` : ''}` : this.gClient() ? '尚未登入 Google' : 'Google 登入暫時還沒開放',
@@ -2933,7 +3027,7 @@ class Component extends DCLogic {
       if (on) { tipAt = mid; tipSeg = g; }
       const r = segs.length === 1 ? 4 : i === 0 ? '4px 0 0 4px' : i === segs.length - 1 ? '0 4px 4px 0' : 0;
       // 淡化只套在色塊上，提示框放在外層，才不會跟著變淡
-      return ce('button', { key: g.key, 'data-lunyi-fseg': i === 0 ? '1' : undefined, 'aria-label': `${g.label}：${share(g.n)}${g.pick ? (sel === g.pick ? '，再點一次顯示全部' : '，點選以篩選') : ''}`, 'aria-pressed': g.pick ? sel === g.pick : undefined, 'aria-describedby': on ? TIP_ID : undefined, onClick: () => pick(g.pick), ...this.hover('f:' + g.key),
+      return ce('button', { key: g.key, 'data-lunyi-fseg': i === 0 ? '1' : undefined, 'aria-label': `${g.label}：${share(g.n)}${g.pick ? (sel === g.pick ? '，再點一次回到全部論文' : '，點選以切換範圍到這個專案') : ''}`, 'aria-pressed': g.pick ? sel === g.pick : undefined, 'aria-describedby': on ? TIP_ID : undefined, onClick: () => pick(g.pick), ...this.hover('f:' + g.key),
         style: { flex: `${g.n} 1 0`, minWidth: 8, height: 24, border: 0, padding: 0, background: 'transparent', cursor: g.pick ? 'pointer' : 'default' } },
         ce('span', { style: { display: 'block', height: '100%', borderRadius: r, background: g.color, opacity: g.on ? 1 : 0.3, boxShadow: on ? 'inset 0 0 0 2px rgba(255,255,255,0.65)' : 'none' } }));
     });
@@ -2960,7 +3054,7 @@ class Component extends DCLogic {
           ce('span', null, '專案'), ce('span', { style: { textAlign: 'right' } }, '篇數'), ce('span', null, '翻譯進度')),
         rows),
       rest.length ? ce('div', { style: { fontSize: 11, color: '#625d55' } }, `前 ${CAT.length} 個專案各有固定顏色，其餘歸為灰色「其他」。`) : null,
-      sel !== '全部' ? ce('button', { onClick: () => this.setState({ folder: '全部' }, () => { const b = document.querySelector('[data-lunyi-fseg]'); b && b.focus(); }), style: { alignSelf: 'flex-start', border: 0, background: 'none', padding: 0, fontSize: 12, color: '#625d55', textDecoration: 'underline' } }, '顯示全部專案') : null);
+      sel !== '全部' ? ce('button', { onClick: () => this.setState({ folder: '全部' }, () => { const b = document.querySelector('[data-lunyi-fseg]'); b && b.focus(); }), style: { alignSelf: 'flex-start', border: 0, background: 'none', padding: 0, fontSize: 12, color: '#625d55', textDecoration: 'underline' } }, '回到全部論文') : null);
   }
   kwChart(papers, cur) {
     if (!papers.length) return chartEmpty('沒有符合的論文');
@@ -3625,8 +3719,8 @@ class Component extends DCLogic {
       ce('div', { style: { display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center', maxWidth: 440 } }, text, btnLabel ? ce('button', { onClick: fn, style: { border: '1px solid #d6d0c4', background: '#fff', borderRadius: 6, padding: '7px 14px', fontSize: 13 } }, btnLabel) : null));
     let body;
     const live = this.isProj(s.folder) && this.projectNames().includes(s.folder);
-    if (!s.papers.length) body = emptyBox('文獻庫是空的，從新增第一篇論文開始。', '＋ 新增論文', () => { this._retFocus = document.activeElement; this.setState({ showAdd: true }); });
-    else if (!s.papers.some(this.inScope(s.folder))) body = emptyBox(live ? `「${s.folder}」還沒有論文。到專案首頁從推薦加入，或新增一篇論文到這個專案。` : s.folder === NOPROJ ? '「未分類」裡已經沒有論文，所有論文都放進專案了。' : `「${s.folder}」沒有論文。`, live ? '打開專案首頁' : '看全部論文', () => live ? this.openProject(s.folder) : this.setState({ folder: '全部' }));
+    if (!s.papers.length) body = emptyBox('文獻庫是空的，從新增第一篇論文開始。', '＋ 新增論文', () => this.openAddDlg());
+    else if (!s.papers.some(this.inScope(s.folder))) body = emptyBox(live ? `「${s.folder}」還沒有論文。到「總覽」從推薦加入，或新增一篇論文到這個專案。` : s.folder === NOPROJ ? '「未分類」裡已經沒有論文，所有論文都放進專案了。' : `「${s.folder}」沒有論文。`, live ? '到總覽看推薦' : '看全部論文', () => live ? this.openProject(s.folder) : this.setState({ folder: '全部' }));
     else if (!filtered.length) body = emptyBox('沒有符合目前搜尋或關鍵詞的論文，清除篩選後就會列出。', '清除篩選', () => { clearTimeout(this._qT); this.setState({ q: '', kw: '' }); });
     else if (!cols.length) body = emptyBox('所有欄位都隱藏了，到「欄位設定」勾選要顯示的面向。', '打開欄位設定', () => this.setState({ mxColsOpen: true }));
     else if (!rows.length && s.mxTag.length) body = emptyBox('沒有論文符合這個分類篩選。', '清除分類篩選', () => this.setState({ mxTag: [] }));
@@ -3637,7 +3731,7 @@ class Component extends DCLogic {
     else body = this.mxTableEl(rows, cols, rowSt, swatch, scope);
     const val = {
       mxGrid: validSel && !s.narrow ? (s.wide ? 'minmax(0,1fr) 380px' : 'minmax(0,1fr) 340px') : 'minmax(0,1fr)',
-      mxViews: [['table', '比較矩陣'], ['concept', '概念矩陣'], ['gap', '缺口地圖']].map(([k, label]) => ({ label, pressed: String(s.mxView === k), bg: s.mxView === k ? '#fff' : 'transparent', onClick: () => { this.mxPref({ mxView: k }); if (k !== 'table') this.setState({ mxSel: null, mxEv: [], mxSug: null }); } })),
+      mxViews: [['table', '逐篇比較'], ['concept', '概念矩陣'], ['gap', '缺口地圖']].map(([k, label]) => ({ label, pressed: String(s.mxView === k), bg: s.mxView === k ? '#fff' : 'transparent', onClick: () => { this.mxPref({ mxView: k }); if (k !== 'table') this.setState({ mxSel: null, mxEv: [], mxSug: null }); } })),
       mxSortVal: s.mxSort, onMxSort: e => this.mxPref({ mxSort: e.target.value }),
       mxTodoAttr: String(!!s.mxTodo), mxTodoBg: s.mxTodo ? '#ece8e0' : '#fff', mxTodoLabel: `只看待處理（${filtered.filter(p => s.mxTag.every(({ c, k }) => ((this.mxCell(p, c) || {}).g || []).some(g => norm(g) === k)) && this.mxTodoN(p, cols) > 0).length} 篇）`, onMxTodo: () => this.setState(st => ({ mxTodo: !st.mxTodo })),
       mxHasTag: !!s.mxTag.length, mxTagLabel: s.mxTag.map(({ c, k }) => { const col = allCols.find(x => x.id === c), g = rows.concat(filtered).map(p => ((this.mxCell(p, c) || {}).g || []).find(x => norm(x) === k)).find(Boolean); return `${col ? col.label : c}：${g || k}`; }).join(' × '), clearMxTag: () => this.setState({ mxTag: [] }),
@@ -3797,10 +3891,10 @@ class Component extends DCLogic {
   }
 
   // 專案首頁：這個專案的論文、從全部論文推薦 3 篇、推薦串聯、找新文獻的連結
-  homeVals(s, fSlot, fColor) {
-    const nm = s.folder, mine = s.papers.filter(p => projOf(p).includes(nm)), has = fSlot(nm) >= 0, dir = s.projDir, terms = dirTerms(dir);
+  homeVals(s, fSlot, fColor, shown) {
+    const nm = s.folder, mine = s.papers.filter(p => projOf(p).includes(nm)), filt = shown.length !== mine.length, has = fSlot(nm) >= 0, dir = s.projDir, terms = dirTerms(dir);
     const recs = recommend(nm, dir, s.papers, s.links).map(({ p, why }) => ({ title: p.title, meta: `${surname(p)} · ${p.journal} ${p.year}`, why, joinLabel: `把「${p.title}」加入「${nm}」`,
-      onJoin: () => this.joinProj(p.id, nm), onOpen: () => this.setState({ folder: '全部', sel: p.id, selPara: null, layout: 'reader' }) }));
+      onJoin: () => this.joinProj(p.id, nm), onOpen: () => this.open(p.id, 'reader') }));
     const links = suggestLinks(nm, s.papers, s.links).map(({ a, b, note }) => ({ a: a.title, b: b.title, note,
       onAdd: () => { this.setState(st => ({ links: [...st.links, { a: a.id, b: b.id, note }] })); this.toast('已加入串聯'); } }));
     // 搜尋詞：研究方向優先；沒填就用專案論文最常見的關鍵詞
@@ -3812,10 +3906,10 @@ class Component extends DCLogic {
       .filter(([, h]) => !seen.has(h) && seen.add(h)).map(([label, href]) => ({ label, href }));
     return { name: nm, swatch: has ? fColor(nm) : 'transparent', ring: has ? 'none' : 'inset 0 0 0 1px #bdb6a9',
       dirHint: terms.length ? `推薦與搜尋會用這些詞：${terms.join('、')}。按 Enter 或點別處就會儲存。` : '填幾個關鍵詞，系統會從全部論文推薦相關的論文，也會產生 Google 學術的搜尋連結。按 Enter 或點別處就會儲存。',
-      count: `${mine.length} 篇`,
-      papers: mine.map(p => ({ title: p.title, meta: `${surname(p)} · ${p.journal} ${p.year}`, prog: `譯 ${p.paras.filter(x => x.zh).length}/${p.paras.length}`,
-        onOpen: () => this.setState({ sel: p.id, selPara: null, layout: 'reader' }), leaveLabel: `把「${p.title}」移出這個專案`, onLeave: () => this.leaveProj(p.id, nm) })),
-      noPapers: !mine.length, recs, noRecs: !recs.length, recN: recs.length ? ` ${recs.length} 篇` : '論文',
+      count: filt ? `符合 ${shown.length} / ${mine.length} 篇` : `${mine.length} 篇`,
+      papers: shown.map(p => ({ title: p.title, meta: `${surname(p)} · ${p.journal} ${p.year}`, prog: `譯 ${p.paras.filter(x => x.zh).length}/${p.paras.length}`,
+        onOpen: () => this.open(p.id, 'reader'), leaveLabel: `把「${p.title}」移出這個專案`, onLeave: () => this.leaveProj(p.id, nm) })),
+      noPapers: !mine.length, noMatch: mine.length > 0 && !shown.length, recs, noRecs: !recs.length, recN: recs.length ? ` ${recs.length} 篇` : '論文',
       recEmpty: s.papers.length <= mine.length ? '全部論文都已經在這個專案裡了。' : terms.length || mine.length ? '全部論文裡沒有找到和這個方向相關、還沒加入的論文。可以用下方的連結到 Google 學術找新文獻。' : '填寫研究方向，或先放進一篇論文，這裡就會推薦相關的論文。',
       links, noLinks: !links.length,
       linkEmpty: mine.length < 2 ? '專案裡有兩篇以上的論文時，這裡會建議可以串聯的論文。' : '目前沒有要建議的串聯：有關係的論文都已經串聯，或彼此沒有共同關鍵詞與引用。',
@@ -3825,9 +3919,10 @@ class Component extends DCLogic {
     const s = this.state;
     // 範圍：全部論文、某個專案、或未分類；選了專案時，各工作區只顯示這個專案的論文
     const inScope = this.inScope(s.folder);
+    const L = s.layout === 'home' ? 'dash' : s.layout;
     let cur = this.find(s.sel) || null;
-    if (cur && !inScope(cur)) cur = s.papers.find(inScope) || null;
-    const L = s.layout === 'home' && !this.isProj(s.folder) ? 'reader' : s.layout;
+    // AI 對話裡點了範圍外的論文：右側照樣顯示原文（範圍不變，AI 也不會讀它）；其他工作區只顯示範圍內的論文
+    if (cur && !inScope(cur) && L !== 'chat') cur = s.papers.find(inScope) || null;
     // 只記閱讀器顯示的論文：在專案首頁、圖譜等地方繞一圈回來同一篇，草稿不會被清掉
     if (L === 'reader') this._shown = cur ? cur.id : null;
     this._adopt = L === 'reader' && cur && cur.id !== s.sel ? cur.id : null;
@@ -3845,7 +3940,6 @@ class Component extends DCLogic {
     // 論文用哪個專案的顏色：目前選的專案優先，否則用它的第一個專案
     const pKey = p => { const ps = projOf(p); return ps.includes(s.folder) ? s.folder : ps[0] || NOPROJ; };
     const projText = p => projOf(p).join('、') || NOPROJ;
-    const fBtn = (label, count) => { const on = s.folder === label, sw = label !== '全部' && fSlot(label) >= 0; return { label, count, onClick: () => this.setState({ folder: label }), bg: on ? '#1d1b18' : 'transparent', color: on ? '#faf9f6' : '#1d1b18', line: on ? '#1d1b18' : '#d6d0c4', swatch: sw ? fColor(label) : 'transparent', swDisp: sw ? 'inline-block' : 'none', pressed: String(on) }; };
     // 被引次數只算範圍內的論文，和總覽的串聯數字口徑一致
     const citedIn = list => { const ids = new Set(list.map(p => p.id)), m = {}; list.forEach(o => (o.cites || []).forEach(c => { if (ids.has(c)) m[c] = (m[c] || 0) + 1; })); return id => m[id] || 0; };
     const meta = p => `${surname(p)} · ${p.journal} ${p.year}`;
@@ -3959,7 +4053,16 @@ class Component extends DCLogic {
     ];
 
     return {
-      isA: L === 'reader', isB: L === 'graph', isC: L === 'chat', isD: L === 'dash', isE: L === 'matrix', isH: L === 'home',
+      isA: L === 'reader', isB: L === 'graph', isC: L === 'chat', isD: L === 'dash', isE: L === 'matrix',
+      dashProj: this.isProj(s.folder), dashPlain: !this.isProj(s.folder), dashStats: !this.isProj(s.folder) || s.papers.some(inScope),
+      dashTitle: s.folder === NOPROJ ? '未分類論文總覽' : '文獻庫總覽', dashCount: `${filtered.length} 篇`,
+      ...(() => { const f = !!(ql || s.kw), sc = this.scopeName(s.folder); return { fbarOn: f, fbarHasQ: !!ql, fbarQ: s.q.trim(), fbarQAria: `清除搜尋「${s.q.trim()}」`, fbarKwAria: `取消關鍵詞「${s.kw}」的篩選`,
+        fbarCount: s.folder === '全部' || s.narrow ? `符合 ${filtered.length} 篇` : `「${sc}」裡符合 ${filtered.length} 篇（全部論文裡 ${qAll.length} 篇）`,
+        fbarClearQ: () => { clearTimeout(this._qT); this.setState({ q: '' }, () => this.fbarRefocus()); }, fbarClearKw: () => this.setState({ kw: '' }, () => this.fbarRefocus()) }; })(),
+      tabsInline: !s.narrow, tabsBelow: !!s.narrow,
+      ...(() => { const v = String(s.form.folder || '').trim(); return { addProjOn: !!v && v !== '全部' && v !== NOPROJ, addProjName: v }; })(),
+      curOutOn: L === 'chat' && !!cur && !inScope(cur), curOutText: cur && !inScope(cur) ? `這篇不在「${this.scopeName(s.folder)}」裡，AI 回答時不會參考它。` : '',
+      skipToTabs: e => { e.preventDefault(); const go = () => this.focusSoon('nav.ly-tabs [aria-current="page"]'); if (!s.wide && s.sbOpen) { this._sbRet = null; this.setState({ sbOpen: false }, go); } else go(); },
       bootOn: s.boot !== 'ready', bootRole: s.boot === 'down' ? 'alert' : 'status', bootBtns: s.boot === 'down' || !!s.bootSlow, bootExport: s.boot === 'down' && !s.bootAtStart && s.papers.length > 0, bootReset: s.boot === 'down' && !!s.bootAtStart,
       bootText: s.boot === 'down' ? s.bootMsg : s.bootSlow ? '仍在開啟文獻庫…（資料很多或電腦比較忙時會久一點；可以按重新整理再試一次）' : '正在開啟文獻庫…',
       bootReload: () => location.reload(), resetStore: () => this.resetStore(),
@@ -3972,14 +4075,13 @@ class Component extends DCLogic {
       openMatrix: () => this.setState(st => ({ layout: 'matrix', hov: null, sbOpen: st.wide ? st.sbOpen : false })),
       ...(() => { const b = s.mxBack, on = L === 'reader' && !!b && !!cur && cur.id === b.pid, col = on && this.mxColsAll().find(c => c.id === b.c);
         return { mxBackOn: !!(on && col), mxBackLabel: on && col ? `${col.label} · ${shortName(cur)}` : '', mxBackGo: () => this.mxBackGo() }; })(),
-      home: L === 'home' ? this.homeVals(s, fSlot, fColor) : { name: '', swatch: 'transparent', ring: 'none', dirHint: '', count: '', papers: [], noPapers: false, recs: [], noRecs: false, recEmpty: '', links: [], noLinks: false, linkEmpty: '', searches: [], noSearch: false },
+      home: L === 'dash' && this.isProj(s.folder) ? this.homeVals(s, fSlot, fColor, filtered) : { name: '', swatch: 'transparent', ring: 'none', dirHint: '', count: '', papers: [], noPapers: false, noMatch: false, recs: [], noRecs: false, recEmpty: '', links: [], noLinks: false, linkEmpty: '', searches: [], noSearch: false },
       projDir: s.projDir, onProjDir: e => this.setState({ projDir: e.target.value }), saveProjDir: () => this.setDir(s.folder, s.projDir),
       onProjDirKey: e => { if (e.key === 'Enter' && !e.nativeEvent.isComposing) { e.preventDefault(); this.setDir(s.folder, s.projDir); this.toast('已更新研究方向'); } },
       onNewProjDir: e => this.setState({ newProjDir: e.target.value }), newProjDir: s.newProjDir,
       chatLive: s.asking ? '正在翻閱文獻庫…' : s.chatLive || '',
       chatTitle: this.isProj(s.folder) ? `問「${s.folder}」這個專案` : '問你的文獻庫',
       chatScope: s.folder === '全部' ? '對話會參考整個文獻庫與你的筆記。' : `對話只參考「${s.folder}」的 ${s.papers.filter(inScope).length} 篇論文與你的筆記。`,
-      dashScope: `範圍：${s.folder === '全部' ? '全部論文' : s.folder}${s.kw ? `，關鍵詞「${s.kw}」` : ''}${ql ? `，搜尋「${s.q.trim()}」` : ''} · ${filtered.length} 篇`,
       hasKw: !!s.kw, kwLabel: s.kw, clearKw: () => this.setState({ kw: '' }),
       kpis, dashRows, dashEmpty: !filtered.length,
       yearChart: L === 'dash' ? this.yearChart(filtered) : null,
@@ -3987,10 +4089,10 @@ class Component extends DCLogic {
       kwChart: L === 'dash' ? this.kwChart(filtered, cur) : null,
       kwSub: '收錄篇數最多的 10 個關鍵詞，點選即可在閱讀器只看含這個關鍵詞的論文',
       onQ: e => { const v = e.target.value; clearTimeout(this._qT); this._qT = setTimeout(() => this.setState({ q: v }), 150); },
-      onQKey: e => { if (e.key === 'Escape' && e.target.value) { e.stopPropagation(); e.target.value = ''; clearTimeout(this._qT); this.setState({ q: '' }); } else if (e.key === 'Enter') { clearTimeout(this._qT); this.setState({ q: e.target.value }); } },
+      onQKey: e => { if (e.nativeEvent && e.nativeEvent.isComposing) return; if (e.key === 'Escape' && e.target.value) { e.stopPropagation(); e.target.value = ''; clearTimeout(this._qT); this.setState({ q: '' }); } else if (e.key === 'Enter') { clearTimeout(this._qT); this.setState({ q: e.target.value }); } },
       hasQ: !!s.q, clearQ: () => { clearTimeout(this._qT); this.setState({ q: '' }, () => this.focusSoon('input.ly-search')); },
       noHits: !!(ql || s.kw) && !qAll.length, noHitsText: `找不到符合${s.q.trim() ? `「${s.q.trim()}」` : '這個關鍵詞'}的論文`,
-      skipToMain: e => { e.preventDefault(); const m = document.querySelector('main'); if (m) { m.tabIndex = -1; m.focus(); } },
+      skipToMain: e => { e.preventDefault(); const go = () => this.focusSoon(() => { const m = document.querySelector('main'); if (m) m.tabIndex = -1; return m; }); if (!s.wide && s.sbOpen) { this._sbRet = null; this.setState({ sbOpen: false }, go); } else go(); },
       srcLang: cur ? (LANG_CODE[cur.lang] || 'en') : 'en',
       closeSettings: () => this.setState({ showSet: false }), showSet: s.showSet,
       aiMode: this.aiMode(), keyDraft: s.keyDraft, codeDraft: s.codeDraft,
@@ -4018,12 +4120,7 @@ class Component extends DCLogic {
       ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
       toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; if (on && this.cloudTarget() === 'drive' && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this.lsSet('lunyi-sync-owner', ''); if (on) this.ensureOwner(); this._syncReady = !!this._ready; if (on) this._needPull = true; if (on && this.cloudTarget() === 'gist' && this.syncOn() && this._ready) this.pullThenPush(); this.setState({ syncStatus: this.state.syncStatus }); if (on && this.cloudTarget() === 'drive' && this.lsGet('lunyi-sync-owner')) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並登入 Google 後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
-      openAdd: () => { if (!s.showSet && !s.showAdd && !s.showLogin) this._retFocus = document.activeElement; this.setState(st => {
-        // 上次是自動填的專案就換成目前的專案；使用者自己打的才保留
-        const typed = st.form.folder && st.form.folder !== this._autoFolder ? st.form.folder : '', want = this.isProj(st.folder) ? st.folder : '';
-        this._autoFolder = typed ? null : want;
-        return { showAdd: true, acctOpen: false, sbOpen: st.wide ? st.sbOpen : false, form: { ...st.form, folder: typed || want } }; }); }, closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
-      folders: [fBtn('全部', qAll.length), ...[...folderNames, ...(s.papers.some(p => !projOf(p).length) ? [NOPROJ] : [])].map(f => fBtn(f, qAll.filter(this.inScope(f)).length))],
+      openAdd: () => this.openAddDlg(), closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
       folderNames,
       curProj: cur ? projOf(cur).map(nm => { const has = fSlot(nm) >= 0; return { name: nm, swatch: has ? fColor(nm) : 'transparent', ring: has ? 'none' : 'inset 0 0 0 1px #bdb6a9', rmLabel: `從「${nm}」移出`, onRemove: () => { this.leaveProj(cur.id, nm); this.focusSoon('select[aria-label="加入專案"]'); } }; }) : [],
       joinable: cur ? folderNames.filter(nm => !projOf(cur).includes(nm)) : [],
@@ -4062,12 +4159,13 @@ class Component extends DCLogic {
       list: filtered.map(p => ({ title: p.title, meta: meta(p), tagsText: (p.tags || []).join(' · '), prog: `譯 ${p.paras.filter(x => x.zh).length}/${p.paras.length}`, bg: cur && p.id === cur.id ? '#fff' : 'transparent', onClick: () => this.open(p.id) })),
       listEmpty: !filtered.length,
       stats: `${s.papers.length} 篇 · ${s.notes.length} 筆記 · ${s.links.length} 手動串聯`,
-      ...(() => { const list = s.papers.filter(inScope), scope = s.folder === '全部' ? '全部論文' : `「${s.folder}」`; return { bibLabel: `複製 BibTeX（${list.length} 篇）`, bibTitle: `把${scope}的 ${list.length} 篇論文複製成 BibTeX`,
-        exportAllBib: () => list.length ? this.copy(list.map(p => this.bib(p)).join('\n\n'), `${scope} ${list.length} 篇 BibTeX`) : this.toast('這個範圍沒有論文') }; })(),
+      // 總覽的 BibTeX：和畫面上的篇數一致（範圍＋搜尋＋關鍵詞）
+      ...(() => { const f = !!(ql || s.kw), scope = s.folder === '全部' ? '全部論文' : `「${s.folder}」`, what = `${scope}${f ? '中符合篩選的' : ''}`; return { bibLabel: `複製 BibTeX（${filtered.length} 篇）`, bibTitle: `把${what} ${filtered.length} 篇論文複製成 BibTeX`,
+        exportAllBib: () => this.copyBibList(filtered, what, f && s.papers.some(inScope) ? '沒有符合目前篩選的論文' : '這個範圍沒有論文') }; })(),
       hasPaper: !!cur, noPaper: !cur, readerCols: cur ? 'minmax(0,1fr) 340px' : 'minmax(0,1fr)',
       ...(() => { const empty = !cur && s.papers.length > 0, live = this.isProj(s.folder) && this.projectNames().includes(s.folder);
-        return { noPaperText: !empty ? '文獻庫是空的，從新增第一篇論文開始。' : live ? `「${s.folder}」還沒有論文。到專案首頁從推薦加入，或新增一篇論文到這個專案。` : s.folder === NOPROJ ? '「未分類」裡已經沒有論文，所有論文都放進專案了。' : `「${s.folder}」沒有論文。`,
-          scopeEmpty: empty, scopeEmptyLabel: live ? '打開專案首頁' : '看全部論文', onScopeEmpty: () => live ? this.openProject(s.folder) : this.setState({ folder: '全部' }) }; })(),
+        return { noPaperText: !empty ? '文獻庫是空的，從新增第一篇論文開始。' : live ? `「${s.folder}」還沒有論文。到「總覽」從推薦加入，或新增一篇論文到這個專案。` : s.folder === NOPROJ ? '「未分類」裡已經沒有論文，所有論文都放進專案了。' : `「${s.folder}」沒有論文。`,
+          scopeEmpty: empty, scopeEmptyLabel: live ? '到總覽看推薦' : '看全部論文', onScopeEmpty: () => live ? this.openProject(s.folder) : this.setScope('全部') }; })(),
       cur: cur || { title: '', authors: '', journal: '', year: '', folder: '' },
       curLang: cur && cur.lang ? `原文 ${cur.lang}` : '',
       curTags: cur ? cur.tags || [] : [],
@@ -4103,9 +4201,9 @@ class Component extends DCLogic {
       graphEmpty: L === 'graph' && !vis.length,
       graphEmptyText: ql || s.kw ? '沒有符合目前搜尋或關鍵詞的論文，清除篩選後就會畫出圖譜。' : !s.papers.length ? '文獻庫是空的，新增論文後這裡會畫出論文之間的關聯。' : `「${s.folder === '全部' ? '全部論文' : s.folder}」還沒有論文，加入論文後這裡會畫出它們之間的關聯。`,
       edgeFilters: [efBtn('kw', '共同關鍵詞', '#bdb6a9', 'solid'), efBtn('cite', '引用', '#1d1b18', 'dotted'), efBtn('man', '手動串聯', ACC, 'dashed')],
-      openInReader: () => this.setState({ layout: 'reader' }),
+      openInReader: () => cur && (cur.id !== s.sel || !inScope(cur)) ? this.open(cur.id, 'reader', s.selFrom) : this.setState({ layout: 'reader', hov: null }),
       askAbout: () => cur && this.submitAsk(`用三點摘要「${cur.title}」，並說明它和文獻庫中其他論文的關係。`),
-      ...(() => { const qs = s.qa.filter(x => (x.proj || '全部') === s.folder); return { qa: qs.map(x => ({ q: x.q, segs: this.segs(x.a) })), qaEmpty: !qs.length && !s.asking }; })(), asking: s.asking,
+      ...(() => { const qs = s.qa.filter(x => (x.proj || '全部') === s.folder); return { qa: qs.map(x => ({ q: x.q, segs: this.segs(x.a) })), qaEmpty: !qs.length && !s.asking }; })(), asking: s.asking, askingText: !s.asking || (s.askScope || '全部') === s.folder ? '正在翻閱文獻庫…' : `AI 正在回答「${this.scopeName(s.askScope)}」的問題，回答會留在那裡的對話。`,
       suggestions: sugg.map(label => ({ label, onClick: () => this.submitAsk(label) })),
       ask: s.ask, onAsk: e => this.setState({ ask: e.target.value }),
       onAskKey: e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); this.submitAsk(); } },
