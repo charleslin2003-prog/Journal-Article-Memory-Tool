@@ -12,6 +12,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>html,body{margin:0;height:100%;background:#f4f2ed;color:#1d1b18;font-family:'Noto Sans TC',sans-serif}*{box-sizing:border-box}a{color:oklch(0.45 0.1 200)}a:hover{color:#1d1b18}input,textarea,select,button{font:inherit;color:inherit}button,label{cursor:pointer}
 .ly-root[data-sb="false"] .ly-sb{visibility:hidden}
+.ly-boot-t{animation:lyfade .2s .4s both}@keyframes lyfade{from{opacity:0}to{opacity:1}}
 .ly-sbrow{display:flex;align-items:center;gap:8px;width:100%;border:0;background:transparent;border-radius:6px;padding:5px 8px;font-size:14px;color:#37352f;text-align:left;min-height:30px}
 .ly-sbrow:hover{background:#e3ded5!important}
 .ly-search::placeholder{color:#625d55}
@@ -181,6 +182,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
         <sc-for list="{{ crumbs }}" as="cb" hint-placeholder-count="2"><span aria-hidden="true" class="{{ cb.sepCls }}" style="color:#bdb6a9;display:{{ cb.sepDisp }}">/</span><sc-if value="{{ cb.btn }}" hint-placeholder-val="{{ false }}"><button class="{{ cb.cls }}" sc-camel-on-click="{{ cb.onClick }}" title="{{ cb.title }}" style="border:0;background:transparent;border-radius:4px;padding:3px 6px;color:{{ cb.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:{{ cb.max }}" style-hover="background:#ece8e0">{{ cb.label }}</button></sc-if><sc-if value="{{ cb.txt }}" hint-placeholder-val="{{ true }}"><span class="{{ cb.cls }}" aria-current="{{ cb.cur }}" title="{{ cb.title }}" style="padding:3px 6px;color:{{ cb.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:{{ cb.max }}">{{ cb.label }}</span></sc-if></sc-for>
       </nav>
       <div style="flex:1"></div>
+      <sc-if value="{{ hasSaveErr }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ showSaveErr }}" title="{{ saveErr }}" style="border:1px solid #f0d2c2;background:#fbeee6;color:#7a2e12;border-radius:999px;padding:4px 11px;font-size:12px;white-space:nowrap;flex-shrink:0">⚠ 尚未儲存</button></sc-if>
       <button sc-camel-on-click="{{ openAiSettings }}" title="{{ aiChipTitle }}" style="border:1px solid #e2ddd3;background:#fff;border-radius:999px;padding:4px 11px;font-size:12px;display:flex;align-items:center;gap:7px;white-space:nowrap;min-width:84px;max-width:320px;flex-shrink:1" style-hover="border-color:#bdb6a9"><span style="width:8px;height:8px;border-radius:50%;background:{{ aiDot }};flex-shrink:0"></span><span style="overflow:hidden;text-overflow:ellipsis">{{ aiChip }}</span></button>
     </header>
 
@@ -811,6 +813,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             <label style="position:relative;border:1px solid #d6d0c4;padding:6px 14px;border-radius:6px;background:#fff;font-size:12px">匯入 JSON<input class="ly-file" type="file" accept="application/json,.json" sc-camel-on-change="{{ onImport }}"></label>
             <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">{{ stats }}</span>
           </div>
+          <sc-if value="{{ storeOn }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55;line-height:1.7">{{ storeText }}<sc-if value="{{ storeCanPersist }}" hint-placeholder-val="{{ false }}"> <button sc-camel-on-click="{{ askPersist }}" aria-disabled="{{ persistBusyAttr }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:5px;padding:3px 10px;font-size:12px">{{ persistLabel }}</button></sc-if></div></sc-if>
           <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:14px;font-weight:600">雲端同步</div>
           <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px;align-self:flex-start">
             <sc-for list="{{ syncBtns }}" as="sb" hint-placeholder-count="2"><button sc-camel-on-click="{{ sb.onClick }}" aria-pressed="{{ sb.pressed }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ sb.bg }}">{{ sb.label }}</button></sc-for>
@@ -867,6 +870,19 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   <div style="position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#1d1b18;color:#faf9f6;font-size:13px;padding:10px 18px;border-radius:6px;z-index:60;max-width:calc(100vw - 32px)">{{ toast }}<sc-if value="{{ hasToastAct }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ runToastAct }}" style="border:0;background:none;color:oklch(0.85 0.08 200);margin-left:12px;font-size:13px;text-decoration:underline;padding:0">{{ toastActLabel }}</button></sc-if><sc-if value="{{ hasToastLink }}" hint-placeholder-val="{{ false }}"><a href="{{ toastLink }}" target="_blank" rel="noopener" style="color:oklch(0.85 0.08 200);margin-left:12px">開啟</a></sc-if></div>
 </sc-if>
 <div role="status" aria-live="polite" style="position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">{{ toast }}</div>
+<sc-if value="{{ bootOn }}" hint-placeholder-val="{{ false }}">
+  <div class="ly-boot" style="position:fixed;inset:0;z-index:80;background:#f4f2ed;display:grid;place-items:center;padding:24px">
+    <div role="{{ bootRole }}" aria-live="polite" style="max-width:460px;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center;font-size:14px;line-height:1.7;color:#37352f">
+      <span aria-hidden="true" style="width:46px;height:46px;border-radius:11px;background:#1d1b18;color:#faf9f6;display:grid;place-items:center;font-family:'Noto Serif TC',serif;font-size:25px">論</span>
+      <div class="ly-boot-t">{{ bootText }}</div>
+      <sc-if value="{{ bootBtns }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        <button sc-camel-on-click="{{ bootReload }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:6px;padding:8px 16px;font-size:13px">重新整理</button>
+        <sc-if value="{{ bootExport }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ exportJson }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:8px 16px;font-size:13px">先匯出 JSON 備份</button></sc-if>
+        <sc-if value="{{ bootReset }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ resetStore }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:8px 16px;font-size:13px;color:oklch(0.5 0.15 25)">清除這台瀏覽器的文獻庫並重新開始</button></sc-if>
+      </div></sc-if>
+    </div>
+  </div>
+</sc-if>
 </x-dc>
 <script>
 (function(){
@@ -1180,6 +1196,89 @@ const SEED_MX = {
 };
 SEED.papers.forEach(p => { if (SEED_MX[p.id]) p.mx = SEED_MX[p.id]; });
 
+// ---- 文獻庫存放：IndexedDB（容量是 localStorage 的上百倍）；舊版存在 localStorage 的資料第一次開啟時搬過去 ----
+// 資料庫 lunyi：papers（每篇一筆）、kv（lib＝筆記、串聯、專案等其他資料與論文順序；migr＝搬移紀錄；legacy＝舊版資料的原始備份）
+// localStorage 只留一個標記 lunyi-store=idb：有標記卻打不開 IndexedDB 時，絕不改用示範論文或空白文獻庫存檔、同步
+const IDB_NAME = 'lunyi', STORE_MARK = 'lunyi-store', REV_KEY = 'lunyi-lib-rev', PEND_KEY = 'lunyi-pending';
+const KV_KEYS = ['links', 'notes', 'qa', 'gone', 'fslots', 'projects', 'projAt', 'projDel', 'projMeta', 'mxCols'];
+// 這個分頁的代號：判斷 IndexedDB 裡的資料是不是別的分頁剛寫的
+const TAB = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+// 字串指紋（FNV-1a）：只用來判斷舊版分頁有沒有改過資料，不是安全用途
+const fp = t => { let h = 2166136261; const s = String(t); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0).toString(36) + '.' + s.length; };
+// 論文內容的指紋（同一個物件只算一次）：判斷上次同步之後有沒有改過
+const FPC = new WeakMap();
+const fpOf = p => { let v = FPC.get(p); if (!v) { v = fp(JSON.stringify(p)); FPC.set(p, v); } return v; };
+const SEED_IDS = new Set(SEED.papers.map(p => p.id));
+// 打開資料庫；缺少資料表時升一版補上。ms 之後還沒打開就回報 slow（不代表失敗，連線之後仍可能成功）
+function idbOpen(onSlow, ms) {
+  return new Promise(ok => {
+    let f = null, done = false;
+    try { f = window.indexedDB; } catch (e) {}
+    if (!f) return ok({ db: null, err: Object.assign(new Error('這個瀏覽器不能使用 IndexedDB'), { name: 'NoIDB' }) });
+    const fin = (db, err) => { if (done) { if (db) db.close(); return; } done = true; clearTimeout(t); ok({ db, err }); };
+    const t = ms ? setTimeout(() => onSlow && onSlow(fin), ms) : 0;
+    const up = db => { if (!db.objectStoreNames.contains('papers')) db.createObjectStore('papers', { keyPath: 'id' }); if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); };
+    const req = v => {
+      let r;
+      try { r = v ? f.open(IDB_NAME, v) : f.open(IDB_NAME); } catch (e) { return fin(null, e); }
+      r.onupgradeneeded = () => up(r.result);
+      r.onsuccess = () => { const db = r.result; if (db.objectStoreNames.contains('papers') && db.objectStoreNames.contains('kv')) return fin(db); const nv = db.version + 1; db.close(); req(nv); };
+      r.onerror = e => { e.preventDefault(); fin(null, r.error); };
+    };
+    req(0);
+  });
+}
+function idbRead(db) {
+  return new Promise((ok, fail) => {
+    let tx;
+    try { tx = db.transaction(['papers', 'kv'], 'readonly'); } catch (e) { return fail(e); }
+    const out = { papers: [] };
+    try {
+      const kv = tx.objectStore('kv');
+      kv.get('lib').onsuccess = e => { out.lib = e.target.result; };
+      kv.get('migr').onsuccess = e => { out.migr = e.target.result; };
+      kv.get('synced').onsuccess = e => { out.synced = e.target.result; };
+      tx.objectStore('papers').getAll().onsuccess = e => { out.papers = e.target.result || []; };
+    } catch (e) { try { tx.abort(); } catch (x) {} return fail(e); }
+    tx.oncomplete = () => ok(out);
+    tx.onabort = () => fail(tx.error || new Error('讀取中斷'));
+  });
+}
+// 組回文獻庫：照 order 排；重複的、已刪除（gone）的跳過；不在 order 裡的（別的分頁剛新增）接在後面
+function libFrom(out) {
+  if (!out || !out.lib || typeof out.lib !== 'object') return null;
+  const gone = new Set(Array.isArray(out.lib.gone) ? out.lib.gone : []), by = new Map(out.papers.map(p => [p.id, p])), seen = new Set(), papers = [];
+  (Array.isArray(out.lib.order) ? out.lib.order : []).forEach(id => { const p = by.get(id); if (p && !seen.has(id) && !gone.has(id)) { seen.add(id); papers.push(p); } });
+  out.papers.forEach(p => { if (!seen.has(p.id) && !gone.has(p.id)) { seen.add(p.id); papers.push(p); } });
+  return { ...out.lib, papers };
+}
+// 寫入一次：論文的新增／修改／刪除和其他資料在同一個交易裡，要嘛全部寫進去、要嘛全部不寫
+// check(cur)：交易裡先讀目前的 lib，回傳 false 代表別的分頁剛寫過，整個交易取消
+function idbWrite(db, { puts, dels, lib, extra, check }) {
+  return new Promise((ok, fail) => {
+    let tx, conflict = false, thrown = null;
+    try { tx = db.transaction(['papers', 'kv'], 'readwrite'); } catch (e) { return fail(e); }
+    tx.oncomplete = () => ok(lib);
+    tx.onabort = () => fail(conflict ? Object.assign(new Error(conflict === 'reset' ? '這台瀏覽器的文獻庫被清掉了' : '另一個分頁剛更新了文獻庫'), { name: conflict === 'reset' ? 'ResetError' : 'ConflictError' }) : tx.error || thrown || new Error('寫入中斷'));
+    const abort = x => { if (x) thrown = x; try { tx.abort(); } catch (y) {} };
+    try {
+      const ps = tx.objectStore('papers'), kv = tx.objectStore('kv');
+      kv.get('lib').onsuccess = e => {
+        try {
+          const cur = e.target.result, c = check ? check(cur) : true;
+          if (c !== true) { conflict = c === 'reset' ? 'reset' : 'conflict'; return abort(); }
+          lib.rev = ((cur && cur.rev) || 0) + 1;
+          if (!cur) lib.gen = Date.now().toString(36) + Math.random().toString(36).slice(2, 8); else if (cur.gen) lib.gen = cur.gen;
+          puts.forEach(p => ps.put(p)); dels.forEach(id => ps.delete(id));
+          kv.put(lib, 'lib');
+          Object.entries(extra || {}).forEach(([k, v]) => kv.put(v, k));
+          if (typeof tx.commit === 'function') tx.commit();
+        } catch (x) { abort(x); }
+      };
+    } catch (e) { abort(e); }
+  });
+}
+
 function splitParas(lines) {
   const lens = lines.filter(l => l.length > 20).map(l => l.length).sort((a, b) => a - b);
   const med = lens[Math.floor(lens.length / 2)] || 80;
@@ -1280,10 +1379,8 @@ function suggestLinks(name, papers, links, n = 4) {
 class Component extends DCLogic {
   state = this.init();
   init() {
-    let d = null;
-    try { d = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
-    if (!d || !Array.isArray(d.papers)) d = JSON.parse(JSON.stringify(SEED));
-    d.papers = d.papers.map(fromStore).map(withMx);
+    // 文獻庫在 componentDidMount 時從 IndexedDB 讀進來（boot）；讀完以前是空的，畫面蓋著「正在開啟文獻庫」，也不會存檔或同步
+    const d = { papers: [] };
     return { papers: d.papers, links: d.links || [], notes: d.notes || [], qa: d.qa || [], gone: d.gone || [], sel: d.papers[0] && d.papers[0].id,
       layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '',
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
@@ -1291,7 +1388,7 @@ class Component extends DCLogic {
       gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
       projects: [...new Set([...(Array.isArray(d.projects) ? d.projects : []), ...d.papers.flatMap(projOf)])].filter(RESERVED), projAt: d.projAt || {}, projDel: d.projDel || {}, projOpen: d.papers[0] ? { [projOf(d.papers[0])[0] || NOPROJ]: true } : {}, projMeta: d.projMeta && typeof d.projMeta === 'object' ? d.projMeta : {}, projDir: '', newProjDir: '', newProjFor: null, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
       sbOpen: window.innerWidth >= 1100, narrow: window.innerWidth <= 900, wide: window.innerWidth >= 1100, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
-      showLogin: false, loginMsg: '', loginBusy: '', remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '', mxCols: validMxCols(d.mxCols), ...this.mxInitState() };
+      showLogin: false, loginMsg: '', loginBusy: '', remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '', mxCols: null, boot: 'pending', bootSlow: false, bootMsg: '', bootAtStart: false, saveErr: '', storeInfo: null, persistBusy: false, ...this.mxInitState() };
   }
   // 比較矩陣的畫面狀態；檢視方式、排序、概念來源與匯出選項記在這台裝置
   mxInitState() {
@@ -1303,8 +1400,8 @@ class Component extends DCLogic {
   }
   componentDidMount() {
     this._ps = this.state;
-    const hadLib = !!this.lsGet(KEY); // 已有文獻庫＝更新前就用過的舊使用者，不算第一次開啟
-    this.ensureSlots();
+    document.documentElement.dataset.lunyiStore = 'pending';
+    this._bootDirty = !!this.lsGet('lunyi-sync-dirty');
     this._needKey = e => { const d = e.detail || {}; this.toast((typeof d === 'string' ? d : d.msg) || '需要連結 AI'); this.openSettings(d.tab || 'ai'); };
     window.addEventListener('lunyi-need-key', this._needKey);
     // 視窗變窄時側欄改成浮動抽屜
@@ -1316,10 +1413,13 @@ class Component extends DCLogic {
     window.addEventListener('keydown', this._esc);
     this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); };
     window.addEventListener('pointerdown', this._down);
-    // 關閉或切走分頁時，把還沒存的修改寫進去
-    this._flush = () => { if (this._save) this.saveLib(); };
+    // 關閉或切走分頁時，把還沒存的修改寫進去（IndexedDB 是非同步的，同時在 localStorage 留一份小備份）
+    this._flush = () => this.flushLib();
     this._vis = () => { if (document.visibilityState === 'hidden') this._flush(); };
     window.addEventListener('pagehide', this._flush); document.addEventListener('visibilitychange', this._vis);
+    // 存檔失敗、修改還沒寫進去時，關閉分頁前先提醒
+    this._bu = e => { if (this._dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('beforeunload', this._bu);
     this._pop = () => {
       if (this._popSkip) { this._popSkip = false; return; }
       if (!this._ovPushed) return;
@@ -1347,22 +1447,25 @@ class Component extends DCLogic {
     }
     let gUser = null;
     try { gUser = JSON.parse(this.lsGet('lunyi-g-user') || 'null'); } catch (e) {}
-    const firstVisit = !this.lsGet('lunyi-login-seen');
-    if (firstVisit) this.lsSet('lunyi-login-seen', '1');
-    // 只在真正第一次使用時跳出；存不了 localStorage 時也不跳，免得每次開都出現
-    const fresh = firstVisit && !hadLib && !!this.gClient() && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
-    this.setState({ gUser, syncTarget: this.cloudTarget(), showLogin: fresh && !gUser });
+    // 只在真正第一次使用時跳出登入視窗（文獻庫讀完才知道是不是舊使用者，見 afterBoot）
+    this._firstVisit = !this.lsGet('lunyi-login-seen');
+    if (this._firstVisit) this.lsSet('lunyi-login-seen', '1');
+    this.setState({ gUser, syncTarget: this.cloudTarget() });
     if (this.gClient()) loadScript(GSI).catch(() => {});
     this.ensureOwner();
     // 其他分頁登入、登出或換帳號：更新頭像；自動同步被關掉時取消這裡排著的上傳（每次上傳也會再檢查帳號）
     this._store = e => {
       if (e.key === 'lunyi-g-user') { let u = null; try { u = JSON.parse(e.newValue || 'null'); } catch (x) {} this.setState({ gUser: u }); }
       if ((e.key === 'lunyi-sync-auto' || e.key === 'lunyi-sync-owner') && !this.syncOn()) { clearTimeout(this._push); this._push = null; }
+      if (e.key === 'lunyi-sync-auto' || e.key === 'lunyi-sync-target' || e.key === 'lunyi-gist-id') this._needPull = true;
+      // 別的分頁剛存了文獻庫：重新讀一次（這裡還沒存的修改會保留）
+      if (e.key === REV_KEY && e.newValue && this._boot === 'idb' && this._ready && e.newValue.split(':')[0] !== TAB) { if (!this._db && !this._vc) this.reconnect().then(() => this.rehydrate()); else this.rehydrate(); }
+      // 舊版論憶的分頁還開著，還在寫 localStorage
+      if (e.key === KEY && e.newValue && this._boot === 'idb' && !this._oldTabWarned) { this._oldTabWarned = true; this.toast('另一個分頁還在用舊版論憶：請重新整理那個分頁。它的修改會在下次開啟論憶時合併進來。', '', 10000); }
     };
     window.addEventListener('storage', this._store);
-    this.lsSet('lunyi-sync-dirty', '');
-    if (this.syncOn()) this.pullCloud(true).then(() => { this._syncReady = true; });
-    else this._syncReady = true;
+    window.lunyiFlush = () => this.flushAll();
+    this.boot();
   }
   // 執行環境只傳 prevProps，不傳 prevState，上一個 state 要自己記
   componentDidUpdate(pp) {
@@ -1370,7 +1473,7 @@ class Component extends DCLogic {
     this._ps = s;
     if (pp.layout !== this.props.layout && this.props.layout) this.setState({ layout: this.props.layout });
     if (pp.defaultMode !== this.props.defaultMode && this.props.defaultMode) this.setState({ mode: this.props.defaultMode });
-    const libChanged = ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone || ps.projects !== s.projects || ps.projDel !== s.projDel || ps.projMeta !== s.projMeta || ps.mxCols !== s.mxCols;
+    const libChanged = ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone || ps.projects !== s.projects || ps.projAt !== s.projAt || ps.projDel !== s.projDel || ps.projMeta !== s.projMeta || ps.mxCols !== s.mxCols;
     // 連續修改時合併成一次儲存（大文獻庫每次存檔要幾十毫秒）；關閉分頁前一定會存
     if (libChanged || ps.fslots !== s.fslots) { clearTimeout(this._save); this._save = setTimeout(() => this.saveLib(), 200); }
     if (ps.sel !== s.sel || ps.selPara !== s.selPara) this.clearNote();
@@ -1384,7 +1487,10 @@ class Component extends DCLogic {
     if (ps.projMeta !== s.projMeta && s.layout === 'home') { const od = ((ps.projMeta || {})[s.folder] || {}).dir || '', nd = ((s.projMeta || {})[s.folder] || {}).dir || ''; if (nd !== od && String(s.projDir || '').trim() === od) this.setState({ projDir: nd }); }
     if (s.layout === 'graph') { cancelAnimationFrame(this._fitL); this._fitL = requestAnimationFrame(() => this.fitLabels()); }
     if (ps.q !== s.q) { const i = document.querySelector('input.ly-search'); if (i && i.value !== s.q) i.value = s.q; }
-    if (libChanged && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) this.autoPush(); }, 3000); }
+    // 只是重新讀出別的分頁存的內容（這裡沒有其他修改）：不必再上傳
+    const fromDb = this._fromDb && s.papers === this._fromDb.papers && KV_KEYS.every(k => s[k] === this._fromDb.kv[k]); this._fromDb = null;
+    if (libChanged && !fromDb && this._ready) this.lsSet('lunyi-sync-dirty', String(Date.now()));
+    if (libChanged && !fromDb && this._syncReady && this.syncOn()) { clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) { if (this._needPull) this.pullThenPush(); else this.autoPush(); } }, 3000); }
     if (ps.papers !== s.papers || ps.projects !== s.projects || ps.projDel !== s.projDel) this.ensureSlots();
     this.syncFocus(ps, s);
     // 手機：開了側欄或視窗時多一筆瀏覽紀錄，按返回鍵會先關掉它，而不是離開網站
@@ -1408,22 +1514,346 @@ class Component extends DCLogic {
       if (![t0, 0.5, 0.42, 0.58, 0.35, 0.65, 0.3, 0.7].some(t => { at(t); return !hit(l.getBoundingClientRect()); })) { at(t0); l.style.visibility = 'hidden'; }
     });
   }
+  // ---- 開啟文獻庫：先讀 IndexedDB；舊版的 localStorage 資料第一次開啟時搬過去 ----
+  libState(d, first) {
+    const seen = new Set(), papers = [];
+    (Array.isArray(d.papers) ? d.papers : []).filter(p => p && p.id != null && typeof p.title === 'string' && Array.isArray(p.paras))
+      .map(p => withMx(fromStore({ ...p, id: String(p.id), keywords: Array.isArray(p.keywords) ? p.keywords : [], cites: Array.isArray(p.cites) ? p.cites : [] })))
+      .forEach(p => { if (!seen.has(p.id)) { seen.add(p.id); papers.push(p); } });
+    const o = { papers, links: Array.isArray(d.links) ? d.links : [], notes: Array.isArray(d.notes) ? d.notes : [], qa: Array.isArray(d.qa) ? d.qa : [], gone: Array.isArray(d.gone) ? d.gone : [], fslots: d.fslots && typeof d.fslots === 'object' ? d.fslots : {},
+      projects: [...new Set([...(Array.isArray(d.projects) ? d.projects : []), ...papers.flatMap(projOf)])].filter(RESERVED), projAt: d.projAt || {}, projDel: d.projDel || {}, projMeta: d.projMeta && typeof d.projMeta === 'object' ? d.projMeta : {}, mxCols: validMxCols(d.mxCols) };
+    if (first) { o.sel = papers[0] && papers[0].id; o.projOpen = papers[0] ? { [projOf(papers[0])[0] || NOPROJ]: true } : {}; }
+    return o;
+  }
+  async boot() {
+    const mark = this.lsGet(STORE_MARK) === 'idb', raw = this.lsGet(KEY);
+    let legacy = null;
+    try { legacy = raw ? JSON.parse(raw) : null; } catch (e) {}
+    if (!legacy || typeof legacy !== 'object' || !Array.isArray(legacy.papers)) legacy = null;
+    const ms = Number(window.__lunyiIdbTimeout) || 6000;
+    // 開很久：已經搬到 IndexedDB 的就繼續等（不能改用別的資料）；還沒搬過的改用 localStorage
+    const { db, err } = await idbOpen(fin => { if (mark) this.setState({ bootSlow: true }); else fin(null, Object.assign(new Error('開啟逾時'), { name: 'TimeoutError' })); }, ms);
+    if (!db) return mark ? this.storeDown(err, true) : this.bootDone('ls', legacy);
+    this.attachDb(db);
+    let out;
+    try { out = await idbRead(db); } catch (e) { if (this._boot === 'down') return; if (mark) return this.storeDown(e, true); this.dropDb(); return this.bootDone('ls', legacy); }
+    if (this._boot === 'down') return;
+    let d = libFrom(out), migr = out.migr || null, migrated = false;
+    if (!d && legacy) {
+      // 第一次：把 localStorage 的文獻庫搬進 IndexedDB；同一個交易裡先確認沒有別的分頁剛搬好
+      const st0 = this.libState(legacy, false);
+      const lib = { ...Object.fromEntries(KV_KEYS.map(k => [k, st0[k]])), order: st0.papers.map(p => p.id), savedAt: Date.now(), tab: TAB };
+      const m = { sig: fp(raw), fps: Object.fromEntries(legacy.papers.map(p => [String(p.id), fp(JSON.stringify(p))])), at: Date.now() };
+      const puts = st0.papers;
+      try { await idbWrite(db, { puts, dels: [], lib, extra: { migr: m, legacy: raw }, check: cur => !cur }); migrated = true; d = { ...lib, papers: puts }; migr = m; }
+      catch (e) {
+        if (this._boot === 'down') return;
+        if (e.name === 'ConflictError') { try { out = await idbRead(db); d = libFrom(out); migr = out.migr || null; } catch (x) { return this.storeDown(x, true); } }
+        // 寫不進 IndexedDB（例如空間不足）：這次先繼續用 localStorage，下次開啟再搬
+        else { this.dropDb(); return this.bootDone('ls', legacy); }
+      }
+      if (migrated) this.lsSet(STORE_MARK, 'idb');
+      if (this._boot === 'down') return;
+      if (migrated) this.clearLegacy(raw);
+    }
+    if (d && !mark) this.lsSet(STORE_MARK, 'idb');
+    // 搬過之後 localStorage 又出現資料：舊版論憶的分頁寫的。改過的論文合併進來（同一篇以舊版分頁的為準），原始資料留一份備份
+    let late = null;
+    if (d && raw && !migrated) {
+      if (migr && migr.sig === fp(raw)) this.clearLegacy(raw);
+      else if (legacy) late = { legacy, raw, fps: (migr && migr.fps) || {} };
+    }
+    if (!d && mark) return this.bootDone('idb', null, { lost: true });
+    this.bootDone('idb', d, { late, migr, synced: out.synced });
+  }
+  // 只有內容還是開啟時讀到的那份才清掉（舊版分頁剛好又存了的話留著，下次開啟再合併）
+  clearLegacy(raw) { try { if (localStorage.getItem(KEY) === raw) localStorage.removeItem(KEY); } catch (e) {} }
+  attachDb(db) {
+    this._db = db;
+    // 別的分頁要升級或刪除資料庫：先把還沒存的寫進去，再關掉連線，請使用者重新整理
+    db.onversionchange = () => { this._vc = true; try { this.saveLib(); } catch (e) {} db.close(); if (this._db === db) this._db = null; this.storeDown(null, false, '另一個分頁更新了論憶，請重新整理這個頁面。'); };
+    db.onclose = () => { if (this._db !== db) return; this._db = null; clearTimeout(this._recon); this._recon = setTimeout(() => { if (!this._db && !this._vc && this._boot === 'idb') this.reconnect().then(() => this.rehydrate()); }, 300); };
+  }
+  dropDb() { if (this._db) { try { this._db.close(); } catch (e) {} } this._db = null; }
+  bootDone(mode, d, { late = null, lost = false, migr = null, synced = null } = {}) {
+    if (this._boot === 'down') return;
+    this._boot = mode;
+    this._migr = migr;
+    const lib = d || (lost ? { papers: [] } : JSON.parse(JSON.stringify(SEED)));
+    const st = this.libState(lib, true);
+    this._cm = new Map(); this._ckv = null; this._cord = ''; this._seenRev = (d && d.rev) || 0; this._gen = (d && d.gen) || null; this._inflight = new Map();
+    // 從 IndexedDB 讀來的就是已經存好的狀態；示範論文、從 localStorage 來的還沒存
+    if (mode === 'idb' && d) {
+      const raw = new Map(d.papers.map(p => [String(p.id), p]));
+      const clean = n => { const r = raw.get(n.id); return !!r && r.id === n.id && Array.isArray(r.keywords) && Array.isArray(r.cites) && r.folder === n.folder && JSON.stringify(r.projects) === JSON.stringify(n.projects) && (!r.mx || JSON.stringify(r.mx) === JSON.stringify(n.mx)); };
+      this._cm = new Map(st.papers.filter(clean).map(p => [p.id, p])); this._ckv = KV_KEYS.map(k => st[k]); this._cord = st.papers.map(p => p.id).join('\n'); }
+    document.documentElement.dataset.lunyiStore = mode;
+    this._libSavedAt = (d && Number(d.savedAt)) || 0;
+    // 資料不見了（被清掉）才開啟的分頁：之後別的分頁寫進來的資料也走合併復原，不直接採用
+    if (lost) this._gen = 'wiped';
+    // 上次同步時每篇的指紋（存在 IndexedDB）：之後從雲端下載時，這台改過、還沒上傳的論文保留這台的版本
+    this._synced = synced && typeof synced === 'object' ? new Map(Object.entries(synced)) : null;
+    // 還沒有指紋紀錄時的備案：這次開啟之後改過的才算這台的修改
+    this._syncBase = new Map(st.papers.map(p => [p.id, p]));
+    this.setState({ ...st, boot: 'ready', bootSlow: false }, () => this.afterBoot(!!d, late, lost));
+  }
+  afterBoot(hadLib, late, lost) {
+    this._ready = true;
+    if (this._boot === 'idb') { this.applyPending(); if (late) this.mergeLate(late); }
+    if (lost) this.toast('這台瀏覽器裡的文獻庫資料不見了（可能被瀏覽器清掉）。開啟了自動同步的話會從雲端下載；也可以到「設定 → 同步與備份」匯入 JSON 備份。', '', 12000);
+    const fresh = this._firstVisit && !hadLib && !lost && !!this.gClient() && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
+    if (fresh && !this.state.gUser) this.setState({ showLogin: true });
+    if (this._joinAfterBoot) { this._joinAfterBoot = false; this.syncPullPush(); }
+    else if (this.syncOn()) this.pullThenReady();
+    // 之後才開啟同步（任何方式）：第一次上傳前一定先下載合併
+    else { this._syncReady = true; this._needPull = true; }
+  }
+  // 開啟網站時的下載：成功才開放上傳；失敗的話，之後的上傳一律先下載合併
+  async pullThenReady() {
+    const r = await this.pullCloud(true); this._needPull = !(r === true || r === 'empty'); this._syncReady = true;
+    // 這台有還沒上傳的修改（上次關閉前沒傳成功、或剛才合併時保留的）：現在補傳
+    if (!this._needPull && this.syncOn()) setTimeout(() => { const sy = this._synced; if (this._bootDirty || this.lsGet('lunyi-sync-dirty') || !sy || this.state.papers.some(p => sy.get(p.id) !== fpOf(p)) || this.state.papers.length !== sy.size) { this._bootDirty = false; clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) { if (this._needPull) this.pullThenPush(); else this.autoPush(); } }, 400); } }, 0);
+  }
+  async pullThenPush() {
+    if (this._pulling) return;
+    this._pulling = true;
+    // 下載失敗：這台的修改還沒上傳，記下來（重新登入時 retryPush 會再試一次）
+    try { if (this._pushing) await this._pushing; const r = await this.pullCloud(true); this._needPull = !(r === true || r === 'empty'); if (this._needPull) this._pushFailed = true; else if (this.syncOn()) this.autoPush(); }
+    finally { this._pulling = false; }
+  }
+  // 舊版分頁在搬移後寫進 localStorage 的修改：只合併它改過或新增的論文；沒改過的示範論文不合併
+  mergeLate({ legacy, raw, fps }) {
+    const norm = p => { const n = this.libState({ papers: [p] }, false).papers[0]; if (!n) return ''; const { mx, ...r } = n; return JSON.stringify(r); };
+    const seedN = new Map(SEED.papers.map(p => [p.id, norm(p)]));
+    // 舊版剛打開、還沒動過的示範論文：不合併（才不會蓋掉你在示範論文上的修改）
+    const pristine = p => !!p && seedN.has(String(p.id)) && norm(p) === seedN.get(String(p.id));
+    // 示範論文：沒動過的、或搬移時文獻庫裡本來就沒有的，都不合併
+    const changed = legacy.papers.filter(p => p && p.id != null && fps[String(p.id)] !== fp(JSON.stringify(p)) && !pristine(p) && !(SEED_IDS.has(String(p.id)) && !(String(p.id) in fps)));
+    const m = { sig: fp(raw), fps: { ...fps, ...Object.fromEntries(legacy.papers.map(p => [String(p.id), fp(JSON.stringify(p))])), at: Date.now() } };
+    this._extraKv = { ...(this._extraKv || {}), migr: m, legacy: raw };
+    const sN = new Set(SEED.notes.map(n => n.id)), sL = new Set(SEED.links.map(l => l.a + '|' + l.b + '|' + l.note));
+    const sP = new Set(SEED.papers.flatMap(projOf)), empty = o => !o || typeof o !== 'object' || !Object.keys(o).length;
+    const untouched = legacy.papers.length > 0 && legacy.papers.every(p => pristine(p) || (p && SEED_IDS.has(String(p.id)) && !(String(p.id) in fps))) && !(legacy.gone || []).length
+      && (legacy.notes || []).every(n => n && sN.has(n.id)) && (legacy.links || []).every(l => l && sL.has(l.a + '|' + l.b + '|' + l.note))
+      && !(legacy.qa || []).length && empty(legacy.projMeta) && empty(legacy.projDel) && !legacy.mxCols && (legacy.projects || []).every(x => sP.has(x));
+    if (!untouched) {
+      // 論文以外的修改（筆記、串聯、刪除、專案）也合併；只指向不存在的論文的筆記與串聯不帶進來
+      const st = this.state, have = new Set([...st.papers.map(p => p.id), ...changed.map(p => String(p.id))]);
+      const notes = (legacy.notes || []).filter(n => n && have.has(String(n.paperId))), links = (legacy.links || []).filter(l => l && have.has(String(l.a)) && have.has(String(l.b)));
+      // 真的有合併到東西才提示（mergeData 沒有任何改變時不會更新狀態）
+      this.mergeData({ ...legacy, papers: changed, notes, links }, { quiet: true, done: ch => ch && this.toast(changed.length ? `已合併另一個分頁（舊版論憶）留下的修改：${changed.length} 篇論文` : '已合併另一個分頁（舊版論憶）留下的筆記與其他修改', '', 8000) });
+    }
+    setTimeout(() => this.saveLib(), 0);
+    this.clearLegacy(raw);
+  }
+  // 上次關閉分頁時沒來得及寫進 IndexedDB 的修改（關閉前同步寫在 localStorage）：比文獻庫新才補上
+  applyPending() {
+    const keys = [];
+    try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k && (k === PEND_KEY || k.startsWith(PEND_KEY + ':'))) keys.push(k); } } catch (e) { return; }
+    const js = keys.map(k => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }).filter(j => j && typeof j === 'object').sort((a, b) => (Number(a.at) || 0) - (Number(b.at) || 0));
+    keys.forEach(k => this.lsSet(k, ''));
+    if (!js.length) return;
+    const norm = x => withMx(fromStore({ ...x, id: String(x.id), keywords: Array.isArray(x.keywords) ? x.keywords : [], cites: Array.isArray(x.cites) ? x.cites : [] }));
+    // 那個分頁存檔時的版本（base 指紋）還在才補上；已經寫進去，或之後被別的分頁改過的不動
+    this.setState(st => {
+      let papers = st.papers.slice();
+      const kv = {};
+      js.forEach(j => {
+        const by = new Map(papers.map(p => [p.id, p]));
+        (Array.isArray(j.put) ? j.put : []).forEach(e => { const x = e && e.p; if (!x || x.id == null || !Array.isArray(x.paras)) return; const id = String(x.id), cur = by.get(id);
+          if (cur ? !!e.base && fpOf(cur) === e.base : !e.base) { const n = norm(x); papers = cur ? papers.map(p => p.id === id ? n : p) : [...papers, n]; by.set(id, n); } });
+        (Array.isArray(j.del) ? j.del : []).forEach(e => { const id = String(e && e.id), cur = by.get(id); if (cur && e.base && fpOf(cur) === e.base) { papers = papers.filter(p => p.id !== id); by.delete(id); } });
+        Object.entries(j.kv && typeof j.kv === 'object' ? j.kv : {}).forEach(([k, e]) => { if (!KV_KEYS.includes(k) || !e || !e.base) return; const cur = k in kv ? kv[k] : st[k]; if (fp(JSON.stringify(cur === undefined ? null : cur)) === e.base) kv[k] = k === 'mxCols' ? validMxCols(e.v) : e.v; });
+      });
+      return { papers, ...kv };
+    });
+  }
+  // 這次要寫的差異：參考位址變了的論文、刪掉的論文、其他資料有沒有變
+  libDiff(s) {
+    const cm = this._cm, puts = s.papers.filter(p => cm.get(p.id) !== p), ids = new Set(s.papers.map(p => p.id));
+    const dels = [...new Set([...cm.keys(), ...this._inflight.keys()])].filter(id => !ids.has(id));
+    const kv = KV_KEYS.map(k => s[k]), ord = s.papers.map(p => p.id).join('\n');
+    if (!puts.length && !dels.length && !this._extraKv && this._ckv && kv.every((v, i) => v === this._ckv[i]) && ord === this._cord) return null;
+    return { puts, dels, kv, ord };
+  }
+  saveLs() {
+    const s = this.state;
+    try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, ...Object.fromEntries(KV_KEYS.map(k => [k, s[k]])) })); this.saveOk(); } catch (e) { this.saveFail(e); }
+    return Promise.resolve();
+  }
+  // 存檔：建立交易時就把要寫的東西都送出去（不等前一個交易），IndexedDB 會照順序執行
   saveLib() {
     clearTimeout(this._save); this._save = null;
-    const s = this.state;
-    try { localStorage.setItem(KEY, JSON.stringify({ papers: s.papers, links: s.links, notes: s.notes, qa: s.qa, gone: s.gone, fslots: s.fslots, projects: s.projects, projAt: s.projAt, projDel: s.projDel, projMeta: s.projMeta, mxCols: s.mxCols })); } catch (e) { this.toast('儲存空間已滿，請刪除部分論文'); }
+    if (!this._ready) return Promise.resolve();
+    if (this._boot === 'ls') return this.saveLs();
+    if (this._boot !== 'idb') return Promise.resolve();
+    if (!this._db) return this.reconnect();
+    const s = this.state, diff = this.libDiff(s);
+    if (!diff) return this._lastTx || Promise.resolve();
+    // 空間不足之後：先只寫刪除與其他資料（釋放空間），下一次再寫新增修改的論文
+    const quota = this._quota && diff.dels.length && diff.puts.length;
+    const puts = quota ? [] : diff.puts, extra = this._extraKv;
+    this._extraKv = null;
+    const at = Date.now(), lib = { ...Object.fromEntries(KV_KEYS.map((k, i) => [k, diff.kv[i]])), order: s.papers.map(p => p.id), savedAt: at, tab: TAB };
+    puts.forEach(p => this._inflight.set(p.id, (this._inflight.get(p.id) || 0) + 1));
+    const seen = this._seenRev;
+    const done = () => puts.forEach(p => { const n = (this._inflight.get(p.id) || 1) - 1; if (n) this._inflight.set(p.id, n); else this._inflight.delete(p.id); });
+    const tx = idbWrite(this._db, { puts, dels: diff.dels, lib, extra, check: cur => !cur ? (seen || this._cm.size ? 'reset' : true) : (this._gen || seen) && (cur.gen || null) !== (this._gen || null) ? 'reset' : cur.tab === TAB || cur.rev === seen }).then(l => {
+      done();
+      puts.forEach(p => this._cm.set(p.id, p)); diff.dels.forEach(id => this._cm.delete(id));
+      if (!quota) { this._ckv = diff.kv; this._cord = diff.ord; } else this._ckv = null;
+      this._seenRev = l.rev; this._gen = l.gen || null; this._libSavedAt = at; this._mine = null;
+      if (this.lsGet(STORE_MARK) !== 'idb') this.lsSet(STORE_MARK, 'idb');
+      this.lsSet(REV_KEY, TAB + ':' + l.rev);
+      if (this._pendAt && this._pendAt <= at) { this._pendAt = 0; this.lsSet(PEND_KEY + ':' + TAB, ''); }
+      if (quota) { this._quota = false; this.saveLib(); } else this.saveOk();
+    }, e => {
+      done();
+      if (extra && !this._extraKv) this._extraKv = extra;
+      if (e && e.name === 'ConflictError') return this.rehydrate();
+      if (e && e.name === 'ResetError') return this.recoverReset();
+      if (e && e.name === 'QuotaExceededError') this._quota = true;
+      if (e && e.name === 'InvalidStateError' && !this._vc) this._db = null;
+      this.saveFail(e);
+    });
+    this._lastTx = tx.catch(() => {});
+    return this._lastTx;
+  }
+  async recoverReset() {
+    if (this._recovering || !this._db) return;
+    this._recovering = true;
+    try {
+      // 讀不到（和「資料庫是空的」不同）：照一般的存檔失敗處理，間隔愈來愈長地重試
+      let out = null;
+      try { out = await idbRead(this._db); } catch (e) { this.saveFail(e); return; }
+      const d = out && libFrom(out), cm = this._cm, st0 = this.state;
+      // 這個分頁還沒存的修改：保留；其他的以資料庫裡（別的分頁剛重建的）為準，資料庫沒有的從記憶體補回
+      const sy = this._synced;
+      const mine = this._mine = new Set([...(this._mine || []), ...st0.papers.filter(p => cm.get(p.id) !== p || (sy && sy.get(p.id) !== fpOf(p))).map(p => p.id)]);
+      // 資料庫是空的：世代設成「清掉過」，之後別的分頁先寫進去的資料一律走這裡的合併，不會被當成全新的分頁直接採用
+      this._cm = new Map(); this._ckv = null; this._cord = ''; this._seenRev = (d && d.rev) || 0; this._gen = d ? d.gen || null : this._gen || 'wiped';
+      if (this._synced) this._extraKv = { ...(this._extraKv || {}), synced: Object.fromEntries(this._synced) };
+      const stored = d ? new Map(d.papers.map(p => [String(p.id), fp(JSON.stringify(p))])) : new Map();
+      const after = () => { this.state.papers.forEach(p => { if (stored.get(p.id) === fpOf(p)) this._cm.set(p.id, p); }); setTimeout(() => this.saveLib(), 0); };
+      if (d) this.mergeData(d, { keep: l => mine.has(l.id), quiet: true, done: after }); else after();
+      this.toast('這台瀏覽器裡的文獻庫被清掉了，已用目前畫面上的資料重新存一份。', '', 9000);
+    } finally { this._recovering = false; }
+  }
+  // 同步基準存進 IndexedDB（下一次存檔一起寫）
+  persistSynced() { if (!this._synced) return; this._extraKv = { ...(this._extraKv || {}), synced: Object.fromEntries(this._synced) }; setTimeout(() => this.saveLib(), 0); }
+  saveOk() { this._fails = 0; clearTimeout(this._retry); if (this._dirty) { this._dirty = false; this.setState({ saveErr: '' }); } }
+  saveFail(e) {
+    this._dirty = true;
+    const quota = e && (e.name === 'QuotaExceededError' || /quota/i.test(e.message || ''));
+    const msg = quota ? '瀏覽器的儲存空間不足，最近的修改還沒存進這台電腦。請先「匯出 JSON」備份，再刪除部分論文或清出硬碟空間。' : `最近的修改還沒存進這台電腦（${(e && (e.message || e.name)) || '寫入失敗'}），會自動再試；關閉分頁前請先「匯出 JSON」備份。`;
+    if (this.state.saveErr !== msg) this.setState({ saveErr: msg });
+    if (!this._toastSave || Date.now() - this._toastSave > 60000) { this._toastSave = Date.now(); this.toast(msg, '', 9000); }
+    clearTimeout(this._retry);
+    this._fails = (this._fails || 0) + 1;
+    this._retry = setTimeout(() => this.saveLib(), [2000, 10000, 30000][Math.min(2, this._fails - 1)]);
+  }
+  // 連線被瀏覽器關掉（例如 iOS 在背景太久）：重新連一次再存
+  async reconnect() {
+    if (this._vc) { this.saveFail(new Error('另一個分頁更新了論憶，請重新整理這個頁面')); return Promise.resolve(); }
+    if (this._reconnecting) return this._reconnecting;
+    this._reconnecting = (async () => {
+      const { db } = await idbOpen(fin => fin(null, new Error('開啟逾時')), 5000);
+      this._reconnecting = null;
+      if (!db) { this.saveFail(new Error('文獻庫的連線中斷了')); return; }
+      this.attachDb(db);
+      return this.saveLib();
+    })();
+    // 重新連上後不論有沒有東西要存，都讓呼叫的人接著做（例如重新讀一次）
+    return this._reconnecting.then(() => {}, () => {});
+    return this._reconnecting;
+  }
+  // 別的分頁剛存了文獻庫：重新讀一次；這個分頁還沒存的修改（論文或其他資料）保留下來，之後照常存
+  async rehydrate() {
+    if (this._boot !== 'idb' || !this._db || this._rehydrating) return;
+    this._rehydrating = true;
+    try {
+      const out = await idbRead(this._db), d = libFrom(out);
+      if (!d || ((this._gen || this._seenRev) && (d.gen || null) !== (this._gen || null)) || (d.rev || 0) < this._seenRev) return this.recoverReset();
+      if (!this._gen) this._gen = d.gen || null;
+      this._libSavedAt = Math.max(this._libSavedAt || 0, Number(d.savedAt) || 0);
+      if (out.synced && !(this._extraKv && this._extraKv.synced)) this._synced = new Map(Object.entries(out.synced));
+      const fresh = this.libState(d, false);
+      this.setState(st => {
+        const cm = this._cm, ids = new Set(st.papers.map(p => p.id));
+        const mine = new Map(st.papers.filter(p => cm.get(p.id) !== p).map(p => [p.id, p]));
+        const delLocal = new Set([...cm.keys()].filter(id => !ids.has(id)));
+        const fids = new Set(fresh.papers.map(p => p.id));
+        const papers = [...fresh.papers.filter(p => !delLocal.has(p.id)).map(p => mine.get(p.id) || p), ...[...mine.values()].filter(p => !fids.has(p.id))];
+        const kv = {};
+        KV_KEYS.forEach((k, i) => { kv[k] = this._ckv && st[k] !== this._ckv[i] ? st[k] : fresh[k]; });
+        const fromDbClean = !mine.size && !delLocal.size && KV_KEYS.every((k, i) => !(this._ckv && st[k] !== this._ckv[i]));
+        this._cm = new Map(fresh.papers.map(p => [p.id, p])); this._ckv = KV_KEYS.map(k => fresh[k]); this._cord = fresh.papers.map(p => p.id).join('\n'); this._seenRev = d.rev || 0;
+        this._fromDb = fromDbClean ? { papers, kv } : null;
+        return { papers, ...kv, sel: papers.some(p => p.id === st.sel) ? st.sel : papers[0] && papers[0].id };
+      });
+    } catch (e) {} finally { this._rehydrating = false; }
+  }
+  // 關閉或切走分頁：還沒寫進 IndexedDB 的修改先同步寫一份在 localStorage，再開始寫入
+  flushLib() {
+    if (this._boot === 'ls') { if (this._save) this.saveLib(); return; }
+    if (this._boot !== 'idb' || !this._ready) return;
+    const s = this.state, diff = this.libDiff(s);
+    if (!diff && !this._dirty) return;
+    if (diff) {
+      const at = Date.now(), cm = this._cm, ck = this._ckv, kv = {};
+      KV_KEYS.forEach((k, i) => { if (!ck || diff.kv[i] !== ck[i]) kv[k] = { v: diff.kv[i], base: ck ? fp(JSON.stringify(ck[i] === undefined ? null : ck[i])) : '' }; });
+      try { localStorage.setItem(PEND_KEY + ':' + TAB, JSON.stringify({ at, tab: TAB, put: diff.puts.map(p => ({ p, base: cm.has(p.id) ? fpOf(cm.get(p.id)) : '' })), del: diff.dels.map(id => ({ id, base: cm.has(id) ? fpOf(cm.get(id)) : '' })), kv })); this._pendAt = at; } catch (e) {}
+    }
+    this.saveLib();
+  }
+  // 給測試與匯出用：等目前排著的存檔都寫完
+  async flushAll() { if (this._save || (this._ready && this._boot === 'idb' && this.libDiff(this.state))) this.saveLib(); for (let i = 0; i < 5 && this._lastTx; i++) { const t = this._lastTx; await t; if (t === this._lastTx) break; } }
+  // 打不開文獻庫：不顯示示範論文、不存檔、不同步；給重新整理（和打得開時的匯出備份）
+  storeDown(err, atBoot, msg) {
+    this._boot = 'down'; this._syncReady = false; clearTimeout(this._push); this._push = null; this._toastFn = null;
+    document.documentElement.dataset.lunyiStore = 'down';
+    const name = err && err.name;
+    this.setState({ boot: 'down', toast: '', toastAct: '', toastLink: '', bootAtStart: !!atBoot, bootMsg: msg || (name === 'VersionError' ? '另一個分頁開著較新版本的論憶，請重新整理這個頁面。' : `這台瀏覽器的文獻庫暫時打不開${err && err.message ? `（${err.message}）` : ''}。請重新整理頁面；資料仍在這台電腦裡，論憶不會改用空白或示範的文獻庫存檔。`) });
+  }
+  // 最後手段：清除這台瀏覽器裡的文獻庫並重新開始（要再從雲端同步或匯入備份）
+  resetStore() {
+    if (!window.confirm('清除這台瀏覽器裡的論憶文獻庫並重新開始？這台電腦裡的論文、筆記與比較矩陣都會刪除；之後可以從雲端同步或匯入 JSON 備份還原。')) return;
+    this.dropDb();
+    try { const q = window.indexedDB.deleteDatabase(IDB_NAME); q.onsuccess = q.onerror = q.onblocked = () => { this.lsSet(STORE_MARK, ''); try { Object.keys(localStorage).filter(k => k.startsWith(PEND_KEY)).forEach(k => localStorage.removeItem(k)); } catch (e) {} location.reload(); }; } catch (e) { this.lsSet(STORE_MARK, ''); location.reload(); }
+  }
+  // 設定 → 同步與備份：這台瀏覽器用了多少空間
+  async refreshStorage() {
+    let sm = null;
+    try { sm = window.isSecureContext && navigator.storage && navigator.storage.estimate ? navigator.storage : null; } catch (e) {}
+    if (!sm) return this.setState({ storeInfo: null });
+    try {
+      const e = await sm.estimate(), used = (e.usageDetails && e.usageDetails.indexedDB) || e.usage || 0, persisted = sm.persisted ? await sm.persisted() : false;
+      this.setState({ storeInfo: { mb: used / 1048576, persisted, canPersist: !!sm.persist } });
+    } catch (e) { this.setState({ storeInfo: null }); }
+  }
+  async askPersist() {
+    const sm = navigator.storage;
+    this.setState({ persistBusy: true });
+    const t = setTimeout(() => this.setState({ persistBusy: false }), 10000);
+    let ok = false;
+    try { ok = await sm.persist(); } catch (e) {}
+    clearTimeout(t);
+    this.setState({ persistBusy: false });
+    this.toast(ok ? '瀏覽器同意保留論憶的資料，空間不足時不會自動清掉' : '瀏覽器沒有同意（由瀏覽器自行決定；加入書籤或安裝成 App 比較容易通過）。請定期匯出 JSON 或開啟雲端同步。', '', 8000);
+    this.refreshStorage();
   }
   clearNote() { this._note = ''; const t = document.querySelector('textarea.ly-note'); if (t) t.value = ''; }
   ensureSlots() {
     const { map, changed } = slotMap(this.slotNames(), this.state.fslots);
     if (changed) this.setState({ fslots: map });
   }
-  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
+  componentWillUnmount() { window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('beforeunload', this._bu); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
   lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
   lsSet(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
   openSettings(tab) {
     if (!this.state.showSet && !this.state.showAdd && !this.state.showLogin) this._retFocus = document.activeElement;
     const t = tab || this.state.setTab || 'account';
+    if (t === 'sync') this.refreshStorage();
     this.setState({ showSet: true, setTab: t, acctOpen: false, showLogin: false, loginMsg: '', loginBusy: '', keyDraft: this.secGet('lunyi-apikey'), codeDraft: this.lsGet('lunyi-code'), tokenDraft: this.secGet('lunyi-gh-token'), gistDraft: this.lsGet('lunyi-gist-id'),
       gemKeyDraft: this.secGet('lunyi-gemini-key'), gemModelDraft: this.lsGet('lunyi-gemini-model'), claudeModelDraft: this.lsGet('lunyi-claude-model'), clientDraft: this.gClient(), syncTarget: this.cloudTarget(), gemMsg: '', claudeMsg: '' });
   }
@@ -1454,17 +1884,29 @@ class Component extends DCLogic {
     this.toast(`已匯入 ${n} 篇論文`);
   }
   // 合併外部資料：同一篇以外部為準；gone 記錄已刪除的論文與筆記 id，避免同步時被別台裝置加回來。
-  mergeData(d) {
-    const ok = p => p && p.id && p.title && Array.isArray(p.paras);
-    const inc0 = d.papers.filter(ok).map(p => withMx(fromStore({ ...p, keywords: Array.isArray(p.keywords) ? p.keywords : [], cites: Array.isArray(p.cites) ? p.cites : [] })));
+  mergeData(d, o = {}) {
+    const base = o.base;
+    if (!this._ready || this._boot === 'down') { if (!o.quiet) this.toast('文獻庫還在開啟中，請稍後再試'); return 0; }
+    const ok = p => p && p.id != null && p.id !== '' && p.title && Array.isArray(p.paras);
+    // 同一個 id 出現兩次時留最後一個
+    const inc0 = [...new Map(d.papers.filter(ok).map(p => withMx(fromStore({ ...p, id: String(p.id), keywords: Array.isArray(p.keywords) ? p.keywords : [], cites: Array.isArray(p.cites) ? p.cites : [] }))).map(p => [p.id, p])).values()];
+    let changed = true;
     this.setState(st => {
       const gone = new Set([...(st.gone || []), ...(Array.isArray(d.gone) ? d.gone : [])]);
       // 比較矩陣的格子逐格合併（較新的留下）；論文其他欄位照舊以外部為準
       const local = new Map(st.papers.map(p => [p.id, p]));
       // 這台裝置還沒動過的示範格子不要混進雲端或備份檔裡真的文獻庫
-      const inc = inc0.map(p => { const l = local.get(p.id), lm = l && l.mx ? Object.fromEntries(Object.entries(l.mx).filter(([, x]) => !(x && x.at === SEED_AT))) : null; return l && (lm || p.mx) ? { ...p, mx: mergeMx(lm, p.mx) } : p; });
+      const kept = new Set(), sy = o.sync ? ('sy' in o ? o.sy : this._synced) : null;
+      // 上次同步之後在這台改過：有指紋紀錄就比指紋；還沒有紀錄時，用這次開啟以來的版本比
+      const edited = l => sy ? sy.has(l.id) && fpOf(l) !== sy.get(l.id) : !!(base && base.get(l.id) !== l);
+      const inc = inc0.map(p => { const l = local.get(p.id);
+        // 上次同步之後在這台改過、還沒上傳的論文：保留這台的（格子仍逐格合併）
+        if (l && ((o.sync && edited(l)) || (o.keep && o.keep(l)))) { kept.add(p.id); const m = l.mx || p.mx ? mergeMx(l.mx, p.mx) : null; return m && JSON.stringify(m) !== JSON.stringify(l.mx) ? { ...l, mx: m } : l; }
+        const lm = l && l.mx ? Object.fromEntries(Object.entries(l.mx).filter(([, x]) => !(x && x.at === SEED_AT))) : null, q = l && (lm || p.mx) ? { ...p, mx: mergeMx(lm, p.mx) } : p;
+        // 內容完全一樣就沿用原本的物件，存檔時不必重寫這篇
+        return l && JSON.stringify(l) === JSON.stringify(q) ? l : q; });
       const ids = new Set(inc.map(p => p.id));
-      const papers = [...st.papers.filter(p => !ids.has(p.id)), ...inc].filter(p => !gone.has(p.id)).map(p => ({ ...p, cites: p.cites.filter(c => !gone.has(c)) }));
+      const papers = [...st.papers.filter(p => !ids.has(p.id)), ...inc].filter(p => !gone.has(p.id)).map(p => (p.cites || []).some(c => gone.has(c)) ? { ...p, cites: p.cites.filter(c => !gone.has(c)) } : p);
       const lk = l => [l.a, l.b].sort().join('|') + '|' + l.note;
       const links = [...st.links]; const seen = new Set(links.map(lk));
       (d.links || []).forEach(l => { if (l && l.a && l.b && !seen.has(lk(l))) { seen.add(lk(l)); links.push(l); } });
@@ -1472,6 +1914,10 @@ class Component extends DCLogic {
       const notes = [...st.notes, ...(d.notes || []).filter(n => n && n.id && !nid.has(n.id))].filter(n => !gone.has(n.id) && !gone.has(n.paperId));
       const qa = [...st.qa, ...(d.qa || []).filter(x => x && x.q && !st.qa.some(y => y.q === x.q && y.a === x.a))];
       const sel = papers.some(p => p.id === st.sel) ? st.sel : (papers[0] && papers[0].id);
+      if (o.sync) {
+        const cur0 = this._synced;
+        const ns = new Map(); papers.forEach(p => { if (ids.has(p.id) && !kept.has(p.id)) ns.set(p.id, fpOf(p)); else if (cur0 && cur0.has(p.id)) ns.set(p.id, cur0.get(p.id)); else if (sy && sy.has(p.id)) ns.set(p.id, sy.get(p.id)); else if (kept.has(p.id)) ns.set(p.id, ''); }); this._synced = ns;
+        if (base) { const nb = new Map(); papers.forEach(p => { const v = ids.has(p.id) && !kept.has(p.id) ? p : base.get(p.id); if (v) nb.set(p.id, v); }); this._syncBase = nb; } }
       // 專案的建立／刪除時間都取兩邊較新的，刪除時間晚於建立時間的專案不會被同步加回來
       const maxMerge = (a, b) => { const o = { ...(a || {}) }; Object.entries(b && typeof b === 'object' ? b : {}).forEach(([k, v]) => { if (typeof v === 'number' && !(o[k] >= v)) o[k] = v; }); return o; };
       const projAt = maxMerge(st.projAt, d.projAt), projDel = maxMerge(st.projDel, d.projDel);
@@ -1486,8 +1932,10 @@ class Component extends DCLogic {
       const ms = st.mxSel;
       if (ms) { const np = papers.find(p => p.id === ms.pid), lp = local.get(ms.pid), nc = np && np.mx && np.mx[ms.c], oc = lp && lp.mx && lp.mx[ms.c];
         if (nc !== oc && (nc && nc.at) !== (oc && oc.at) && !this.mxHasDraft(ms.pid + ':' + ms.c)) { this._mxVer = (this._mxVer || 0) + 1; mxo = { mxEv: nc && Array.isArray(nc.ev) ? nc.ev.map(e => ({ ...e })) : [], mxSug: null }; } }
-      return { papers, links: links.filter(l => !gone.has(l.a) && !gone.has(l.b)), notes, qa, gone: [...gone], sel, projects, projAt, projDel, projMeta, mxCols, ...mxo };
-    });
+      const links2 = links.filter(l => !gone.has(l.a) && !gone.has(l.b)), same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+      if (same(papers, st.papers) && same(links2, st.links) && same(notes, st.notes) && same(qa, st.qa) && gone.size === st.gone.length && same(projects, st.projects || []) && JSON.stringify(projAt) === JSON.stringify(st.projAt || {}) && JSON.stringify(projDel) === JSON.stringify(st.projDel || {}) && JSON.stringify(projMeta) === JSON.stringify(st.projMeta || {}) && mxCols === st.mxCols) { changed = false; return { ...mxo }; }
+      return { papers, links: links2, notes, qa, gone: [...gone], sel, projects, projAt, projDel, projMeta, mxCols, ...mxo };
+    }, () => { if (o.sync) this.persistSynced(); if (o.done) o.done(changed); });
     return inc0.length;
   }
   cloudTarget() { return this.lsGet('lunyi-sync-target') || (this.lsGet('lunyi-gist-id') ? 'gist' : 'drive'); }
@@ -1515,7 +1963,7 @@ class Component extends DCLogic {
     const r = await fetch('https://api.github.com/gists/' + id, { headers: this.ghHeaders(token), cache: 'no-store' });
     if (!r.ok) throw this.ghError(r);
     const f = (await r.json()).files[GIST_FILE];
-    if (!f) throw new Error('Gist 裡沒有 ' + GIST_FILE);
+    if (!f) { const e = new Error('Gist 裡沒有 ' + GIST_FILE); e.empty = true; throw e; }
     return f.truncated ? (await fetch(f.raw_url, { cache: 'no-store' })).text() : f.content;
   }
   async drivePush(content, ia, tok) {
@@ -1533,12 +1981,17 @@ class Component extends DCLogic {
   }
   // quiet = 自動同步：不跳 toast，也不開 Google 登入視窗；只用自動同步綁定帳號的權杖
   async pushCloud(quiet) {
+    if (!this._ready || this._boot === 'down') { if (!quiet) this.toast('文獻庫還在開啟中，請稍後再試'); return false; }
     this.setState({ syncStatus: '上傳中…' });
     try {
-      const content = JSON.stringify(this.payload());
+      // 這次上傳包含的範圍：這個分頁讀過或寫過的最新版本（別的分頁剛改、這裡還沒讀到的不算）
+      const snap = this.state.papers, t0 = Date.now(), known = this._boot === 'idb' ? Math.min(t0, this._libSavedAt || 0) : t0, content = JSON.stringify(this.payload());
       const drive = this.cloudTarget() === 'drive', tok = drive ? (quiet ? this.syncTok() : await this.gToken(null, true)) : null;
       const msg = drive ? await this.drivePush(content, !quiet, tok) : await this.gistPush(content);
       if (quiet) this._pushFailed = false;
+      if (Number(this.lsGet('lunyi-sync-dirty') || 0) <= known) this.lsSet('lunyi-sync-dirty', '');
+      this._syncBase = new Map(snap.map(p => [p.id, p]));
+      this._synced = new Map(snap.map(p => [p.id, fpOf(p)])); this.persistSynced();
       this.setState({ syncStatus: `最後上傳：${this.stamp()}` });
       if (!quiet) this.toast(msg);
       return true;
@@ -1548,16 +2001,19 @@ class Component extends DCLogic {
   autoPush() { const p = this._pushing = this.pushCloud(true).finally(() => { if (this._pushing === p) this._pushing = null; }); return p; }
   // 回傳 true（已合併）、'empty'（雲端還沒有資料）或 false（失敗）
   async pullCloud(quiet) {
+    if (!this._ready || this._boot === 'down') { if (!quiet) this.toast('文獻庫還在開啟中，請稍後再試'); return false; }
     this.setState({ syncStatus: '下載中…' });
+    // 上次同步之後在這台改過的論文不會被雲端的版本蓋掉
+    const base = this._syncBase || new Map(this.state.papers.map(p => [p.id, p])), sy0 = this._synced ? new Map(this._synced) : null;
     try {
       const drive = this.cloudTarget() === 'drive', tok = drive ? (quiet ? this.syncTok() : await this.gToken(null, true)) : null;
       const d = J(drive ? await this.drivePull(!quiet, tok) : await this.gistPull());
       if (!d || !Array.isArray(d.papers)) throw new Error('雲端資料格式不符');
-      const n = this.mergeData(d);
+      const n = this.mergeData(d, { base, sync: true, sy: sy0 });
       this.setState({ syncStatus: `最後下載：${this.stamp()}` });
       if (!quiet) this.toast(`已從雲端合併 ${n} 篇論文`);
       return true;
-    } catch (e) { this.setState({ syncStatus: '下載失敗：' + e.message }); if (!quiet && !e.switched) this.toast('下載失敗：' + e.message); return e.empty ? 'empty' : false; }
+    } catch (e) { this.setState({ syncStatus: e.empty ? '雲端還沒有論憶的資料，之後的修改會上傳' : '下載失敗：' + e.message }); if (!quiet && !e.switched) this.toast(e.empty ? '雲端還沒有論憶的資料' : '下載失敗：' + e.message); return e.empty ? 'empty' : false; }
   }
 
   // ---- Google 帳號（Google Identity Services，只在瀏覽器取得短效存取權杖）----
@@ -1622,8 +2078,9 @@ class Component extends DCLogic {
       const pending = !!this._push;
       off = this.stopDriveAuto();
       const old = prev && prev.exp > Date.now() + 60000 && this.tokEmail(prev) === owner ? prev.token : null;
-      if (pending && old) this.flushDrive(old);
-      this.setState({ syncStatus: t.email ? '因為換了 Google 帳號，自動同步已先關閉。確定要把這台電腦的文獻庫同步到這個帳號後，再開啟自動同步。' : '讀不到這次登入的 Google 帳號，自動同步已先關閉。請重新登入後再開啟自動同步。' });
+      if (pending && old && !this._needPull) this.flushDrive(old);
+      this._heldLocal = !!(pending && this._needPull);
+      this.setState({ syncStatus: (t.email ? '因為換了 Google 帳號，自動同步已先關閉。確定要把這台電腦的文獻庫同步到這個帳號後，再開啟自動同步。' : '讀不到這次登入的 Google 帳號，自動同步已先關閉。請重新登入後再開啟自動同步。') + (this._heldLocal ? '最後的修改沒有上傳到原本的帳號（開啟時沒能從雲端下載），仍保留在這台電腦。' : '') });
     } else if (auto && !owner && t.email) { this.lsSet('lunyi-sync-owner', t.email); this._joining = true; setTimeout(() => this.syncPullPush(), 0); }
     this.lsSet('lunyi-g-token', JSON.stringify(t));
     // 讀不到個人資料：無法確認是誰，不沿用上一個帳號的名稱
@@ -1708,6 +2165,8 @@ class Component extends DCLogic {
   }
   // 這台裝置第一次和這個帳號的雲端硬碟同步：先下載合併（同一篇以雲端為準，和開啟網站時一樣），再上傳；避免用這台的資料蓋掉雲端的整個文獻庫
   async syncPullPush() {
+    // 文獻庫還沒讀完：讀完再做（afterBoot）
+    if (!this._ready) { this._joinAfterBoot = true; this._joining = false; return; }
     try {
       if (!this.syncOn() || this.cloudTarget() !== 'drive') return;
       clearTimeout(this._push); this._push = null;
@@ -1715,14 +2174,16 @@ class Component extends DCLogic {
       if (this._pushing) await this._pushing;
       const r = await this.pullCloud(true); // pullCloud 與進行中的上傳都不會丟出錯誤
       this._syncReady = true;
-      if (r && this.syncOn()) this.autoPush();
+      // 下載失敗就不上傳，之後的上傳也會先下載合併
+      this._needPull = !(r === true || r === 'empty');
+      if (!this._needPull && this.syncOn()) this.autoPush();
     } finally { this._joining = false; }
   }
   // 同一個帳號重新登入：之前因權杖過期沒傳成功的修改現在補傳（和下一次編輯時會做的一樣）
   retryPush() {
-    if (!this.syncOn() || this.cloudTarget() !== 'drive' || this._joining || !(this._pushFailed || this._push)) return;
+    if (!this.syncOn() || this.cloudTarget() !== 'drive' || this._joining || !(this._pushFailed || this._push || this._needPull)) return;
     clearTimeout(this._push); this._push = null;
-    this.autoPush();
+    if (this._needPull) this.pullThenPush(); else this.autoPush();
   }
   // 用指定帳號的權杖把文獻庫傳到該帳號的雲端硬碟（登出、換帳號時補傳最後的修改）
   async flushDrive(tok, content) {
@@ -1741,7 +2202,10 @@ class Component extends DCLogic {
     const t = this.gCached(G_BASE), running = this._pushing;
     let mine = false;
     try { mine = !!t && this.syncTok() === t; } catch (e) {}
-    const flush = mine && this.cloudTarget() === 'drive' && this.syncOn() && (!!this._push || !!running);
+    const pend = mine && this.cloudTarget() === 'drive' && this.syncOn() && (!!this._push || !!running);
+    // 開啟時沒能從雲端下載：不補傳（避免蓋掉雲端的資料），修改留在這台電腦
+    const flush = pend && !this._needPull;
+    if (pend && this._needPull) this.setState({ syncStatus: '登出前最後的修改沒有上傳（開啟時沒能從雲端下載，避免蓋掉雲端的資料），仍保留在這台電腦' });
     const content = flush ? JSON.stringify(this.payload()) : '';
     this.lsSet('lunyi-g-token', ''); this.lsSet('lunyi-g-user', '');
     this._gSeq = (this._gSeq || 0) + 1;
@@ -2117,7 +2581,7 @@ class Component extends DCLogic {
     if (!window.__lunyiShim || /github\.io$/.test(location.hostname) || location.protocol === 'file:') return Promise.resolve(false);
     return fetch('api/claude').then(r => { if (r.status === 405 && !this._backend) { this._backend = true; this.forceUpdate(); } return !!this._backend; }).catch(() => !!this._backend);
   }
-  goTab(k) { this.setState({ setTab: k }); }
+  goTab(k) { this.setState({ setTab: k }); if (k === 'sync') this.refreshStorage(); }
 
   // ---- 專案（論文的 projects 陣列；同一篇可以屬於多個專案）----
   // 側欄顯示順序：使用者建立的專案在前；色槽分配則讓「有論文的專案」優先
@@ -2273,10 +2737,12 @@ class Component extends DCLogic {
     const DLG = ['#lunyi-login', '.ly-setbox', '#lunyi-add', '#lunyi-org'];
     const top = st => st.showLogin ? DLG[0] : st.showSet ? DLG[1] : st.showAdd ? DLG[2] : st.org ? DLG[3] : '';
     const t = top(s), pt = top(ps), modal = !!t, wasModal = !!pt;
-    if (root) root.inert = modal;
+    if (root) root.inert = modal || s.boot !== 'ready';
     if (main) main.inert = !modal && !s.wide && s.sbOpen;
     // 同時開著兩個視窗時，下層的也不能操作
-    DLG.forEach(sel => { const d = document.querySelector(sel); if (d && d.parentElement) d.parentElement.inert = modal && sel !== t; });
+    const down = s.boot !== 'ready';
+    DLG.forEach(sel => { const d = document.querySelector(sel); if (d && d.parentElement) d.parentElement.inert = (modal && sel !== t) || down; });
+    if (s.boot === 'down' && ps.boot !== 'down') this.focusSoon('.ly-boot button');
     if (modal && t !== pt) {
       if (!wasModal) this._retFocus = this._retFocus || document.activeElement;
       this.focusSoon(() => { const d = document.querySelector(t); return d && (d.querySelector('.ly-autofocus:not([aria-disabled="true"])') || d.querySelector('[aria-current=page]') || d.querySelector('button, input, textarea, select')); });
@@ -3494,6 +3960,14 @@ class Component extends DCLogic {
 
     return {
       isA: L === 'reader', isB: L === 'graph', isC: L === 'chat', isD: L === 'dash', isE: L === 'matrix', isH: L === 'home',
+      bootOn: s.boot !== 'ready', bootRole: s.boot === 'down' ? 'alert' : 'status', bootBtns: s.boot === 'down' || !!s.bootSlow, bootExport: s.boot === 'down' && !s.bootAtStart && s.papers.length > 0, bootReset: s.boot === 'down' && !!s.bootAtStart,
+      bootText: s.boot === 'down' ? s.bootMsg : s.bootSlow ? '仍在開啟文獻庫…（資料很多或電腦比較忙時會久一點；可以按重新整理再試一次）' : '正在開啟文獻庫…',
+      bootReload: () => location.reload(), resetStore: () => this.resetStore(),
+      hasSaveErr: !!s.saveErr, saveErr: s.saveErr, showSaveErr: () => { this.toast(s.saveErr, '', 9000); this.openSettings('sync'); },
+      ...(() => { const i = s.storeInfo, ls = this._boot === 'ls', mb = i ? (i.mb < 0.1 ? '不到 0.1' : i.mb.toFixed(i.mb < 10 ? 1 : 0)) : '';
+        return { storeOn: ls || !!i, storeText: ls ? '這台瀏覽器不能使用 IndexedDB，文獻庫存在 localStorage（上限約 5 MB，大約 80 篇全文），請定期匯出 JSON 或開啟雲端同步。'
+          : i ? `這台瀏覽器的文獻庫存在 IndexedDB，已使用約 ${mb} MB${i.persisted ? '，瀏覽器已同意保留（空間不足時不會自動清掉）' : ''}。Safari 連續 7 天沒開啟網站可能會清除本機資料，建議開啟雲端同步或定期匯出 JSON。` : '',
+          storeCanPersist: !ls && !!i && !i.persisted && i.canPersist, persistLabel: s.persistBusy ? '等待瀏覽器回應…' : '請瀏覽器保留資料', persistBusyAttr: String(!!s.persistBusy), askPersist: () => !s.persistBusy && this.askPersist() }; })(),
       ...this.matrixVals({ ...s, layout: L }, filtered, ql, fSlot, fColor, pKey),
       openMatrix: () => this.setState(st => ({ layout: 'matrix', hov: null, sbOpen: st.wide ? st.sbOpen : false })),
       ...(() => { const b = s.mxBack, on = L === 'reader' && !!b && !!cur && cur.id === b.pid, col = on && this.mxColsAll().find(c => c.id === b.c);
@@ -3525,7 +3999,7 @@ class Component extends DCLogic {
       onGemKeyDraft: e => this.setState({ gemKeyDraft: e.target.value }), onGemModelDraft: e => this.setState({ gemModelDraft: e.target.value }),
       clientDraft: s.clientDraft, onClientDraft: e => this.setState({ clientDraft: e.target.value }),
       gSignIn: () => this.gSignIn(), gSignOut: () => this.gSignOut(), gSigned: !!s.gUser, gSignInLabel: s.loginBusy === 'google' ? '請在 Google 視窗選擇帳號…' : s.gUser ? '重新登入' : '用 Google 登入',
-      syncBtns: [['drive', 'Google 雲端硬碟'], ['gist', 'GitHub Gist']].map(([k, label]) => ({ label, pressed: String(s.syncTarget === k), bg: s.syncTarget === k ? '#fff' : 'transparent', onClick: () => { this.lsSet('lunyi-sync-target', k); this.setState({ syncTarget: k, syncStatus: '' }); } })),
+      syncBtns: [['drive', 'Google 雲端硬碟'], ['gist', 'GitHub Gist']].map(([k, label]) => ({ label, pressed: String(s.syncTarget === k), bg: s.syncTarget === k ? '#fff' : 'transparent', onClick: () => { this.lsSet('lunyi-sync-target', k); this._needPull = true; this.setState({ syncTarget: k, syncStatus: '' }); } })),
       syncDrive: s.syncTarget === 'drive', syncGist: s.syncTarget === 'gist',
       scholarUrl: cur ? 'https://scholar.google.com/scholar?q=' + encodeURIComponent(cur.title) : 'https://scholar.google.com/',
       exportDoc: () => cur && this.exportDoc(cur),
@@ -3539,10 +4013,10 @@ class Component extends DCLogic {
       addDrive: s.addTab === 'drive',
       tokenDraft: s.tokenDraft, gistDraft: s.gistDraft, syncStatus: s.syncStatus,
       onTokenDraft: e => this.setState({ tokenDraft: e.target.value }), onGistDraft: e => this.setState({ gistDraft: e.target.value }),
-      saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); try { sessionStorage.removeItem('lunyi-gh-token'); } catch (e) {} this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); if (this.syncOn() && s.gistDraft.trim()) { this._syncReady = false; this.pullCloud(true).then(() => { this._syncReady = true; }); } },
+      saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); try { sessionStorage.removeItem('lunyi-gh-token'); } catch (e) {} this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); this._needPull = true; if (this.syncOn() && s.gistDraft.trim()) { clearTimeout(this._push); this._push = null; this._syncReady = false; this.pullCloud(true).then(r => { this._syncReady = true; this._needPull = !(r === true || r === 'empty'); }); } },
       pushCloud: () => this.pushCloud(), pullCloud: () => this.pullCloud(),
       ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
-      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; if (on && this.cloudTarget() === 'drive' && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this.lsSet('lunyi-sync-owner', ''); if (on) this.ensureOwner(); this._syncReady = true; this.setState({ syncStatus: this.state.syncStatus }); if (on && this.cloudTarget() === 'drive' && this.lsGet('lunyi-sync-owner')) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並登入 Google 後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
+      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; if (on && this.cloudTarget() === 'drive' && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this.lsSet('lunyi-sync-owner', ''); if (on) this.ensureOwner(); this._syncReady = !!this._ready; if (on) this._needPull = true; if (on && this.cloudTarget() === 'gist' && this.syncOn() && this._ready) this.pullThenPush(); this.setState({ syncStatus: this.state.syncStatus }); if (on && this.cloudTarget() === 'drive' && this.lsGet('lunyi-sync-owner')) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並登入 Google 後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
       openAdd: () => { if (!s.showSet && !s.showAdd && !s.showLogin) this._retFocus = document.activeElement; this.setState(st => {
         // 上次是自動填的專案就換成目前的專案；使用者自己打的才保留
@@ -3609,7 +4083,7 @@ class Component extends DCLogic {
         this.toastAct(`已刪除「${cur.title}」`, '復原刪除', () => this.setState(st => ({ papers: (() => { const ps = st.papers.map(p => snap.citedBy.includes(p.id) ? { ...p, cites: [...new Set([...(p.cites || []), snap.paper.id])] } : p);
           ps.splice(Math.max(0, Math.min(snap.idx, ps.length)), 0, normProj({ ...snap.paper, projects: projOf(snap.paper).filter(x => RESERVED(x) && (st.projects || []).includes(x) && !((st.projDel[x] || 0) > (st.projAt[x] || 0))) }));
           return ps; })(), notes: [...st.notes, ...snap.notes], links: [...st.links, ...snap.links], gone: st.gone.filter(g => g !== snap.paper.id && !snap.notes.some(n => n.id === g)), sel: snap.paper.id }), () => { this.toast('已復原'); this.focusSoon(() => [...document.querySelectorAll('.ly-tools button')].find(b => b.innerText.trim() === '刪除')); }));
-        this.setState(st => { const papers = st.papers.filter(p => p.id !== cur.id).map(p => ({ ...p, cites: (p.cites || []).filter(c => c !== cur.id) })); return { papers, links: st.links.filter(l => l.a !== cur.id && l.b !== cur.id), notes: st.notes.filter(x => x.paperId !== cur.id), gone: [...st.gone, cur.id], sel: papers[0] && papers[0].id, selPara: null, folder: st.folder === '全部' || papers.some(this.inScope(st.folder)) || this.liveProjects().includes(st.folder) ? st.folder : '全部' }; }); },
+        this.setState(st => { const papers = st.papers.filter(p => p.id !== cur.id).map(p => (p.cites || []).includes(cur.id) ? { ...p, cites: p.cites.filter(c => c !== cur.id) } : p); return { papers, links: st.links.filter(l => l.a !== cur.id && l.b !== cur.id), notes: st.notes.filter(x => x.paperId !== cur.id), gone: [...st.gone, cur.id], sel: papers[0] && papers[0].id, selPara: null, folder: st.folder === '全部' || papers.some(this.inScope(st.folder)) || this.liveProjects().includes(st.folder) ? st.folder : '全部' }; }); },
       paras,
       panelTabs: [['link', '串聯'], ['note', `筆記 ${curNotes.length || ''}`]].map(([k, label]) => ({ label, pressed: String(s.tab === k), color: s.tab === k ? '#1d1b18' : '#625d55', line: s.tab === k ? '#1d1b18' : 'transparent', onClick: () => this.setState({ tab: k }) })),
       tabLink: s.tab === 'link', tabNote: s.tab === 'note',
