@@ -251,6 +251,12 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
                   <input value="{{ em.journal }}" sc-camel-on-change="{{ onEm.journal }}" aria-label="期刊或會議" placeholder="期刊 / 會議" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
                   <input value="{{ em.year }}" sc-camel-on-change="{{ onEm.year }}" aria-label="年份" placeholder="年份" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
                 </div>
+                <div class="ly-form4" style="display:grid;grid-template-columns:0.6fr 0.6fr 0.9fr 1.9fr;gap:8px">
+                  <input value="{{ em.volume }}" sc-camel-on-change="{{ onEm.volume }}" aria-label="卷" placeholder="卷" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
+                  <input value="{{ em.issue }}" sc-camel-on-change="{{ onEm.issue }}" aria-label="期" placeholder="期" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
+                  <input value="{{ em.pages }}" sc-camel-on-change="{{ onEm.pages }}" aria-label="頁碼" placeholder="頁碼" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
+                  <input value="{{ em.doi }}" sc-camel-on-change="{{ onEm.doi }}" aria-label="DOI" placeholder="DOI（10. 開頭）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
+                </div>
                 <input value="{{ em.keywords }}" sc-camel-on-change="{{ onEm.keywords }}" aria-label="關鍵詞（用逗號分開）" placeholder="關鍵詞（用逗號分開，例如：transformer, self-attention）" style="padding:9px 11px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;outline:none;min-width:0">
                 <div style="display:flex;gap:8px;justify-content:flex-end"><button sc-camel-on-click="{{ cancelEdit }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:6px 14px;font-size:12px">取消</button><button sc-camel-on-click="{{ saveEdit }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:6px;padding:6px 14px;font-size:12px">儲存</button></div>
               </div>
@@ -261,7 +267,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
               <sc-for list="{{ curTags }}" as="tg" hint-placeholder-count="2"><span style="font-size:12px;padding:3px 9px;border-radius:4px;background:#1d1b18;color:#faf9f6">{{ tg }}</span></sc-for>
               <sc-for list="{{ curKeywords }}" as="kw" hint-placeholder-count="3"><button sc-camel-on-click="{{ kw.onClick }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 9px;border-radius:4px;border:1px solid #d6d0c4;background:transparent;white-space:nowrap" style-hover="border-color:#1d1b18">{{ kw.label }}</button></sc-for>
             </div>
-            <div class="ly-tools" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:26px 0 12px;padding-bottom:14px;border-bottom:1px solid #e2ddd3">
+            <div class="ly-tools" style="display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin:26px 0 12px;padding-bottom:14px;border-bottom:1px solid #e2ddd3">
               <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px">
                 <sc-for list="{{ modeBtns }}" as="m" hint-placeholder-count="3"><button sc-camel-on-click="{{ m.onClick }}" aria-pressed="{{ m.pressed }}" style="border:0;padding:4px 12px;border-radius:4px;font-size:12px;background:{{ m.bg }}">{{ m.label }}</button></sc-for>
               </div>
@@ -270,6 +276,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
               </sc-if>
               <div style="flex:1"></div>
               <button sc-camel-on-click="{{ startEdit }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">編輯資訊</button>
+              <button sc-camel-on-click="{{ orgThis }}" title="讓 AI 讀這篇的原文，補齊標題、作者、期刊、年份、卷期頁、DOI 與關鍵詞" style="border:0;background:none;font-size:12px;color:oklch(0.42 0.1 200);padding:4px 6px" style-hover="color:#1d1b18">AI 整理資訊</button>
               <button sc-camel-on-click="{{ copyApa }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">複製 APA</button>
               <button sc-camel-on-click="{{ copyBib }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px" style-hover="color:#1d1b18">複製 BibTeX</button>
               <a href="{{ scholarUrl }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px;text-decoration:none" style-hover="color:#1d1b18">Google 學術</a>
@@ -638,6 +645,37 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   </div>
 </sc-if>
 
+<sc-if value="{{ orgOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:46">
+    <div id="lunyi-org" role="dialog" aria-modal="true" aria-labelledby="lunyi-org-title" aria-describedby="lunyi-org-desc" style="width:780px;max-width:calc(100vw - 32px);max-height:calc(100vh - 48px);display:flex;flex-direction:column;background:#faf9f6;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.18)">
+      <div style="padding:22px 26px 10px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div><h2 id="lunyi-org-title" class="ly-autofocus" tabindex="-1" style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600;outline:none">AI 整理書目資訊</h2><div id="lunyi-org-desc" style="font-size:12.5px;color:#625d55;margin-top:6px;line-height:1.6">只根據每篇論文的原文開頭擷取，找不到的欄位會留空。AI 給的值在原文裡找得到才預設勾選；找不到的會標出來、預設不勾。已經有值的欄位預設不覆蓋，按「寫入」才會改論文。</div></div>
+        <button sc-camel-on-click="{{ orgHead }}" style="border:0;background:none;font-size:13px;color:#625d55;white-space:nowrap">{{ orgCloseLabel }}</button>
+      </div>
+      <div role="status" aria-live="polite" style="padding:0 26px 8px;font-size:13px;color:oklch(0.42 0.1 200)">{{ orgStatus }}</div>
+      <div style="overflow:auto;padding:4px 26px 16px;display:flex;flex-direction:column;gap:12px;min-height:0">
+        <sc-for list="{{ orgList }}" as="og" hint-placeholder-count="0">
+          <div class="ly-orgcard" role="group" aria-label="{{ og.title }}" style="background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline"><span style="font-family:'Noto Serif TC',serif;font-size:14px;font-weight:600;min-width:0;overflow-wrap:anywhere">{{ og.title }}</span><span style="font-size:12px;color:{{ og.stColor }};white-space:nowrap">{{ og.stLabel }}</span></div>
+            <sc-if value="{{ og.isErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:12px;line-height:1.5;color:#7a2e12;overflow-wrap:anywhere">{{ og.errMsg }}</div></sc-if>
+            <sc-for list="{{ og.fields }}" as="fd" hint-placeholder-count="0">
+              <label style="display:grid;grid-template-columns:20px 56px minmax(0,1fr);gap:8px;align-items:start;font-size:12.5px;line-height:1.5;cursor:pointer">
+                <input type="checkbox" checked="{{ fd.on }}" sc-camel-on-change="{{ fd.onToggle }}" aria-label="{{ fd.aria }}" style="margin-top:3px">
+                <span style="color:#625d55">{{ fd.label }}</span>
+                <span style="min-width:0;overflow-wrap:anywhere"><span style="display:block;color:#1d1b18">{{ fd.ai }}</span><sc-if value="{{ fd.unverified }}" hint-placeholder-val="{{ false }}"><span style="display:block;color:#7a2e12">原文裡沒找到這個值，可能不正確，請自己確認</span></sc-if><sc-if value="{{ fd.hasCur }}" hint-placeholder-val="{{ false }}"><span style="display:block;color:#625d55">目前：{{ fd.cur }}</span></sc-if></span>
+              </label>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+      <div style="padding:12px 26px 20px;border-top:1px solid #e2ddd3;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <span style="font-size:12px;color:#625d55">{{ orgCount }}</span>
+        <div style="display:flex;gap:8px"><button sc-camel-on-click="{{ closeOrg }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:7px 14px;font-size:12.5px">取消</button><button sc-camel-on-click="{{ applyOrg }}" aria-disabled="{{ orgCantApply }}" style="border:0;background:#1d1b18;color:#faf9f6;border-radius:6px;padding:7px 14px;font-size:12.5px;opacity:{{ orgApplyOp }}">{{ orgApplyLabel }}</button></div>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
 <sc-if value="{{ showSet }}" hint-placeholder-val="{{ false }}">
   <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:50">
     <div class="ly-setbox" role="dialog" aria-modal="true" aria-label="設定與備份" style="width:880px;max-width:calc(100vw - 32px);height:min(680px,calc(100vh - 40px));background:#faf9f6;border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,0.22);display:grid;grid-template-columns:200px minmax(0,1fr);overflow:hidden">
@@ -941,6 +979,13 @@ const loadScript = src => scriptLoads[src] || (scriptLoads[src] = new Promise((o
 }));
 const SYS_TR = '你是學術論文翻譯。使用者會給一個 JSON 字串陣列，每個元素是一段論文原文（可能是任何語言）。逐段翻譯成繁體中文（台灣學術用語），專有名詞首次出現時於括號保留原文。只輸出同樣長度的 JSON 字串陣列，不要任何說明。';
 const SYS_META = '閱讀論文開頭文字，只輸出 JSON：{"title":"原文標題","authors":"第一作者姓, 名縮寫 等","journal":"期刊或會議","year":"年份","language":"原文語言（繁中名稱）","keywords":["5–8 個英文小寫學術關鍵詞"],"tags":["1–3 個繁中領域標籤"]}';
+// 整理書目資訊：只根據論文原文擷取，找不到就留空（不准用記憶補，避免編造書目）
+const SYS_BIB = '你是書目資料整理員。使用者會給一篇論文的原文開頭（含標題、作者、單位、頁首頁尾等）。只根據這段文字擷取書目資料，只輸出 JSON：{"title":"原文標題","authors":"全部作者，APA 格式：姓, 名縮寫., 姓, 名縮寫., & 姓, 名縮寫.（超過 20 位時列前 19 位、…、最後一位）","journal":"期刊或會議全名","year":"出版年（四位數）","volume":"卷","issue":"期","pages":"起訖頁或文章編號","doi":"10. 開頭的 DOI","keywords":["5–8 個英文小寫學術關鍵詞"]}。中文、日文、韓文作者照原文寫法，用「、」分隔，不要轉成拼音或縮寫；標題用原文、不要翻譯。除了 keywords，文字裡找不到的欄位一律填空字串，絕對不要猜，也不要用你記得的資料補。';
+const ORG_FIELDS = [['title', '標題'], ['authors', '作者'], ['journal', '期刊'], ['year', '年份'], ['volume', '卷'], ['issue', '期'], ['pages', '頁碼'], ['doi', 'DOI'], ['keywords', '關鍵詞']];
+// 對話裡要 AI「填完整／補齊／整理」書目資訊時，改走整理流程（會真的寫進論文，先讓使用者確認）
+const ORG_V = '(填完整|填好|填上|填進|填入|補齊|補上|補完|補全|補足|整理|完善|校正|修正|更正)';
+const ORG_N = '((?<!參考)書目|出處|doi|卷期|頁碼|引用格式|(論文|每篇|各篇|這篇|每一篇|所有論文)的?(基本)?(資訊|資料)|作者[、和與跟及]?(年份|期刊))';
+const ORG_RE = new RegExp(ORG_V + '[^。？?]{0,14}' + ORG_N + '|' + ORG_N + '[^。？?]{0,14}' + ORG_V + '|\\b(fill|complete|fix|update|add)\\b[^.?]{0,30}\\b(doi|bibliograph|citation|metadata)', 'i');
 const SYS_ASK = '你是研究助理，只根據使用者提供的文獻庫與筆記回答。用繁體中文，精簡、可條列。凡是引用某篇論文的觀點，在句末標註方括號 id，例如 [p1] 或 [p1][p3]。資料不足就直說，不要編造。';
 
 const SEED = {
@@ -1096,7 +1141,7 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._rs);
     this._rsL = () => { if (this.state.layout === 'graph') this.fitLabels(); };
     window.addEventListener('resize', this._rsL);
-    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (!s.wide && s.sbOpen) this.setState({ sbOpen: false }); };
+    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.org) { if (s.org.running) this.stopOrg(); else this.closeOrg(); } else if (!s.wide && s.sbOpen) this.setState({ sbOpen: false }); };
     window.addEventListener('keydown', this._esc);
     this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); };
     window.addEventListener('pointerdown', this._down);
@@ -1110,7 +1155,7 @@ class Component extends DCLogic {
       this._ovPushed = false;
       const s = this.state;
       // 跟 Esc 一樣，只關最上層的一個
-      if (s.acctOpen) this.setState({ acctOpen: false }); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.sbOpen && !s.wide) this.setState({ sbOpen: false });
+      if (s.acctOpen) this.setState({ acctOpen: false }); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.org) { if (s.org.running) this.stopOrg(); else this.closeOrg(); } else if (s.sbOpen && !s.wide) this.setState({ sbOpen: false });
     };
     window.addEventListener('popstate', this._pop);
     document.documentElement.lang = 'zh-Hant';
@@ -1172,7 +1217,7 @@ class Component extends DCLogic {
     if (ps.papers !== s.papers || ps.projects !== s.projects || ps.projDel !== s.projDel) this.ensureSlots();
     this.syncFocus(ps, s);
     // 手機：開了側欄或視窗時多一筆瀏覽紀錄，按返回鍵會先關掉它，而不是離開網站
-    const ov = st => !!(st.acctOpen || st.showLogin || st.showSet || st.showAdd || (!st.wide && st.sbOpen));
+    const ov = st => !!(st.acctOpen || st.showLogin || st.showSet || st.showAdd || st.org || (!st.wide && st.sbOpen));
     if (s.narrow && ov(s) && !this._ovPushed) { try { history.pushState({ lunyiOv: 1 }, ''); this._ovPushed = true; } catch (e) {} }
     else if (!ov(s) && this._ovPushed) { this._ovPushed = false; this._popSkip = true; try { history.back(); } catch (e) { this._popSkip = false; } }
     // 離開總覽時元素直接卸載，收不到 mouseleave／blur，要自己清掉提示框
@@ -1620,10 +1665,27 @@ class Component extends DCLogic {
     try { await navigator.clipboard.writeText(text); } catch (e) { const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
     this.toast(`已複製 ${label}`);
   }
-  apa(p) { return `${(p.authors || '').replace(/\s*等$/, ', et al.')} (${p.year}). ${p.title}. ${p.journal}.`; }
+  apa(p) {
+    const t = String(p.title || '').trim(), end = /[.?!。？！]$/.test(t) ? '' : '.';
+    const src = [p.journal, p.volume ? p.volume + (p.issue ? `(${p.issue})` : '') : p.issue ? `(${p.issue})` : '', p.pages].filter(Boolean).join(', ');
+    return `${(p.authors || '').replace(/\s*等$/, ', et al.')} (${p.year || 'n.d.'}). ${t}${end}${src ? ` ${src}.` : ''}${p.doi ? ` https://doi.org/${p.doi}` : ''}`;
+  }
+  // APA 格式的作者清單（姓, 名縮寫., 姓, 名縮寫., & 姓, 名縮寫.）轉成 BibTeX 的「and」分隔
+  bibAuthors(a) {
+    let t = String(a || '').trim();
+    if (!t) return '';
+    const more = /\s*(等|et al\.?)$/i.test(t);
+    t = t.replace(/,?\s*(等|et al\.?)$/i, '').trim();
+    let names = /[、，]/.test(t) ? t.split(/[、，]/) : /\.,\s/.test(t) ? t.split(/\.,\s*(?:&\s*)?/).map(x => x.replace(/^[….\s]+/, '').trim()).filter(Boolean).map(x => /\.$/.test(x) ? x : x + '.') : [t];
+    names = names.map(x => x.trim()).filter(Boolean);
+    return names.join(' and ') + (more ? ' and others' : '');
+  }
+
   bib(p) {
-    const key = (surname(p) + p.year + (p.title.split(/\s+/)[0] || '')).toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g, '');
-    return `@article{${key},\n  title   = {${p.title}},\n  author  = {${(p.authors || '').replace(/\s*等$/, ' and others')}},\n  journal = {${p.journal}},\n  year    = {${p.year}}\n}`;
+    // 引用鍵去掉變音符號（Münzel → munzel），其他符號拿掉
+    const key = (surname(p) + p.year + (p.title.split(/\s+/)[0] || '')).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g, '');
+    const bx = v => String(v == null ? '' : v).replace(/([&%#])/g, '\\$1');
+    return `@article{${key},\n  title   = {${bx(p.title)}},\n  author  = {${bx(this.bibAuthors(p.authors))}},\n  journal = {${bx(p.journal)}},\n  year    = {${p.year}}${p.volume ? `,\n  volume  = {${p.volume}}` : ''}${p.issue ? `,\n  number  = {${p.issue}}` : ''}${p.pages ? `,\n  pages   = {${bx(String(p.pages).replace(/[–—]/g, '--'))}}` : ''}${p.doi ? `,\n  doi     = {${p.doi}}` : ''}\n}`;
   }
 
   async translateIdx(pid, idxs, force) {
@@ -1700,30 +1762,31 @@ class Component extends DCLogic {
       const { paras, refs } = splitParas(pages.flatMap(l => [...l, '']));
       if (!paras.length) throw new Error('empty');
       const ocrNote = ocrN ? ` · OCR ${ocrN} 頁${scan.length > ocrN ? `（掃描頁超過 ${OCR_MAX} 頁，其餘略過）` : ''}` : '';
-      this.setState({ pdf: { name: file.name, paras, refs, full: paras.join('\n\n') }, pdfStatus: `已解析 ${n} 頁 · ${paras.length} 段${refs ? ' · 含參考文獻' : ''}${ocrNote}` });
+      this.setState({ pdf: { name: file.name, paras, refs, full: paras.join('\n\n'), head: pages.flat().join('\n').slice(0, 3000) }, pdfStatus: `已解析 ${n} 頁 · ${paras.length} 段${refs ? ' · 含參考文獻' : ''}${ocrNote}` });
     } catch (e) { this.setState({ pdfStatus: '無法解析此 PDF，請改用貼上文字' }); }
   }
 
   async addPaper() {
     const s = this.state, f = s.form;
-    let paras, full, refs = '';
+    let paras, full, refs = '', head = '';
     if (s.addTab !== 'text') {
       if (!s.pdf) return this.toast(s.addTab === 'drive' ? '請先從雲端硬碟選擇 PDF' : '請先選擇 PDF 檔');
-      ({ paras, full, refs } = s.pdf);
+      ({ paras, full, refs, head = '' } = s.pdf);
     } else {
       paras = f.text.split(/\n\s*\n/).map(t => t.replace(/\s+/g, ' ').trim()).filter(Boolean);
       if (!paras.length) return this.toast('請貼上內文');
       full = paras.join('\n\n');
+      head = f.text.slice(0, 3000);
     }
     let meta = {}, aiErr = '';
     if (this.hasCloud()) {
       this.setState({ importStatus: 'AI 正在辨識標題、關鍵詞…' });
-      try { meta = J(await window.claude.complete({ system: SYS_META, messages: [{ role: 'user', content: full.slice(0, 6000) }], max_tokens: 800 })) || {}; } catch (e) { aiErr = e.message || 'AI 沒有回應'; }
+      try { meta = J(await window.claude.complete({ system: SYS_META, messages: [{ role: 'user', content: ((head ? head + '\n' : '') + full).slice(0, 6000) }], max_tokens: 800 })) || {}; } catch (e) { aiErr = e.message || 'AI 沒有回應'; }
     }
     const id = 'p' + Date.now().toString(36);
     const paper = { id, title: f.title || meta.title || (s.pdf && s.pdf.name.replace(/\.pdf$/i, '')) || '未命名論文', authors: f.authors || meta.authors || '', journal: f.journal || meta.journal || '', year: f.year || String(meta.year || ''),
       projects: [(f.folder.trim() !== '全部' && f.folder.trim() !== NOPROJ && f.folder.trim()) || (s.folder !== '全部' && s.folder !== NOPROJ ? s.folder : '')].filter(Boolean), lang: meta.language || '', tags: Array.isArray(meta.tags) ? meta.tags.slice(0, 3) : [], keywords: (() => { const u = [...new Set(String(f.keywords || '').split(/[,，、;；]/).map(norm).filter(Boolean))]; return (u.length ? u : Array.isArray(meta.keywords) ? [...new Set(meta.keywords.map(norm).filter(Boolean))] : []).slice(0, 8); })(),
-      paras: paras.map(en => ({ en, zh: '' })), cites: [], refText: (refs || '').slice(0, 20000) };
+      paras: paras.map(en => ({ en, zh: '' })), cites: [], refText: (refs || '').slice(0, 20000), head: (head || '').slice(0, 3000) };
     Object.assign(paper, normProj(paper));
     const low = (full + ' ' + refs).toLowerCase(), tkey = paper.title.toLowerCase().slice(0, 50);
     paper.cites = s.papers.filter(o => o.title.length > 12 && low.includes(o.title.toLowerCase().slice(0, 50))).map(o => o.id);
@@ -1735,9 +1798,92 @@ class Component extends DCLogic {
     if (this.props.autoTranslate !== false) setTimeout(() => this.translateAll(id), 50);
   }
 
+  // ---- AI 整理書目資訊：讀原文開頭擷取，列出「目前 → AI 找到的」讓使用者勾選後才寫入 ----
+  // 匯入時保留的原文開頭（作者、單位這些短行在分段時會被濾掉）＋各段原文
+  bibText(p) { return ((p.head ? p.head + '\n' : '') + p.paras.map(x => x.en || x.zh || '').join('\n')).slice(0, 9000); }
+  orgValue(k, v) {
+    if (k === 'keywords') return [...new Set((Array.isArray(v) ? v : typeof v === 'string' ? v.split(/[,，、;；]/) : []).filter(x => typeof x === 'string').map(norm).filter(Boolean))].slice(0, 8).join(', ');
+    if (k === 'authors' && Array.isArray(v)) { const a = v.filter(x => typeof x === 'string' && x.trim()).map(x => x.trim()); v = a.length > 1 ? a.slice(0, -1).join(', ') + ', & ' + a[a.length - 1] : (a[0] || ''); }
+    if (typeof v !== 'string' && typeof v !== 'number') return '';
+    let t = String(v).replace(/\s+/g, ' ').trim();
+    if (k === 'year') t = (t.match(/\b(19|20)\d{2}\b/) || [''])[0];
+    if (k === 'doi') {
+      t = t.replace(/^(https?:\/\/)?(www\.)?(dx\.)?doi\.org\//i, '').replace(/^doi:?\s*/i, '').replace(/[.,;]+$/, '');
+      while (/[)\]]$/.test(t) && t.split(/[(\[]/).length < t.split(/[)\]]/).length) t = t.slice(0, -1);
+      if (!/^10\.\d{4,9}\/\S+$/.test(t)) t = '';
+    }
+    if (k === 'volume' || k === 'issue' || k === 'pages') t = t.replace(/^(vol\.?|volume|no\.?|issue|pp?\.)\s*/i, '').replace(/^第\s*/, '').replace(/\s*[卷期頁]$/, '');
+    const max = { title: 300, authors: 2000, journal: 200, volume: 30, issue: 30, pages: 40 }[k];
+    return max && t.length > max ? '' : t;
+  }
+  orgCur(p, k) { return k === 'keywords' ? (p.keywords || []).join(', ') : String(p[k] == null ? '' : p[k]); }
+  // 目前的值看起來是暫時的（空的、未命名、像檔名）就預設勾選；已經有的值預設不覆蓋。中文標題沒有空白是正常的，不算檔名
+  orgWeak(k, cur) { return !cur || (k === 'title' && (cur === '未命名論文' || (!/\s/.test(cur) && cur.length > 6 && (/^[\x21-\x7e]+$/.test(cur) || cur.includes('_'))))); }
+  // 「需要整理」只看主要欄位：本來就沒有卷期頁、DOI 的論文不會每次都被重送
+  orgNeed(p) { return ['title', 'authors', 'journal', 'year', 'keywords'].some(k => this.orgWeak(k, this.orgCur(p, k))); }
+  // 原文裡找得到才預設勾選：DOI 原樣出現、數字都出現、作者姓氏都出現、標題整句出現；期刊（常是縮寫）與關鍵詞不檢查
+  orgFound(k, ai, src) {
+    const f = x => String(x).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    const t = f(src), v = f(ai);
+    if (k === 'doi') return t.replace(/\s+/g, '').includes(v.replace(/\s+/g, ''));
+    if (k === 'year' || k === 'volume' || k === 'issue' || k === 'pages') { const ns = v.match(/\d+/g); return !!ns && ns.every(n => new RegExp('(^|\\D)' + n + '(\\D|$)').test(t)); }
+    if (k === 'authors') { const sn = v.split(/,|&|、|，|…/).map(x => x.trim()).filter(x => x && !/^([a-z]\.\s*-?\s*)+$/.test(x)); return sn.length > 0 && sn.every(x => t.includes(x)); }
+    if (k === 'title') { const g = x => x.replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); return g(t).includes(g(v)); }
+    return true;
+  }
+  async organize(ids) {
+    if (this.state.org && this.state.org.running) return;
+    if (!this.hasCloud()) { this.toast('整理書目資訊需要 AI：請到「設定 → 進階」連上 Claude 或 Gemini'); this.openSettings('adv'); return; }
+    const list = ids.map(id => this.find(id)).filter(Boolean).map(p => ({ id: p.id, title: p.title, status: 'wait', msg: '', fields: [] }));
+    if (!list.length) return this.toast('這些論文的書目資訊都已經填好了');
+    const run = this._orgRun = (this._orgRun || 0) + 1;
+    this.setState({ org: { list, running: true }, acctOpen: false });
+    const live = () => this._orgRun === run && !!this.state.org;
+    const patch = (id, o) => this.setState(st => st.org && this._orgRun === run ? { org: { ...st.org, list: st.org.list.map(x => x.id === id ? { ...x, ...o } : x) } } : {});
+    for (const it of list) {
+      if (!live()) return;
+      const p = this.find(it.id); if (!p) { patch(it.id, { status: 'err', msg: '論文已被刪除' }); continue; }
+      patch(it.id, { status: 'run' });
+      const src = this.bibText(p);
+      let m = null, err = '', stop = false;
+      try { m = J(await window.claude.complete({ system: SYS_BIB, messages: [{ role: 'user', content: src }], max_tokens: 1500 })); } catch (e) { err = (e && e.message) || 'AI 沒有回應'; stop = !!(e && e.code === 'NO_KEY'); }
+      if (!live()) return;
+      // 金鑰或存取碼有問題：後面的也一定失敗，先停下來，不要每篇都重開一次設定
+      if (stop) return this.setState(st => st.org && this._orgRun === run ? { org: { ...st.org, running: false, list: st.org.list.map(x => x.id === it.id ? { ...x, status: 'err', msg: err } : x.status === 'wait' ? { ...x, status: 'skip' } : x) } } : {});
+      if (!m || typeof m !== 'object' || Array.isArray(m)) { patch(it.id, { status: 'err', msg: err || 'AI 的回應讀不懂，請再試一次' }); continue; }
+      const cp = this.find(it.id) || p;
+      const fields = ORG_FIELDS.map(([k, label]) => { const cur = this.orgCur(cp, k), ai = this.orgValue(k, m[k]); if (!ai || ai === cur) return null; const found = this.orgFound(k, ai, src); return { k, label, cur, ai, found, on: found && this.orgWeak(k, cur) }; }).filter(Boolean);
+      patch(it.id, { status: fields.length ? 'ok' : 'none', fields });
+    }
+    this.setState(st => st.org && this._orgRun === run ? { org: { ...st.org, running: false } } : {});
+  }
+  applyOrg() {
+    const o = this.state.org; if (!o || o.running) return;
+    const ch = {}; let nf = 0;
+    o.list.forEach(it => it.fields.forEach(f => { if (f.on) { (ch[it.id] = ch[it.id] || {})[f.k] = f.ai; nf++; } }));
+    if (!nf) return this.toast('沒有勾選要寫入的欄位');
+    const np = Object.keys(ch).length;
+    // 「編輯資訊」表單如果開著，寫入的值也放進表單，免得之後按儲存又蓋回舊值
+    this.setState(st => ({ org: null, editMeta: st.editMeta && ch[st.editMeta.id] ? { ...st.editMeta, ...ch[st.editMeta.id] } : st.editMeta,
+      papers: st.papers.map(p => { const c = ch[p.id]; if (!c) return p; const q = { ...p }; Object.entries(c).forEach(([k, v]) => { q[k] = k === 'keywords' ? v.split(', ').filter(Boolean) : v; }); return q; }) }));
+    this.toast(`已更新 ${np} 篇論文的 ${nf} 個欄位`);
+  }
+  // 停止：不再送新的請求，已經整理好的結果留著，可以勾選後寫入
+  stopOrg() { this._orgRun = (this._orgRun || 0) + 1; this.setState(st => st.org ? { org: { ...st.org, running: false, list: st.org.list.map(x => x.status === 'wait' || x.status === 'run' ? { ...x, status: 'stop' } : x) } } : {}); }
+  closeOrg() { this._orgRun = (this._orgRun || 0) + 1; this.setState({ org: null }); }
+
   async submitAsk(text) {
     const s = this.state, q = (text || s.ask).trim();
     if (!q || s.asking) return;
+    // 要 AI 補齊／整理書目資訊：改走整理流程（先讓使用者確認才寫入），不是只用文字回報缺什麼
+    if (ORG_RE.test(q) && !(s.org && s.org.running)) {
+      const scope = s.folder, ids = s.papers.filter(this.inScope(scope)).filter(p => this.orgNeed(p)).map(p => p.id);
+      if (!this.hasCloud()) { this.setState({ ask: q }); return this.organize(ids); }
+      const n = s.papers.filter(this.inScope(scope)).length;
+      this.setState(st => ({ ask: '', layout: 'chat', qa: [...st.qa, { q, a: !n ? '這個範圍裡還沒有論文。' : !ids.length ? '這個範圍裡的論文，書目資訊都已經填好了。要修改的話，在閱讀器按「編輯資訊」。' : `我會讀這 ${ids.length} 篇論文的原文開頭，整理出標題、作者、期刊、年份、卷期頁、DOI 與關鍵詞，列在跳出的視窗裡。只填論文裡找得到的資訊，找不到的留空；你勾選確認後才會寫進論文。`, proj: scope, org: true }] }));
+      if (ids.length) this.organize(ids);
+      return;
+    }
     this.setState({ ask: '', asking: true, layout: 'chat' });
     // 選了專案時，只把這個專案的論文交給 AI；對話紀錄也依專案分開
     const scope = s.folder, inScope = this.inScope(scope), pool = s.papers.filter(inScope), poolIds = new Set(pool.map(p => p.id));
@@ -1747,7 +1893,7 @@ class Component extends DCLogic {
       return `[${p.id}] ${p.title}（${p.authors}, ${p.journal} ${p.year}）\n關鍵詞：${p.keywords.join(', ')}\n引用：${(p.cites || []).join(', ') || '無'}\n內容：${p.paras.slice(0, 8).map(x => x.zh || x.en).join(' ').slice(0, 1400)}${hl ? '\n螢光重點：' + hl : ''}${nts ? '\n我的筆記：' + nts : ''}`;
     }).join('\n\n');
     const links = s.links.filter(l => poolIds.has(l.a) && poolIds.has(l.b)).map(l => `${l.a}↔${l.b}：${l.note}`).join('\n');
-    const hist = s.qa.filter(x => (x.proj || '全部') === scope).filter(x => !x.error && x.a !== '（連線失敗，請稍後再試）').slice(-3).flatMap(x => [{ role: 'user', content: x.q }, { role: 'assistant', content: x.a }]);
+    const hist = s.qa.filter(x => (x.proj || '全部') === scope).filter(x => !x.error && !x.org && x.a !== '（連線失敗，請稍後再試）').slice(-3).flatMap(x => [{ role: 'user', content: x.q }, { role: 'assistant', content: x.a }]);
     let a;
     try {
       a = await window.claude.complete({ system: SYS_ASK, max_tokens: 1500, messages: [{ role: 'user', content: `以下是我的文獻庫：\n\n${ctx}\n\n我手動建立的串聯：\n${links || '無'}` }, { role: 'assistant', content: '了解，我會只根據這些內容回答並標註出處。' }, ...hist, { role: 'user', content: q }] });
@@ -1941,8 +2087,8 @@ class Component extends DCLogic {
 
   syncFocus(ps, s) {
     const root = document.querySelector('.ly-root'), main = document.querySelector('.ly-mainwrap');
-    const DLG = ['#lunyi-login', '.ly-setbox', '#lunyi-add'];
-    const top = st => st.showLogin ? DLG[0] : st.showSet ? DLG[1] : st.showAdd ? DLG[2] : '';
+    const DLG = ['#lunyi-login', '.ly-setbox', '#lunyi-add', '#lunyi-org'];
+    const top = st => st.showLogin ? DLG[0] : st.showSet ? DLG[1] : st.showAdd ? DLG[2] : st.org ? DLG[3] : '';
     const t = top(s), pt = top(ps), modal = !!t, wasModal = !!pt;
     if (root) root.inert = modal;
     if (main) main.inert = !modal && !s.wide && s.sbOpen;
@@ -2348,7 +2494,9 @@ class Component extends DCLogic {
     // 建議問題用目前範圍裡真的有的論文；有兩篇以上時挑一對有共同關鍵詞的來比較
     const scoped = s.papers.filter(inScope);
     const pair = scoped.length >= 2 ? (scoped.flatMap((a, i) => scoped.slice(i + 1).map(b => [a, b])).find(([a, b]) => a.keywords.some(k => b.keywords.includes(k))) || [scoped[0], scoped[1]]) : null;
+    const weak = scoped.filter(p => this.orgNeed(p)).length;
     const sugg = [
+      ...(weak ? [`整理這 ${weak} 篇論文的書目資訊`] : []),
       ...(pair ? ['這些論文之間的傳承關係是什麼？', `${shortName(pair[0])} 和 ${shortName(pair[1])} 有什麼共通設計？`] : []),
       ...(scoped.length === 1 ? [`用三點摘要「${scoped[0].title}」`] : []),
       ...(scoped.length ? ['整理我目前筆記與螢光標記的重點'] : []),
@@ -2419,11 +2567,26 @@ class Component extends DCLogic {
         this.joinProj(cur.id, v); this.focusSoon('select[aria-label="加入專案"]'); },
       curProjText: cur ? projText(cur) : '',
       curMeta: cur ? [cur.journal, cur.year].filter(Boolean).join(' · ') : '', curMeta2: cur ? [cur.journal, cur.year, projText(cur)].filter(Boolean).join(' · ') : '',
-      editing: !!(s.editMeta && cur && s.editMeta.id === cur.id), em: s.editMeta || { title: '', authors: '', journal: '', year: '', keywords: '' },
-      onEm: Object.fromEntries(['title', 'authors', 'journal', 'year', 'keywords'].map(k => [k, e => { const v = e.target.value; this.setState(st => ({ editMeta: st.editMeta && { ...st.editMeta, [k]: v } })); }])),
-      startEdit: () => cur && this.setState({ editMeta: { id: cur.id, title: cur.title, authors: cur.authors || '', journal: cur.journal || '', year: String(cur.year || ''), keywords: cur.keywords.join(', ') } }, () => this.focusSoon('#lunyi-edit-title')),
+      orgThis: () => cur && this.organize([cur.id]),
+      ...(() => {
+        const o = s.org, list = o ? o.list : [], sel = list.reduce((a, it) => a + it.fields.filter(f => f.on).length, 0);
+        const ST = { wait: ['等待中', '#625d55'], run: ['讀取中…', 'oklch(0.42 0.1 200)'], ok: ['', '#1e5c33'], none: ['原文裡沒有找到新的資訊', '#625d55'], err: ['失敗', '#7a2e12'], stop: ['已停止', '#625d55'], skip: ['未執行：先修正 AI 設定再試一次', '#625d55'] };
+        const k = list.filter(it => it.status !== 'wait').length;
+        return {
+          orgOpen: !!o, closeOrg: () => this.closeOrg(), applyOrg: () => this.applyOrg(), orgHead: () => (o && o.running ? this.stopOrg() : this.closeOrg()),
+          orgCloseLabel: o && o.running ? '停止' : '關閉',
+          orgStatus: !o ? '' : o.running ? `正在讀第 ${Math.max(1, k)}／${list.length} 篇的原文…` : `${list.some(it => it.status === 'stop' || it.status === 'skip') ? '已停止' : '完成'}：${list.filter(it => it.status === 'ok').length} 篇找到可以補的資訊${list.some(it => it.status === 'err') ? `，${list.filter(it => it.status === 'err').length} 篇失敗` : ''}。`,
+          orgCount: `已勾選 ${sel} 個欄位`, orgApplyLabel: `寫入勾選的 ${sel} 個欄位`, orgCantApply: String(!!(o && o.running) || !sel), orgApplyOp: (o && o.running) || !sel ? 0.45 : 1,
+          orgList: list.map(it => ({ title: it.title, stLabel: it.status === 'ok' ? `找到 ${it.fields.length} 項` : ST[it.status][0], stColor: ST[it.status][1], isErr: it.status === 'err', errMsg: it.msg,
+            fields: it.fields.map(f => ({ label: f.label, ai: f.ai, cur: f.cur, hasCur: !!f.cur, on: !!f.on, unverified: f.found === false, aria: `寫入${f.label}：${f.ai}${f.cur ? `（目前：${f.cur}）` : '（目前空白）'}${f.found === false ? '（原文裡沒找到）' : ''}`,
+              onToggle: e => { const v = !!e.target.checked; this.setState(st => st.org ? { org: { ...st.org, list: st.org.list.map(x => x.id === it.id ? { ...x, fields: x.fields.map(g => g.k === f.k ? { ...g, on: v } : g) } : x) } } : {}); } })) })),
+        };
+      })(),
+      editing: !!(s.editMeta && cur && s.editMeta.id === cur.id), em: s.editMeta || { title: '', authors: '', journal: '', year: '', volume: '', issue: '', pages: '', doi: '', keywords: '' },
+      onEm: Object.fromEntries(['title', 'authors', 'journal', 'year', 'volume', 'issue', 'pages', 'doi', 'keywords'].map(k => [k, e => { const v = e.target.value; this.setState(st => ({ editMeta: st.editMeta && { ...st.editMeta, [k]: v } })); }])),
+      startEdit: () => cur && this.setState({ editMeta: { id: cur.id, title: cur.title, authors: cur.authors || '', journal: cur.journal || '', year: String(cur.year || ''), volume: cur.volume || '', issue: cur.issue || '', pages: cur.pages || '', doi: cur.doi || '', keywords: cur.keywords.join(', ') } }, () => this.focusSoon('#lunyi-edit-title')),
       cancelEdit: () => this.setState({ editMeta: null }),
-      saveEdit: () => { const m = s.editMeta; if (!m || !cur) return; this.upd(cur.id, p => ({ ...p, title: m.title.trim() || p.title, authors: m.authors.trim(), journal: m.journal.trim(), year: m.year.trim(), keywords: [...new Set(m.keywords.split(/[,，、;；]/).map(norm).filter(Boolean))].slice(0, 12) })); this.setState({ editMeta: null }); this.toast('已更新論文資訊'); },
+      saveEdit: () => { const m = s.editMeta; if (!m || !cur) return; this.upd(cur.id, p => ({ ...p, title: m.title.trim() || p.title, authors: m.authors.trim(), journal: m.journal.trim(), year: m.year.trim(), volume: m.volume.trim(), issue: m.issue.trim(), pages: m.pages.trim(), doi: this.orgValue('doi', m.doi) || m.doi.trim(), keywords: [...new Set(m.keywords.split(/[,，、;；]/).map(norm).filter(Boolean))].slice(0, 12) })); this.setState({ editMeta: null }); this.toast('已更新論文資訊'); },
       showIntro: !!s.intro && s.papers.length > 0 && s.papers.every(p => SEED.papers.some(x => x.id === p.id)),
       introN: String(s.papers.length),
       ...(() => { const p = s.newProjOpen && s.newProjFor && this.find(s.newProjFor); return { newProjForOn: !!p, newProjForText: p ? `建立後會把「${p.title}」加入這個專案` : '' }; })(),
