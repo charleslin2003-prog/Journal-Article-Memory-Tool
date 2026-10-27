@@ -696,7 +696,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
       </sc-if>
       <div aria-hidden="true" style="display:flex;align-items:center;gap:12px;color:#625d55;font-size:12px;margin:6px 0 2px"><span style="flex:1;height:1px;background:#e6e1d8"></span>或<span style="flex:1;height:1px;background:#e6e1d8"></span></div>
       <button class="ly-autofocus" sc-camel-on-click="{{ closeLogin }}" style="border:1px solid #e2ddd3;background:#faf9f6;border-radius:999px;min-height:44px;padding:10px;font-size:14px;color:#37352f" style-hover="background:#f1eee8">先不登入，直接使用</button>
-      <p style="margin:6px 0 0;font-size:12px;color:#625d55;line-height:1.7;text-align:center">論憶沒有自己的帳號系統，論文存在這台電腦的瀏覽器。登入 Google 只用來連結你自己的雲端硬碟，隨時可以登出。</p>
+      <p style="margin:6px 0 0;font-size:12px;color:#625d55;line-height:1.7;text-align:center">登入後，你的文獻庫存在你自己的 Google 雲端硬碟，換一台電腦登入同一個帳號就能看到。不登入的話，論文只存在這台電腦的瀏覽器。</p>
     </div>
   </div>
 </sc-if>
@@ -802,7 +802,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             <span style="width:48px;height:48px;border-radius:10px;background:{{ av.bg }};color:#fff;display:grid;place-items:center;font-size:20px;font-weight:600;flex-shrink:0;overflow:hidden;position:relative">{{ av.initial }}<span aria-hidden="true" style="position:absolute;inset:0;background:{{ av.imgBg }}"></span></span>
             <div style="min-width:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:16px;font-weight:600">{{ av.name }}</span><span style="font-size:12px;color:#625d55;line-height:1.6;white-space:pre-line">{{ av.detail }}</span></div>
           </div>
-          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統，登入用的是你自己的 Google 帳號：論文資料存在這台電腦的瀏覽器；登入 Google 後可以同步到你自己的雲端硬碟。</div>
+          <div style="font-size:12px;color:#625d55;line-height:1.7">論憶沒有自己的帳號系統，登入用的是你自己的 Google 帳號。每個 Google 帳號各有一份文獻庫，會自動同步到那個帳號的雲端硬碟；登出後回到這台電腦的訪客文獻庫。</div>
           <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:#fff;border:1px solid #e2ddd3;border-radius:10px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
               <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:14px;font-weight:600">Google 帳號</span><span style="font-size:12px;color:#625d55">{{ gStatus }}</span></div>
@@ -852,7 +852,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             <sc-for list="{{ syncBtns }}" as="sb" hint-placeholder-count="2"><button sc-camel-on-click="{{ sb.onClick }}" aria-pressed="{{ sb.pressed }}" style="border:0;padding:5px 14px;border-radius:4px;font-size:12px;background:{{ sb.bg }}">{{ sb.label }}</button></sc-for>
           </div>
           <sc-if value="{{ syncDrive }}" hint-placeholder-val="{{ true }}">
-            <div style="font-size:12px;color:#625d55;line-height:1.6">文獻庫存在你雲端硬碟的「論憶」資料夾（lunyi-library.json）。其他電腦用同一個 Google 帳號登入即可同步。需要先在「我的帳號」用 Google 登入。</div>
+            <div style="font-size:12px;color:#625d55;line-height:1.6">登入 Google 後，你的文獻庫會自動同步到你雲端硬碟的「論憶」資料夾（lunyi-library.json）。在其他電腦登入同一個帳號，就會看到同一份文獻。</div>
           </sc-if>
           <sc-if value="{{ syncGist }}" hint-placeholder-val="{{ false }}">
             <div style="font-size:12px;color:#625d55;line-height:1.6">把文獻庫存在你 GitHub 帳號的私人 Gist，多台電腦填同一組權杖與 Gist ID 即可同步。權杖到 GitHub → Settings → Developer settings → Personal access tokens 建立，只需要 Gists 讀寫權限。第一次上傳會自動建立 Gist。</div>
@@ -1016,7 +1016,13 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
 })();
 </script>
 <script type="text/x-dc" data-dc-script="" data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;reader&quot;,&quot;graph&quot;,&quot;chat&quot;,&quot;dash&quot;,&quot;matrix&quot;],&quot;default&quot;:&quot;reader&quot;,&quot;tsType&quot;:&quot;'reader'|'graph'|'chat'|'dash'|'matrix'&quot;},&quot;defaultMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;en&quot;,&quot;zh&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;'both'|'en'|'zh'&quot;},&quot;autoTranslate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
-const KEY = 'lunyi-v2';
+// 每個 Google 帳號各一份文獻庫：開著的是哪個帳號的記在 lunyi-lib-acct（空白＝訪客）。換帳號時先存好再重新整理頁面，改開那個帳號的資料庫
+const LIB_ACCT = (() => { try { return localStorage.getItem('lunyi-lib-acct') || ''; } catch (e) { return ''; } })();
+const LIB_NS = LIB_ACCT ? '@' + LIB_ACCT : '';
+// 跟著文獻庫走的設定（同步方式、自動同步、待上傳標記）：每個帳號各記一份
+const LIB_LS = new Set(['lunyi-sync-auto', 'lunyi-sync-dirty', 'lunyi-sync-target', 'lunyi-gist-id']);
+const libKey = k => LIB_LS.has(k) ? k + LIB_NS : k;
+const KEY = 'lunyi-v2' + LIB_NS;
 const ACC = 'oklch(0.45 0.1 200)';
 const HL = { y: 'oklch(0.94 0.07 95)', b: 'oklch(0.93 0.045 220)' };
 // 專案類別色：dataviz 參考色盤前 3 色。圖譜節點四散，任兩色都可能相鄰，validate_palette.js --pairs all
@@ -1232,7 +1238,8 @@ SEED.papers.forEach(p => { if (SEED_MX[p.id]) p.mx = SEED_MX[p.id]; });
 // ---- 文獻庫存放：IndexedDB（容量是 localStorage 的上百倍）；舊版存在 localStorage 的資料第一次開啟時搬過去 ----
 // 資料庫 lunyi：papers（每篇一筆）、kv（lib＝筆記、串聯、專案等其他資料與論文順序；migr＝搬移紀錄；legacy＝舊版資料的原始備份）
 // localStorage 只留一個標記 lunyi-store=idb：有標記卻打不開 IndexedDB 時，絕不改用示範論文或空白文獻庫存檔、同步
-const IDB_NAME = 'lunyi', STORE_MARK = 'lunyi-store', REV_KEY = 'lunyi-lib-rev', PEND_KEY = 'lunyi-pending';
+// 帳號的文獻庫在名稱後面加上 @帳號（訪客沿用原本的名稱）
+const IDB_NAME = 'lunyi' + LIB_NS, STORE_MARK = 'lunyi-store' + LIB_NS, REV_KEY = 'lunyi-lib-rev' + LIB_NS, PEND_KEY = 'lunyi-pending' + LIB_NS;
 const KV_KEYS = ['links', 'notes', 'qa', 'gone', 'fslots', 'projects', 'projAt', 'projDel', 'projMeta', 'mxCols'];
 // 這個分頁的代號：判斷 IndexedDB 裡的資料是不是別的分頁剛寫的
 const TAB = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -1243,7 +1250,7 @@ const FPC = new WeakMap();
 const fpOf = p => { let v = FPC.get(p); if (!v) { v = fp(JSON.stringify(p)); FPC.set(p, v); } return v; };
 const SEED_IDS = new Set(SEED.papers.map(p => p.id));
 // 打開資料庫；缺少資料表時升一版補上。ms 之後還沒打開就回報 slow（不代表失敗，連線之後仍可能成功）
-function idbOpen(onSlow, ms) {
+function idbOpen(onSlow, ms, name = IDB_NAME) {
   return new Promise(ok => {
     let f = null, done = false;
     try { f = window.indexedDB; } catch (e) {}
@@ -1253,7 +1260,7 @@ function idbOpen(onSlow, ms) {
     const up = db => { if (!db.objectStoreNames.contains('papers')) db.createObjectStore('papers', { keyPath: 'id' }); if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv'); };
     const req = v => {
       let r;
-      try { r = v ? f.open(IDB_NAME, v) : f.open(IDB_NAME); } catch (e) { return fin(null, e); }
+      try { r = v ? f.open(name, v) : f.open(name); } catch (e) { return fin(null, e); }
       r.onupgradeneeded = () => up(r.result);
       r.onsuccess = () => { const db = r.result; if (db.objectStoreNames.contains('papers') && db.objectStoreNames.contains('kv')) return fin(db); const nv = db.version + 1; db.close(); req(nv); };
       r.onerror = e => { e.preventDefault(); fin(null, r.error); };
@@ -1480,17 +1487,20 @@ class Component extends DCLogic {
     }
     let gUser = null;
     try { gUser = JSON.parse(this.lsGet('lunyi-g-user') || 'null'); } catch (e) {}
+    // 登入的帳號和開著的文獻庫對不上（之前的版本登入的、或登出時沒來得及換）：先換成對的文獻庫再開啟
+    const want = this.libFor(gUser);
+    if (want !== null && want !== LIB_ACCT && this.libGo(want)) return;
     // 只在真正第一次使用時跳出登入視窗（文獻庫讀完才知道是不是舊使用者，見 afterBoot）
     this._firstVisit = !this.lsGet('lunyi-login-seen');
     if (this._firstVisit) this.lsSet('lunyi-login-seen', '1');
     this.setState({ gUser, syncTarget: this.cloudTarget() });
     if (this.gClient()) loadScript(GSI).catch(() => {});
-    this.ensureOwner();
-    // 其他分頁登入、登出或換帳號：更新頭像；自動同步被關掉時取消這裡排著的上傳（每次上傳也會再檢查帳號）
+    // 其他分頁登入、登出或換帳號：更新頭像；換了文獻庫就跟著換；自動同步被關掉時取消這裡排著的上傳（每次上傳也會再檢查帳號）
     this._store = e => {
+      if (e.key === 'lunyi-lib-acct' && (e.newValue || '') !== LIB_ACCT) return this.switchLib(e.newValue || '', null, true);
       if (e.key === 'lunyi-g-user') { let u = null; try { u = JSON.parse(e.newValue || 'null'); } catch (x) {} this.setState({ gUser: u }); }
-      if ((e.key === 'lunyi-sync-auto' || e.key === 'lunyi-sync-owner') && !this.syncOn()) { clearTimeout(this._push); this._push = null; }
-      if (e.key === 'lunyi-sync-auto' || e.key === 'lunyi-sync-target' || e.key === 'lunyi-gist-id') this._needPull = true;
+      if (e.key === libKey('lunyi-sync-auto') && !this.syncOn()) { clearTimeout(this._push); this._push = null; }
+      if (e.key === libKey('lunyi-sync-auto') || e.key === libKey('lunyi-sync-target') || e.key === libKey('lunyi-gist-id')) this._needPull = true;
       // 別的分頁剛存了文獻庫：重新讀一次（這裡還沒存的修改會保留）
       if (e.key === REV_KEY && e.newValue && this._boot === 'idb' && this._ready && e.newValue.split(':')[0] !== TAB) { if (!this._db && !this._vc) this.reconnect().then(() => this.rehydrate()); else this.rehydrate(); }
       // 舊版論憶的分頁還開著，還在寫 localStorage
@@ -1623,7 +1633,8 @@ class Component extends DCLogic {
     if (this._boot === 'down') return;
     this._boot = mode;
     this._migr = migr;
-    const lib = d || (lost ? { papers: [] } : JSON.parse(JSON.stringify(SEED)));
+    // 帳號的文獻庫第一次開啟：從空白開始，等一下從雲端硬碟下載（示範論文只給訪客）
+    const lib = d || (lost || LIB_ACCT ? { papers: [] } : JSON.parse(JSON.stringify(SEED)));
     const st = this.libState(lib, true);
     this._cm = new Map(); this._ckv = null; this._cord = ''; this._seenRev = (d && d.rev) || 0; this._gen = (d && d.gen) || null; this._inflight = new Map();
     // 從 IndexedDB 讀來的就是已經存好的狀態；示範論文、從 localStorage 來的還沒存
@@ -1647,16 +1658,26 @@ class Component extends DCLogic {
     if (lost) this.toast('這台瀏覽器裡的文獻庫資料不見了（可能被瀏覽器清掉）。開啟了自動同步的話會從雲端下載；也可以到「設定 → 同步與備份」匯入 JSON 備份。', '', 12000);
     const fresh = this._firstVisit && !hadLib && !lost && !!this.gClient() && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
     if (fresh && !this.state.gUser) this.setState({ showLogin: true });
+    // 剛換過文獻庫（登入、登出、換帳號）：說明現在開的是誰的
+    const sw = this.takeSwitch();
+    if (sw && sw.msg) this.toast(sw.msg, '', 6000);
+    let pull = null;
     if (this._joinAfterBoot) { this._joinAfterBoot = false; this.syncPullPush(); }
-    else if (this.syncOn()) this.pullThenReady();
+    else if (this.syncOn()) pull = this.pullThenReady();
     // 之後才開啟同步（任何方式）：第一次上傳前一定先下載合併
     else { this._syncReady = true; this._needPull = true; }
+    // 帳號的文獻庫：下載完再看要不要提醒重新登入、要不要把訪客文獻庫的論文複製過來（第一次在這台電腦開啟時）
+    if (LIB_ACCT) Promise.resolve(pull).then(r => {
+      if (r === false && !this.state.papers.length) this.toastGo('沒能從雲端硬碟載入你的文獻（Google 登入可能已過期）', '重新登入', () => this.gSignIn(), 20000);
+      else if (sw && sw.fresh) this.offerGuest();
+    });
   }
-  // 開啟網站時的下載：成功才開放上傳；失敗的話，之後的上傳一律先下載合併
+  // 開啟網站時的下載：成功才開放上傳；失敗的話，之後的上傳一律先下載合併。回傳 pullCloud 的結果
   async pullThenReady() {
     const r = await this.pullCloud(true); this._needPull = !(r === true || r === 'empty'); this._syncReady = true;
     // 這台有還沒上傳的修改（上次關閉前沒傳成功、或剛才合併時保留的）：現在補傳
     if (!this._needPull && this.syncOn()) setTimeout(() => { const sy = this._synced; if (this._bootDirty || this.lsGet('lunyi-sync-dirty') || !sy || this.state.papers.some(p => sy.get(p.id) !== fpOf(p)) || this.state.papers.length !== sy.size) { this._bootDirty = false; clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) { if (this._needPull) this.pullThenPush(); else this.autoPush(); } }, 400); } }, 0);
+    return r;
   }
   async pullThenPush() {
     if (this._pulling) return;
@@ -1863,7 +1884,7 @@ class Component extends DCLogic {
   resetStore() {
     if (!window.confirm('清除這台瀏覽器裡的論憶文獻庫並重新開始？這台電腦裡的論文、筆記與比較矩陣都會刪除；之後可以從雲端同步或匯入 JSON 備份還原。')) return;
     this.dropDb();
-    try { const q = window.indexedDB.deleteDatabase(IDB_NAME); q.onsuccess = q.onerror = q.onblocked = () => { this.lsSet(STORE_MARK, ''); try { Object.keys(localStorage).filter(k => k.startsWith(PEND_KEY)).forEach(k => localStorage.removeItem(k)); } catch (e) {} location.reload(); }; } catch (e) { this.lsSet(STORE_MARK, ''); location.reload(); }
+    try { const q = window.indexedDB.deleteDatabase(IDB_NAME); q.onsuccess = q.onerror = q.onblocked = () => { this.lsSet(STORE_MARK, ''); try { Object.keys(localStorage).filter(k => k === PEND_KEY || k.startsWith(PEND_KEY + ':')).forEach(k => localStorage.removeItem(k)); } catch (e) {} location.reload(); }; } catch (e) { this.lsSet(STORE_MARK, ''); location.reload(); }
   }
   // 設定 → 同步與備份：這台瀏覽器用了多少空間
   async refreshStorage() {
@@ -1892,8 +1913,8 @@ class Component extends DCLogic {
     if (changed) this.setState({ fslots: map });
   }
   componentWillUnmount() { if (this._ro) this._ro.disconnect(); window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('beforeunload', this._bu); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
-  lsGet(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }
-  lsSet(k, v) { try { v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
+  lsGet(k) { try { return localStorage.getItem(libKey(k)) || ''; } catch (e) { return ''; } }
+  lsSet(k, v) { try { k = libKey(k); v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
   openSettings(tab) {
     if (!this.state.showSet && !this.state.showAdd && !this.state.showLogin) this._retFocus = document.activeElement;
     const t = tab || this.state.setTab || 'account';
@@ -1985,7 +2006,8 @@ class Component extends DCLogic {
   cloudTarget() { return this.lsGet('lunyi-sync-target') || (this.lsGet('lunyi-gist-id') ? 'gist' : 'drive'); }
   syncOn() {
     if (this.lsGet('lunyi-sync-auto') !== '1') return false;
-    return this.cloudTarget() === 'drive' ? !!this.gClient() : !!this.secGet('lunyi-gh-token') && !!this.lsGet('lunyi-gist-id');
+    // 雲端硬碟同步只在帳號的文獻庫（訪客沒有登入 Google）
+    return this.cloudTarget() === 'drive' ? !!LIB_ACCT && !!this.gClient() : !!this.secGet('lunyi-gh-token') && !!this.lsGet('lunyi-gist-id');
   }
   ghHeaders(token) { return { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' }; }
   ghError(r) { return new Error(r.status === 401 ? '權杖無效或已過期' : r.status === 404 ? '找不到 Gist，或權杖沒有 Gists 權限' : r.status === 403 ? '權限不足或超過 API 用量' : 'HTTP ' + r.status); }
@@ -2075,6 +2097,8 @@ class Component extends DCLogic {
     const cached = prompt ? null : this.gCached(scope);
     if (cached) return cached;
     if (!ia) throw new Error('Google 登入已過期，請到「設定」重新登入');
+    // 訪客用到 Google 功能：先登入（登入後會換成這個帳號的文獻庫），不在這裡悄悄登入
+    if (!prompt && !this.state.gUser) { this.openLogin('這個功能要先用 Google 登入。登入後會開啟你自己的文獻庫，這台電腦的訪客文獻庫可以複製過去。'); throw Object.assign(new Error('請先用 Google 登入'), { switched: true }); }
     const id = this.gClient();
     if (!id) { this.openSettings('adv'); throw new Error('請先在「設定 → 進階」填入 Google OAuth 用戶端 ID'); }
     await loadScript(GSI);
@@ -2093,13 +2117,14 @@ class Component extends DCLogic {
     // 等個人資料時又開始了新的登入：這個舊的結果不存，也不動自動同步
     if (seq && seq !== this._gSeq) throw new Error('已取消 Google 登入');
     const t = { token: r.access_token, scope: r.scope || scope, exp: Date.now() + (Number(r.expires_in) || 3600) * 1000, email: info ? info.email : '' };
-    const off = this.gAdopt(t, info);
-    // 不是登入的請求（上傳、下載、匯入、匯出…）卻換了帳號或讀不到是誰：新權杖已存好，但這次先不做，免得資料傳到或讀自另一個帳號
-    if (!prompt && hint && t.email !== hint) {
-      const e = new Error(`Google 帳號${info ? '換成了 ' + info.name : '讀不到是哪個帳號'}，這次沒有執行${off ? '；雲端硬碟自動同步已先關閉，可到「設定 → 同步與備份」重新開啟' : ''}。確定要用這個帳號的話，請再操作一次`);
-      e.switched = true; this.toast(e.message, '', 9000); throw e;
+    const to = this.gAdopt(t, info);
+    // 不是登入的請求（上傳、下載、匯入、匯出…）卻換了帳號或讀不到是誰：新權杖已存好，但這次先不做，免得資料傳到或讀自另一個帳號；換了帳號就改開那個帳號的文獻庫
+    if (!prompt && t.email !== hint) {
+      const e = new Error(to !== null ? `Google 帳號換成了 ${info.name}，已改開這個帳號的文獻庫（剛才的操作沒有執行）` : '讀不到這次登入的是哪個 Google 帳號，這次沒有執行；請到「設定 → 我的帳號」重新登入');
+      e.switched = true;
+      if (to !== null) this.switchLib(to, e.message); else this.toast(e.message, '', 9000);
+      throw e;
     }
-    if (!prompt && off) this.toast(`Google 帳號換成了 ${this.state.gUser.name}，雲端硬碟自動同步已先關閉，可到「設定 → 同步與備份」重新開啟`, '', 9000);
     return t.token;
   }
   // 讀 Google 個人資料；10 秒沒回應就當作讀不到
@@ -2112,44 +2137,88 @@ class Component extends DCLogic {
       return { email: u.email || '', name: u.name || u.email || 'Google 帳號', picture: u.picture || '' };
     } catch (e) { return null; } finally { clearTimeout(timer); }
   }
-  // 存新權杖。和雲端硬碟自動同步綁定的帳號不同（或讀不到是誰）時：待上傳的修改用原本的權杖傳回原本的帳號，再關掉自動同步。回傳是否關掉了自動同步
+  // 存新權杖。登入的帳號和開著的文獻庫不同時，回傳要換去的帳號（之後由 switchLib 換文獻庫；讀不到是誰就回傳 null、不換）
+  // 這份文獻庫排著還沒上傳的修改：用原本的權杖傳回原本的帳號
   gAdopt(t, info) {
-    this.ensureOwner();
-    const prev = J(this.lsGet('lunyi-g-token') || 'null'), owner = this.lsGet('lunyi-sync-owner');
-    const auto = this.lsGet('lunyi-sync-auto') === '1' && this.cloudTarget() === 'drive';
-    let off = false;
-    if (auto && owner && t.email !== owner) {
-      const pending = !!this._push;
-      off = this.stopDriveAuto();
-      const old = prev && prev.exp > Date.now() + 60000 && this.tokEmail(prev) === owner ? prev.token : null;
-      if (pending && old && !this._needPull) this.flushDrive(old);
-      this._heldLocal = !!(pending && this._needPull);
-      this.setState({ syncStatus: (t.email ? '因為換了 Google 帳號，自動同步已先關閉。確定要把這台電腦的文獻庫同步到這個帳號後，再開啟自動同步。' : '讀不到這次登入的 Google 帳號，自動同步已先關閉。請重新登入後再開啟自動同步。') + (this._heldLocal ? '最後的修改沒有上傳到原本的帳號（開啟時沒能從雲端下載），仍保留在這台電腦。' : '') });
-    } else if (auto && !owner && t.email) { this.lsSet('lunyi-sync-owner', t.email); this._joining = true; setTimeout(() => this.syncPullPush(), 0); }
+    const prev = J(this.lsGet('lunyi-g-token') || 'null'), to = t.email ? t.email.toLowerCase() : null, away = to !== null && to !== LIB_ACCT;
+    if (away && LIB_ACCT && this._push && this.cloudTarget() === 'drive') {
+      clearTimeout(this._push); this._push = null;
+      const old = prev && prev.exp > Date.now() + 60000 && this.tokEmail(prev).toLowerCase() === LIB_ACCT ? prev.token : null;
+      // 開啟時沒能從雲端下載就不補傳（避免蓋掉雲端的資料）；沒傳的修改留在這個帳號的文獻庫，下次登入時再上傳
+      if (old && !this._needPull) this._leaving = this.flushDrive(old);
+    }
     this.lsSet('lunyi-g-token', JSON.stringify(t));
     // 讀不到個人資料：無法確認是誰，不沿用上一個帳號的名稱
     const gUser = info || { email: '', name: 'Google 帳號', picture: '' };
     this.lsSet('lunyi-g-user', JSON.stringify(gUser));
     this.setState({ gUser });
-    return off;
+    return away ? to : null;
   }
   // 權杖屬於哪個帳號（舊版存的權杖沒有記錄，以當時登入的帳號為準）
   tokEmail(rec) { return 'email' in rec ? rec.email || '' : ((J(this.lsGet('lunyi-g-user') || 'null') || {}).email || ''); }
-  // 自動同步綁定的帳號：開啟自動同步或第一次登入時決定；舊版開啟的自動同步以目前登入的帳號為準
-  ensureOwner() {
-    if (this.lsGet('lunyi-sync-owner') || this.lsGet('lunyi-sync-auto') !== '1' || this.cloudTarget() !== 'drive') return;
-    // 沒有權杖記錄（例如權杖失效被清掉）時，以畫面上登入的帳號為準
-    const e = this.tokEmail(J(this.lsGet('lunyi-g-token') || 'null') || {});
-    if (e) this.lsSet('lunyi-sync-owner', e);
-  }
-  // 自動同步用的權杖：必須是綁定帳號的（其他分頁換了帳號也擋得住）
+  // 這個登入狀態該開哪一份文獻庫：沒登入是訪客（''）；登入了卻讀不到是哪個帳號就不換（null）
+  libFor(u) { return !u ? '' : u.email ? u.email.toLowerCase() : null; }
+  // 雲端硬碟同步用的權杖：必須是這份文獻庫的帳號的（其他分頁換了帳號也擋得住）
   syncTok() {
-    this.ensureOwner();
-    const rec = J(this.lsGet('lunyi-g-token') || 'null'), owner = this.lsGet('lunyi-sync-owner');
+    const rec = J(this.lsGet('lunyi-g-token') || 'null');
     if (!rec || !(rec.exp > Date.now() + 60000)) throw new Error('Google 登入已過期，請到「設定」重新登入');
-    if (!owner) throw new Error('讀不到目前登入的是哪個 Google 帳號，這次沒有同步；請到「設定」重新登入 Google');
-    if (this.tokEmail(rec) !== owner) throw new Error('目前登入的 Google 帳號不是自動同步綁定的帳號，這次沒有同步');
+    const e = this.tokEmail(rec).toLowerCase();
+    if (!e) throw new Error('讀不到目前登入的是哪個 Google 帳號，這次沒有同步；請到「設定」重新登入 Google');
+    if (e !== LIB_ACCT) throw new Error('目前登入的 Google 帳號不是這份文獻庫的帳號，這次沒有同步');
     return rec.token;
+  }
+  // 換帳號：先把這份文獻庫存好（還在上傳的等它傳完，最多等 8 秒），再換成 to（空白＝訪客）的文獻庫；other＝別的分頁已經換好了，只要重新整理
+  async switchLib(to, msg, other) {
+    if (this._switching) return;
+    this._switching = true;
+    clearTimeout(this._push); this._push = null; this._syncReady = false;
+    this.setState({ boot: 'pending', bootSlow: false, showLogin: false, showSet: false, acctOpen: false });
+    try { await this.flushAll(); } catch (e) {}
+    const wait = p => p ? Promise.race([p, new Promise(ok => setTimeout(ok, 8000))]) : null;
+    await wait(this._pushing); await wait(this._leaving);
+    if (other) return location.reload();
+    if (this.libGo(to, msg)) return;
+    this._switching = false;
+    this.setState({ boot: 'ready' });
+    this.toast('這個瀏覽器不能儲存設定，沒辦法換成這個帳號的文獻庫', '', 9000);
+  }
+  // 記下要開的文獻庫，重新整理頁面；記不下來（瀏覽器不讓用 localStorage）就不重新整理，免得一直重新整理
+  libGo(to, msg) {
+    try {
+      // 這個帳號的文獻庫第一次在這台電腦開啟：預設用雲端硬碟自動同步，登入就會載入雲端硬碟裡的文獻
+      const fresh = !!to && !localStorage.getItem('lunyi-store@' + to) && !localStorage.getItem('lunyi-sync-auto@' + to);
+      if (fresh) { localStorage.setItem('lunyi-sync-auto@' + to, '1'); localStorage.setItem('lunyi-sync-target@' + to, 'drive'); }
+      if (to) localStorage.setItem('lunyi-lib-acct', to); else localStorage.removeItem('lunyi-lib-acct');
+      if ((localStorage.getItem('lunyi-lib-acct') || '') !== to) return false;
+      try { sessionStorage.setItem('lunyi-switch', JSON.stringify({ msg: msg || '', fresh })); } catch (e) {}
+    } catch (e) { return false; }
+    location.reload();
+    return true;
+  }
+  // 剛換過文獻庫時留下的說明（只讀一次）
+  takeSwitch() { try { const v = JSON.parse(sessionStorage.getItem('lunyi-switch') || 'null'); sessionStorage.removeItem('lunyi-switch'); return v && typeof v === 'object' ? v : null; } catch (e) { return null; } }
+  // 訪客的文獻庫（帳號的文獻庫裡才讀得到；訪客的文獻庫從沒存進 IndexedDB 就不開，免得建立一個空的資料庫）
+  async readGuest() {
+    if (!LIB_ACCT || this.lsGet('lunyi-store') !== 'idb') return null;
+    const { db } = await idbOpen(fin => fin(null, null), 5000, 'lunyi');
+    if (!db) return null;
+    try { return libFrom(await idbRead(db)); } catch (e) { return null; } finally { db.close(); }
+  }
+  // 訪客文獻庫裡自己加的、這個帳號還沒有的論文（示範論文不算）
+  guestExtra(g) { const have = new Set(this.state.papers.map(p => p.id)); return g ? g.papers.filter(p => p && !SEED_IDS.has(String(p.id)) && !have.has(String(p.id))) : []; }
+  // 帳號的文獻庫第一次在這台電腦開啟：問要不要把訪客文獻庫的論文複製過來
+  async offerGuest() {
+    const n = this.guestExtra(await this.readGuest()).length;
+    if (n) this.toastGo(`這台電腦的訪客文獻庫有 ${n} 篇論文不在這個帳號裡，要複製過來嗎？`, '複製過來', () => this.copyGuest(), 20000);
+  }
+  async copyGuest() {
+    const g = await this.readGuest(), papers = this.guestExtra(g);
+    if (!papers.length) return this.toast(g ? '訪客文獻庫沒有要複製的論文' : '讀不到訪客文獻庫');
+    const ids = new Set([...this.state.papers.map(p => p.id), ...papers.map(p => String(p.id))]), seedProj = new Set(SEED.papers.flatMap(projOf)), used = new Set(papers.flatMap(projOf));
+    // 只帶這些論文和它們的筆記、串聯；訪客刪除的紀錄、只有示範論文用的專案、刪除專案的紀錄不帶過來；比較矩陣的欄位只在這個帳號還沒設定時帶過來
+    const n = this.mergeData({ papers, notes: (g.notes || []).filter(x => x && ids.has(String(x.paperId))), links: (g.links || []).filter(l => l && ids.has(String(l.a)) && ids.has(String(l.b))), qa: g.qa || [], gone: [],
+      projects: (g.projects || []).filter(x => used.has(x) || !seedProj.has(x)), projAt: g.projAt, projMeta: g.projMeta, mxCols: this.state.mxCols ? null : g.mxCols }, { quiet: true });
+    this.toast(`已把 ${n} 篇論文複製到這個帳號的文獻庫`);
   }
   tokNoEmail() { const rec = J(this.lsGet('lunyi-g-token') || 'null'); return !!rec && !this.tokEmail(rec); }
   // 權杖沒記到是哪個帳號（登入時讀不到個人資料）：用同一把權杖再讀一次補記；期間換了權杖或登出就不補
@@ -2161,13 +2230,22 @@ class Component extends DCLogic {
     this.lsSet('lunyi-g-token', JSON.stringify({ ...cur, email: info.email }));
     this.lsSet('lunyi-g-user', JSON.stringify(info));
     this.setState({ gUser: info });
+    // 補記之後才知道是別的帳號：改開那個帳號的文獻庫
+    if (info.email.toLowerCase() !== LIB_ACCT) { this.switchLib(info.email.toLowerCase(), `已用 Google 登入：${info.name}，已開啟你的文獻庫`); return false; }
     return true;
   }
   async gFetch(url, opts = {}, extra, ia = true, tok) {
     const token = tok || await this.gToken(extra, ia);
     const r = await fetch(url.startsWith('http') ? url : GAPI + url, { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + token } });
     if (r.status === 401) { if ((J(this.lsGet('lunyi-g-token') || 'null') || {}).token === token) this.lsSet('lunyi-g-token', ''); throw new Error('Google 登入已過期，請重新登入'); }
-    if (r.status === 403) throw new Error('Google 拒絕存取，請確認 Google Cloud 已啟用對應的 API');
+    if (r.status === 403) {
+      // 看 Google 回的原因：專案沒啟用這個 API，或登入時沒勾選允許存取（Google 授權畫面可以逐項取消勾選）
+      let j = null; try { j = await r.json(); } catch (e) {}
+      const s = JSON.stringify(j || ''), api = /calendar/i.test(s) ? 'Google Calendar API' : 'Google Drive API';
+      if (/accessNotConfigured|SERVICE_DISABLED|has not been used|is disabled/i.test(s)) throw new Error(`網站的 Google Cloud 專案還沒啟用 ${api}，請網站管理者到「API 和服務 → 程式庫」啟用（啟用後約幾分鐘生效）`);
+      if (/insufficient|SCOPE/i.test(s)) { if ((J(this.lsGet('lunyi-g-token') || 'null') || {}).token === token) this.lsSet('lunyi-g-token', ''); throw new Error('登入時沒有勾選允許論憶存取雲端硬碟（或日曆），請按「重新登入」，在 Google 的畫面把權限都勾起來'); }
+      throw new Error('Google 拒絕存取：' + ((j && j.error && j.error.message) || '請確認 Google Cloud 已啟用對應的 API'));
+    }
     if (!r.ok) throw new Error('Google HTTP ' + r.status);
     return r;
   }
@@ -2193,13 +2271,13 @@ class Component extends DCLogic {
     const req = this._gSeq = (this._gSeq || 0) + 1;
     this.setState({ loginBusy: 'google', loginMsg: '', acctOpen: false });
     try {
-      const before = this.lsGet('lunyi-sync-auto');
       await this.gToken(null, true, 'select_account', req);
-      const off = before === '1' && this.lsGet('lunyi-sync-auto') !== '1', paused = !off && this.syncOn() && this.cloudTarget() === 'drive' && !this.lsGet('lunyi-sync-owner');
       if (req !== this._gSeq) return;
       this.setState({ showLogin: false, loginBusy: '' });
-      const u = this.state.gUser;
-      this.toast((u ? `已用 Google 登入：${u.name}` : '已用 Google 登入') + (!off ? '' : u && u.email ? '。因為換了帳號，雲端硬碟自動同步已先關閉，可到「設定 → 同步與備份」重新開啟' : '。讀不到帳號資料，雲端硬碟自動同步已先關閉，請重新登入後再開啟') + (paused ? '。讀不到帳號資料，雲端硬碟自動同步暫停，請稍後重新登入' : ''), '', off || paused ? 9000 : 0);
+      const u = this.state.gUser, to = this.libFor(u), hi = u ? `已用 Google 登入：${u.name}` : '已用 Google 登入';
+      // 從訪客登入、或換了帳號：改開這個帳號的文獻庫
+      if (to !== null && to !== LIB_ACCT) return this.switchLib(to, hi + '，已開啟你的文獻庫');
+      this.toast(hi + (to === null ? '。讀不到帳號資料，雲端硬碟同步暫停，請稍後重新登入' : ''), '', to === null ? 9000 : 0);
       this.retryPush();
     } catch (e) {
       if (req !== this._gSeq) return;
@@ -2211,6 +2289,7 @@ class Component extends DCLogic {
   async syncPullPush() {
     // 文獻庫還沒讀完：讀完再做（afterBoot）
     if (!this._ready) { this._joinAfterBoot = true; this._joining = false; return; }
+    this._joining = true;
     try {
       if (!this.syncOn() || this.cloudTarget() !== 'drive') return;
       clearTimeout(this._push); this._push = null;
@@ -2233,37 +2312,30 @@ class Component extends DCLogic {
   async flushDrive(tok, content) {
     try { await this.drivePush(content || JSON.stringify(this.payload()), false, tok); return true; } catch (e) { return false; }
   }
-  // 本機文獻庫不分帳號：Google 帳號登出或更換時關掉雲端硬碟自動同步、解除綁定，並取消還沒送出的上傳
-  stopDriveAuto() {
-    this.lsSet('lunyi-sync-owner', '');
-    if (this.cloudTarget() !== 'drive' || this.lsGet('lunyi-sync-auto') !== '1') return false;
-    clearTimeout(this._push); this._push = null;
-    this.lsSet('lunyi-sync-auto', '');
-    return true;
-  }
   async gSignOut() {
-    // 先在這台電腦登出（之後關掉分頁也不會停在登入狀態），再用原本的權杖補傳最後的修改、撤銷授權
+    // 先在這台電腦登出（之後關掉分頁也不會停在登入狀態），再用原本的權杖補傳最後的修改、撤銷授權，最後換回訪客的文獻庫
     const t = this.gCached(G_BASE), running = this._pushing;
     let mine = false;
     try { mine = !!t && this.syncTok() === t; } catch (e) {}
     const pend = mine && this.cloudTarget() === 'drive' && this.syncOn() && (!!this._push || !!running);
-    // 開啟時沒能從雲端下載：不補傳（避免蓋掉雲端的資料），修改留在這台電腦
+    // 開啟時沒能從雲端下載：不補傳（避免蓋掉雲端的資料），修改留在這個帳號的文獻庫，下次登入時再上傳
     const flush = pend && !this._needPull;
-    if (pend && this._needPull) this.setState({ syncStatus: '登出前最後的修改沒有上傳（開啟時沒能從雲端下載，避免蓋掉雲端的資料），仍保留在這台電腦' });
+    clearTimeout(this._push); this._push = null;
+    if (flush) { try { await this.flushAll(); } catch (e) {} }
     const content = flush ? JSON.stringify(this.payload()) : '';
     this.lsSet('lunyi-g-token', ''); this.lsSet('lunyi-g-user', '');
     this._gSeq = (this._gSeq || 0) + 1;
-    const off = this.stopDriveAuto();
-    this.setState({ gUser: null, driveFiles: [], loginBusy: '' });
-    this.toast(off ? '已登出 Google，雲端硬碟自動同步也已關閉' : '已登出 Google', '', off ? 6000 : 0);
+    // 帳號的文獻庫：補傳期間先蓋住畫面（等一下就換成訪客的文獻庫）
+    this.setState({ gUser: null, driveFiles: [], loginBusy: '', acctOpen: false, ...(LIB_ACCT ? { boot: 'pending', bootSlow: false, showSet: false } : {}) });
+    let ok = true;
     if (flush) {
       if (running) await running;
-      const ok = await this.flushDrive(t, content);
-      this.setState({ syncStatus: ok ? `最後上傳：${this.stamp()}` : '登出前最後的修改沒有上傳到雲端硬碟，仍保留在這台電腦' });
-      if (!ok) this.toast('已登出 Google。最後的修改沒有上傳到雲端硬碟，仍保留在這台電腦', '', 6000);
+      ok = await this.flushDrive(t, content);
     }
     // 補傳期間又登入了（存了新的權杖）：不撤銷，撤銷會收回整個授權、連新權杖一起失效；舊權杖一小時內自然過期
     if (t && !this.lsGet('lunyi-g-token') && window.google && window.google.accounts) window.google.accounts.oauth2.revoke(t, () => {});
+    if (LIB_ACCT) return this.switchLib('', ok ? '已登出 Google，回到這台電腦的訪客文獻庫' : '已登出 Google，回到這台電腦的訪客文獻庫。最後的修改沒有上傳到雲端硬碟，仍保留在這台電腦，下次登入時會上傳');
+    this.toast('已登出 Google');
   }
 
   // ---- Google 雲端硬碟 ----
@@ -2854,7 +2926,7 @@ class Component extends DCLogic {
     const guest = !g;
     const closeMenu = fn => () => { this.setState({ acctOpen: false }); fn(); };
     const acctItems = [
-      g ? { label: '登出 Google', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '用 Google 登入', note: '同步與匯出', onClick: closeMenu(() => this.gSignIn()) },
+      g ? { label: '登出 Google', note: '', onClick: closeMenu(() => this.gSignOut()) } : { label: '用 Google 登入', note: '看到自己的文獻', onClick: closeMenu(() => this.gSignIn()) },
       { label: '帳號與設定', note: '', onClick: closeMenu(() => this.openSettings('account')) }
     ];
     // 上方的五個檢視分頁：換檢視不換範圍，也不換目前的論文
@@ -2910,7 +2982,7 @@ class Component extends DCLogic {
       showLogin: s.showLogin, closeLogin: () => this.closeLogin(), loginGoogle: () => this.gSignIn(),
       gOff: String(!this.gClient()), gOpacity: this.gClient() ? 1 : 0.6,
       gBtnLabel: s.loginBusy === 'google' ? '請在 Google 視窗選擇帳號…' : '繼續使用 Google',
-      gBtnNote: this.gClient() ? '同步文獻庫到你的 Google 雲端硬碟，也能匯入 PDF、匯出 Google 文件' : 'Google 登入暫時還沒開放',
+      gBtnNote: this.gClient() ? '開啟你自己的文獻庫（存在你的 Google 雲端硬碟），也能匯入 PDF、匯出 Google 文件' : 'Google 登入暫時還沒開放',
       hasLoginMsg: !!s.loginMsg, loginMsg: s.loginMsg, showLoginAdmin: !this.gClient() && s.loginMsg === G_OFF_MSG, loginAdmin: () => this.openSettings('adv'),
       acctBlur: e => { const box = e.currentTarget; if (!box.contains(e.relatedTarget)) this.setState({ acctOpen: false }); },
       addHint: this.hasCloud() ? '以下欄位可留空，會由 AI 自動辨識。儲存後自動擷取關鍵詞、比對引用、與現有論文串聯並翻譯成繁中。' : '目前沒有連結雲端 AI：請自行填寫標題等欄位（留空會用檔名）。儲存後會用瀏覽器內建翻譯翻成繁中；連結 AI 後可自動辨識標題與關鍵詞、串聯相關論文。',
@@ -4117,8 +4189,8 @@ class Component extends DCLogic {
       onTokenDraft: e => this.setState({ tokenDraft: e.target.value }), onGistDraft: e => this.setState({ gistDraft: e.target.value }),
       saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); try { sessionStorage.removeItem('lunyi-gh-token'); } catch (e) {} this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); this._needPull = true; if (this.syncOn() && s.gistDraft.trim()) { clearTimeout(this._push); this._push = null; this._syncReady = false; this.pullCloud(true).then(r => { this._syncReady = true; this._needPull = !(r === true || r === 'empty'); }); } },
       pushCloud: () => this.pushCloud(), pullCloud: () => this.pullCloud(),
-      ...(() => { const on = this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
-      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1'; if (on && this.cloudTarget() === 'drive' && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this.lsSet('lunyi-sync-owner', ''); if (on) this.ensureOwner(); this._syncReady = !!this._ready; if (on) this._needPull = true; if (on && this.cloudTarget() === 'gist' && this.syncOn() && this._ready) this.pullThenPush(); this.setState({ syncStatus: this.state.syncStatus }); if (on && this.cloudTarget() === 'drive' && this.lsGet('lunyi-sync-owner')) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : (this.cloudTarget() === 'drive' ? '已開啟，填好 Google 用戶端 ID 並登入 Google 後生效' : '已開啟，填好權杖與 Gist ID 後生效')) : '已關閉自動同步'); },
+      ...(() => { const guest = !LIB_ACCT && s.syncTarget === 'drive', on = !guest && this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: guest ? '自動同步：登入 Google 後開啟' : paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
+      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1', drive = this.cloudTarget() === 'drive'; if (on && drive && !LIB_ACCT) return this.openLogin('雲端硬碟同步要先用 Google 登入；登入後會開啟你自己的文獻庫，並自動同步到你的雲端硬碟。'); if (on && drive && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = !!this._ready; if (on) this._needPull = true; if (on && !drive && this.syncOn() && this._ready) this.pullThenPush(); this.setState({ syncStatus: this.state.syncStatus }); if (on && drive) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : drive ? '已開啟，填好 Google 用戶端 ID 後生效' : '已開啟，填好權杖與 Gist ID 後生效') : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
       openAdd: () => this.openAddDlg(), closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
       folderNames,
