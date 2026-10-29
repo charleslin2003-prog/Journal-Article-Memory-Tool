@@ -27,6 +27,7 @@
 .ly-tab[aria-current="page"]{color:#1d1b18;font-weight:600;border-bottom-color:oklch(0.45 0.1 200)}
 .ly-tab:focus-visible{outline-offset:-2px!important}
 .ly-sb .ly-darkbtn:focus-visible{outline-offset:2px}
+.ly-mk{cursor:pointer;border-radius:2px;box-decoration-break:clone;-webkit-box-decoration-break:clone}.ly-penon .ly-tx{cursor:crosshair}
 .ly-paperrow{font-size:13px;padding:4px 8px 4px 4px;min-height:26px;gap:6px}
 .ly-toprow{display:contents}
 .ly-search::placeholder{color:#625d55}
@@ -38,6 +39,10 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 .ly-file{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 .ly-para{content-visibility:auto;contain-intrinsic-size:auto 160px}
 .ly-skip{position:absolute;left:-9999px;top:8px;z-index:70;background:#1d1b18;color:#faf9f6;padding:8px 14px;border-radius:6px;font-size:13px;text-decoration:none}.ly-skip:focus{left:8px}
+.ly-pdfpages{overflow-x:auto;max-width:100%;padding:2px 2px 12px}
+.ly-pdfpage canvas{width:100%;height:100%;display:block}
+.ly-pdfbar button,.ly-pdfbar a{border:1px solid #d6d0c4;background:#fff;border-radius:5px;padding:4px 10px;font-size:12px;color:#1d1b18;text-decoration:none;display:inline-flex;align-items:center;min-height:28px}
+.ly-pdfbar button[aria-disabled="true"]{opacity:.45;cursor:default}
 .ly-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .ly-root[data-ov="true"] .ly-sb{position:fixed;top:0;bottom:0;left:0;width:280px;z-index:30;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,0.18)}
 .ly-root[data-ov="true"][data-sb="true"] .ly-sb{transform:none}
@@ -75,6 +80,10 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 .ly-mx{padding:16px 14px 48px!important}
 .ly-mx button,.ly-mx select,.ly-mx summary{min-height:40px}
 .ly-mx input:not([type=checkbox]),.ly-mx textarea,.ly-mx select{font-size:16px!important}
+.ly-note,.ly-noteedit{font-size:16px!important}
+.ly-pdfbar button,.ly-pdfbar a{min-height:40px}
+.ly-pdfbar{top:var(--ly-toph,96px)!important}.ly-pdfpage{scroll-margin-top:118px!important}
+.ly-notecard button,.ly-draftcard button{min-height:40px;padding:0 12px!important}.ly-notebtns{gap:6px!important}
 .ly-mxfill{flex:1 1 100%;flex-wrap:wrap!important}.ly-mxfill button{flex:1 1 auto}
 .ly-root{display:block!important;height:auto!important;min-height:100vh}
 .ly-sb{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);z-index:30;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,0.18)}
@@ -247,7 +256,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             </div>
           </sc-if>
           <sc-if value="{{ mxBackOn }}" hint-placeholder-val="{{ false }}"><div style="max-width:1000px;margin:14px auto 0;padding:0 44px"><button sc-camel-on-click="{{ mxBackGo }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:6px;padding:5px 12px;font-size:12px">← 回到比較矩陣：{{ mxBackLabel }}</button></div></sc-if>
-          <article class="ly-article" style="max-width:1000px;margin:0 auto;padding:34px 44px 96px">
+          <article class="{{ articleCls }}" style="max-width:1000px;margin:0 auto;padding:34px 44px 96px">
             <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#625d55;letter-spacing:0.03em">
               <span>{{ curMeta }}</span><span>{{ curLang }}</span>
               <span class="ly-projchips" style="display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center;font-family:'Noto Sans TC',sans-serif;letter-spacing:0">
@@ -288,6 +297,12 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
               <div style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:6px">
                 <sc-for list="{{ modeBtns }}" as="m" hint-placeholder-count="3"><button sc-camel-on-click="{{ m.onClick }}" aria-pressed="{{ m.pressed }}" style="border:0;padding:4px 12px;border-radius:4px;font-size:12px;background:{{ m.bg }}">{{ m.label }}</button></sc-for>
               </div>
+              <sc-if value="{{ textOn }}" hint-placeholder-val="{{ true }}">
+              <div role="group" aria-label="螢光筆" style="display:flex;align-items:center;gap:2px;background:#ece8e0;padding:3px;border-radius:6px">
+                <span aria-hidden="true" style="font-size:12px;color:#625d55;padding:0 4px 0 6px">螢光筆</span>
+                <sc-for list="{{ penBtns }}" as="pb" hint-placeholder-count="2"><button class="ly-pen" sc-camel-on-click="{{ pb.onClick }}" aria-pressed="{{ pb.pressed }}" aria-label="{{ pb.aria }}" title="{{ pb.title }}" style="border:0;padding:4px 9px;border-radius:4px;font-size:12px;background:{{ pb.bg }};display:inline-flex;align-items:center;gap:5px"><span aria-hidden="true" style="width:11px;height:11px;border-radius:3px;background:{{ pb.sw }};box-shadow:inset 0 0 0 1px rgba(0,0,0,0.12)"></span>{{ pb.label }}</button></sc-for>
+              </div>
+              </sc-if>
               <sc-if value="{{ hasMissing }}" hint-placeholder-val="{{ false }}">
                 <button sc-camel-on-click="{{ translateAll }}" style="border:1px solid oklch(0.45 0.1 200);color:oklch(0.4 0.1 200);background:transparent;padding:5px 12px;border-radius:5px;font-size:12px">{{ translateAllLabel }}</button>
               </sc-if>
@@ -309,37 +324,71 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
                 <button sc-camel-on-click="{{ togglePlan }}" style="border:0;background:none;font-size:12px;color:#625d55;padding:4px 6px">取消</button>
               </div>
             </sc-if>
-            <div style="font-size:12px;color:#625d55;margin-bottom:8px">點選段落可加螢光、筆記或重新翻譯。</div>
+            <div style="font-size:12px;color:{{ readHintColor }};margin-bottom:8px;line-height:1.6">{{ readHint }}</div>
+            <sc-if value="{{ pdfOn }}" hint-placeholder-val="{{ false }}">
+              <div class="ly-pdfbox" style="display:flex;flex-direction:column;gap:10px">
+                <div class="ly-pdfbar" role="toolbar" aria-label="原始檔" tabindex="-1" style="outline:none;position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;align-items:center;gap:6px;background:#faf9f6;padding:8px 0;border-bottom:1px solid #e2ddd3">
+                  <sc-if value="{{ pdfReady }}" hint-placeholder-val="{{ false }}">
+                    <button sc-camel-on-click="{{ pdfPrev }}" aria-disabled="{{ pdfPrevOff }}" aria-label="上一頁">‹</button>
+                    <span aria-live="polite" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:#625d55;min-width:84px;text-align:center">{{ pdfPgText }}</span>
+                    <button sc-camel-on-click="{{ pdfNext }}" aria-disabled="{{ pdfNextOff }}" aria-label="下一頁">›</button>
+                    <button sc-camel-on-click="{{ pdfOut }}" aria-disabled="{{ pdfOutOff }}" aria-label="縮小">−</button>
+                    <button sc-camel-on-click="{{ pdfFit }}" aria-label="{{ pdfFitAria }}" title="符合寬度">{{ pdfZoomText }}</button>
+                    <button sc-camel-on-click="{{ pdfIn }}" aria-disabled="{{ pdfInOff }}" aria-label="放大">＋</button>
+                    <div style="flex:1"></div>
+                    <a href="{{ pdfUrl }}" target="_blank" rel="noopener">在新分頁開啟</a>
+                    <a href="{{ pdfUrl }}" download="{{ pdfName }}">下載</a>
+                    <button sc-camel-on-click="{{ removePdf }}" style="color:#625d55">移除原始檔</button>
+                  </sc-if>
+                  <sc-if value="{{ pdfNotReady }}" hint-placeholder-val="{{ true }}"><span style="font-size:12.5px;color:#625d55">{{ pdfMsg }}</span></sc-if>
+                  <sc-if value="{{ pdfErrOn }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ pdfRetry }}">重試</button></sc-if><sc-if value="{{ pdfErrFile }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ removePdf }}" style="color:#625d55">移除原始檔</button></sc-if>
+                </div>
+                <sc-if value="{{ pdfNone }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:16px;font-size:13px;line-height:1.7">
+                    <div>{{ pdfNoneText }}</div>
+                    <label style="display:inline-flex;align-items:center;gap:8px;border:0;padding:7px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px;cursor:pointer">附加 PDF<input class="ly-pdfattach ly-sr" type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ onPdfAttach }}" aria-label="附加這篇論文的原始 PDF"></label>
+                    <sc-if value="{{ pdfDrive }}" hint-placeholder-val="{{ false }}"><a href="{{ pdfDriveUrl }}" target="_blank" rel="noopener" style="font-size:12.5px;color:oklch(0.42 0.1 200)">在 Google 雲端硬碟開啟原本那份</a></sc-if>
+                  </div>
+                </sc-if>
+                <div class="ly-pdfpages"></div>
+                <div style="font-size:11.5px;color:#625d55;line-height:1.6">原始檔只存在這台裝置的瀏覽器裡，不會同步到雲端，也不會放進 JSON 備份。原始檔是頁面影像：要複製文字、畫螢光或用螢幕閱讀器，請切回「對照」或「原文」。</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ textOn }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;gap:4px">
               <sc-for list="{{ paras }}" as="p" hint-placeholder-count="3">
                 <div class="ly-para" data-pi="{{ p.idx }}" sc-camel-on-click="{{ p.onClick }}" style="display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;padding:16px 14px;border-radius:6px;background:{{ p.bg }};box-shadow:{{ p.ring }};cursor:pointer">
                   <button class="ly-pnum" sc-camel-on-click="{{ p.onNum }}" aria-expanded="{{ p.selAttr }}" aria-label="{{ p.numLabel }}">{{ p.n }}</button>
                   <div style="display:flex;flex-direction:column;gap:10px">
                     <div class="ly-pcols" style="display:grid;grid-template-columns:{{ p.cols }};gap:28px">
-                      <sc-if value="{{ p.showEn }}" hint-placeholder-val="{{ true }}"><p lang="{{ srcLang }}" style="margin:0;font-family:'Noto Serif TC',Georgia,serif;font-size:15px;line-height:1.7;text-wrap:pretty">{{ p.en }}</p></sc-if>
+                      <sc-if value="{{ p.showEn }}" hint-placeholder-val="{{ true }}"><p class="ly-tx" data-side="en" data-pi="{{ p.idx }}" lang="{{ srcLang }}" style="margin:0;font-family:'Noto Serif TC',Georgia,serif;font-size:15px;line-height:1.7;text-wrap:pretty"><sc-for list="{{ p.enSegs }}" as="sg" hint-placeholder-count="1"><span class="{{ sg.cls }}" data-hid="{{ sg.hid }}" style="background:{{ sg.bg }}">{{ sg.t }}</span></sc-for></p></sc-if>
                       <sc-if value="{{ p.showZh }}" hint-placeholder-val="{{ true }}">
                         <div>
-                          <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:15px;line-height:1.85;color:#2c2925;text-wrap:pretty">{{ p.zh }}</p></sc-if>
+                          <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p class="ly-tx" data-side="zh" data-pi="{{ p.idx }}" style="margin:0;font-size:15px;line-height:1.85;color:#2c2925;text-wrap:pretty"><sc-for list="{{ p.zhSegs }}" as="sg" hint-placeholder-count="1"><span class="{{ sg.cls }}" data-hid="{{ sg.hid }}" style="background:{{ sg.bg }}">{{ sg.t }}</span></sc-for></p></sc-if>
                           <sc-if value="{{ p.byBuiltin }}" hint-placeholder-val="{{ false }}"><span title="這段由瀏覽器內建翻譯產生，點段落可用 AI 重新翻譯" style="display:inline-block;margin-top:6px;font-size:11px;color:#625d55;border:1px solid #e2ddd3;border-radius:4px;padding:1px 6px">內建翻譯</span></sc-if>
                           <sc-if value="{{ p.busy }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:oklch(0.45 0.1 200)">翻譯中…</span></sc-if>
                           <sc-if value="{{ p.idle }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;color:#625d55">尚未翻譯</span></sc-if>
                         </div>
                       </sc-if>
                     </div>
-                    <sc-for list="{{ p.notes }}" as="pn" hint-placeholder-count="0"><div style="font-size:13px;line-height:1.6;background:#fff;border:1px solid #e2ddd3;padding:6px 10px;border-radius:4px">✎ {{ pn }}</div></sc-for>
+                    <sc-for list="{{ p.notes }}" as="pn" hint-placeholder-count="0"><button class="ly-noteline" data-nid="{{ pn.id }}" sc-camel-on-click="{{ pn.onEdit }}" title="點一下修改這則筆記" style="display:block;width:100%;text-align:left;font-size:13px;line-height:1.6;background:#fff;border:1px solid #e2ddd3;padding:6px 10px;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;color:inherit" style-hover="border-color:#bdb6a9"><span aria-hidden="true">✎ </span><span class="ly-sr">{{ pn.sr }}</span>{{ pn.text }}<sc-if value="{{ pn.pending }}" hint-placeholder-val="{{ false }}"><span style="color:oklch(0.36 0.09 200)">（有還沒儲存的修改）</span></sc-if></button></sc-for>
+                    <sc-if value="{{ p.hasDraft }}" hint-placeholder-val="{{ false }}"><button class="ly-notedraft" sc-camel-on-click="{{ p.onDraft }}" style="display:block;width:100%;text-align:left;font-size:13px;line-height:1.6;overflow-wrap:anywhere;background:transparent;border:1px dashed oklch(0.45 0.1 200);color:oklch(0.36 0.09 200);padding:6px 10px;border-radius:4px">✎ 未儲存的筆記草稿：{{ p.draftText }}（點一下繼續寫）</button></sc-if>
                     <sc-if value="{{ p.sel }}" hint-placeholder-val="{{ false }}">
                       <div class="ly-ptools" style="display:flex;flex-wrap:wrap;gap:6px">
-                        <button sc-camel-on-click="{{ p.onHlY }}" style="border:1px solid #d6d0c4;background:oklch(0.94 0.07 95);border-radius:4px;padding:4px 10px;font-size:12px">黃色螢光</button>
-                        <button sc-camel-on-click="{{ p.onHlB }}" style="border:1px solid #d6d0c4;background:oklch(0.93 0.045 220);border-radius:4px;padding:4px 10px;font-size:12px">藍色螢光</button>
-                        <button sc-camel-on-click="{{ p.onHlClear }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:4px;padding:4px 10px;font-size:12px">清除標記</button>
+                        <button sc-camel-on-click="{{ p.onHlY }}" style="border:1px solid #d6d0c4;background:oklch(0.94 0.07 95);border-radius:4px;padding:4px 10px;font-size:12px">整段黃色螢光</button>
+                        <button sc-camel-on-click="{{ p.onHlB }}" style="border:1px solid #d6d0c4;background:oklch(0.93 0.045 220);border-radius:4px;padding:4px 10px;font-size:12px">整段藍色螢光</button>
+                        <button sc-camel-on-click="{{ p.onHlClear }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:4px;padding:4px 10px;font-size:12px">清除整段螢光</button>
                         <button sc-camel-on-click="{{ p.onNote }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:4px;padding:4px 10px;font-size:12px">加筆記</button>
                         <button sc-camel-on-click="{{ p.onTranslate }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:4px;padding:4px 10px;font-size:12px">{{ p.trLabel }}</button>
+                        <sc-if value="{{ p.hasPg }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ p.onPdfPage }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:4px;padding:4px 10px;font-size:12px">在原始檔看第 {{ p.pg }} 頁</button></sc-if>
                       </div>
+                      <sc-if value="{{ p.hasMarks }}" hint-placeholder-val="{{ false }}"><div class="ly-mklist" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12px;color:#625d55"><span>這段畫的詞句：</span><sc-for list="{{ p.markList }}" as="mk" hint-placeholder-count="0"><span style="display:inline-flex;align-items:center;gap:2px;border-radius:4px;background:{{ mk.bg }};padding:1px 2px 1px 7px;color:#1d1b18"><span style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ mk.text }}</span><button sc-camel-on-click="{{ mk.onSwap }}" aria-label="{{ mk.swapAria }}" title="換顏色" style="border:1px solid rgba(0,0,0,0.15);background:{{ mk.swapBg }};font-size:10.5px;padding:0 5px;margin-left:4px;border-radius:3px;color:#1d1b18">{{ mk.swapLabel }}</button><button sc-camel-on-click="{{ mk.onDel }}" aria-label="{{ mk.delAria }}" title="刪除這段螢光" style="border:0;background:transparent;font-size:11px;padding:2px 5px;border-radius:3px;color:#37352f">✕</button></span></sc-for></div></sc-if>
                     </sc-if>
                   </div>
                 </div>
               </sc-for>
             </div>
+            </sc-if>
           </article>
         </sc-if>
         <sc-if value="{{ noPaper }}" hint-placeholder-val="{{ false }}"><div style="height:100%;display:grid;place-items:center;color:#625d55;font-size:14px;text-align:center;padding:24px"><div style="display:flex;flex-direction:column;align-items:center;gap:12px;max-width:420px;line-height:1.7">{{ noPaperText }}<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button sc-camel-on-click="{{ openAdd }}" style="border:0;padding:8px 16px;border-radius:6px;background:#1d1b18;color:#faf9f6;font-size:13px">＋ 新增論文</button><sc-if value="{{ scopeEmpty }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ onScopeEmpty }}" style="border:1px solid #d6d0c4;padding:8px 16px;border-radius:6px;background:#fff;font-size:13px">{{ scopeEmptyLabel }}</button></sc-if></div></div></div></sc-if>
@@ -360,6 +409,8 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
                 <sc-for list="{{ cites }}" as="c" hint-placeholder-count="1"><button sc-camel-on-click="{{ c.onOpen }}" style="text-align:left;border:1px solid #e2ddd3;background:#fff;border-radius:6px;padding:9px 11px;display:flex;flex-direction:column;gap:3px" style-hover="border-color:#1d1b18"><span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.4">→ {{ c.title }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55">{{ c.meta }}</span></button></sc-for>
                 <div style="font-size:12px;font-weight:500;margin-top:6px">被引用（{{ citedByCount }}）</div>
                 <sc-for list="{{ citedBy }}" as="c" hint-placeholder-count="1"><button sc-camel-on-click="{{ c.onOpen }}" style="text-align:left;border:1px solid #e2ddd3;background:#fff;border-radius:6px;padding:9px 11px;display:flex;flex-direction:column;gap:3px" style-hover="border-color:#1d1b18"><span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.4">← {{ c.title }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55">{{ c.meta }}</span></button></sc-for>
+                <div id="lunyi-cite-note" style="font-size:11.5px;color:#625d55;line-height:1.55;margin-top:2px">{{ citeHint }}</div>
+                <button class="ly-recite" sc-camel-on-click="{{ reciteAll }}" aria-disabled="{{ recitingOff }}" aria-describedby="lunyi-cite-note" style="align-self:flex-start;border:1px solid #d6d0c4;background:#fff;padding:5px 12px;border-radius:5px;font-size:12px">{{ reciteLabel }}</button>
               </div>
               <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid #e2ddd3;padding-top:14px">
                 <div style="font-size:12px;font-weight:500">主題相關</div>
@@ -388,15 +439,29 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
               <sc-if value="{{ hasSelPara }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:12px;color:#625d55">附加到第 {{ selParaNum }} 段</div>
                 <div style="font-family:'Noto Serif TC',serif;font-size:13px;line-height:1.6;color:#2c2925;background:#fff;border:1px solid #e2ddd3;border-radius:6px;padding:10px;max-height:140px;overflow:auto">{{ selParaText }}</div>
-                <textarea class="ly-note" sc-camel-on-change="{{ onNoteDraft }}" rows="4" aria-label="筆記內容" placeholder="寫下理解、疑問，或與其他論文的關係…" style="padding:10px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;line-height:1.6;resize:vertical;outline:none"></textarea>
-                <button sc-camel-on-click="{{ saveNote }}" style="align-self:flex-start;border:0;padding:6px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存筆記</button>
+                <textarea class="ly-note" sc-camel-on-change="{{ onNoteDraft }}" rows="4" aria-label="筆記內容" aria-describedby="lunyi-note-hint" placeholder="寫下理解、疑問，或與其他論文的關係…" style="padding:10px;border:1px solid #e2ddd3;border-radius:6px;background:#fff;font-size:13px;line-height:1.6;resize:vertical;outline:none"></textarea>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button sc-camel-on-click="{{ saveNote }}" style="border:0;padding:6px 14px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存筆記</button><span id="lunyi-note-hint" style="font-size:11.5px;color:#625d55;line-height:1.5">還沒儲存的草稿會留在這一段，換段落、換論文或重新整理都不會不見</span></div>
               </sc-if>
               <sc-if value="{{ noSelPara }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:#625d55;line-height:1.6">點選中間任一段落，即可在該段附加筆記。</div></sc-if>
-              <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500">本篇筆記（{{ curNoteCount }}）</div>
+              <sc-if value="{{ hasDrafts }}" hint-placeholder-val="{{ false }}">
+                <div style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500;color:oklch(0.36 0.09 200)">未儲存的草稿（{{ draftCount }}）</div>
+                <sc-for list="{{ draftList }}" as="dr" hint-placeholder-count="0">
+                  <div class="ly-draftcard" style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:#fff;border:1px dashed oklch(0.45 0.1 200);border-radius:6px">
+                    <div style="font-size:11px;color:#625d55;overflow-wrap:anywhere">{{ dr.label }}</div>
+                    <div style="font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere">{{ dr.text }}</div>
+                    <div style="display:flex;gap:8px"><sc-if value="{{ dr.canResume }}" hint-placeholder-val="{{ true }}"><button class="ly-draftgo" sc-camel-on-click="{{ dr.onResume }}" aria-label="{{ dr.resumeAria }}" style="border:0;padding:4px 12px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">繼續寫</button></sc-if><button sc-camel-on-click="{{ dr.onDiscard }}" aria-label="{{ dr.discardAria }}" style="border:1px solid #d6d0c4;background:#fff;padding:4px 12px;border-radius:5px;font-size:12px;color:#625d55">捨棄</button></div>
+                  </div>
+                </sc-for>
+              </sc-if>
+              <div id="lunyi-notes-h" tabindex="-1" style="border-top:1px solid #e2ddd3;padding-top:14px;font-size:12px;font-weight:500;outline:none">本篇筆記（{{ curNoteCount }}）</div>
               <sc-for list="{{ curNotes }}" as="nt" hint-placeholder-count="1">
-                <div style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:#fff;border:1px solid #e2ddd3;border-radius:6px">
-                  <div style="display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55"><span>{{ nt.where }} · {{ nt.date }}</span><button sc-camel-on-click="{{ nt.onDelete }}" style="border:0;background:none;padding:0;font-size:10px;color:#625d55">刪除</button></div>
-                  <div style="font-size:13px;line-height:1.6">{{ nt.text }}</div>
+                <div class="ly-notecard" style="display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:#fff;border:1px solid #e2ddd3;border-radius:6px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#625d55"><span>{{ nt.where }} · {{ nt.date }}{{ nt.editedText }}</span><span class="ly-notebtns" style="display:flex;gap:12px;flex-shrink:0"><sc-if value="{{ nt.notEditing }}" hint-placeholder-val="{{ true }}"><button class="ly-noteeditbtn" data-nid="{{ nt.id }}" sc-camel-on-click="{{ nt.onEdit }}" aria-label="{{ nt.editAria }}" style="border:0;background:none;padding:0;font-size:10px;color:oklch(0.42 0.1 200)">編輯</button></sc-if><button sc-camel-on-click="{{ nt.onDelete }}" aria-label="{{ nt.delAria }}" style="border:0;background:none;padding:0;font-size:10px;color:#625d55">刪除</button></span></div>
+                  <sc-if value="{{ nt.notEditing }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere">{{ nt.text }}</div></sc-if>
+                  <sc-if value="{{ nt.editing }}" hint-placeholder-val="{{ false }}">
+                    <textarea class="ly-noteedit" data-nid="{{ nt.id }}" sc-camel-on-change="{{ nt.onEditDraft }}" sc-camel-on-key-down="{{ nt.onEditKey }}" rows="4" aria-label="{{ nt.editAria }}" style="padding:8px 10px;border:1px solid #bdb6a9;border-radius:6px;background:#fff;font-size:13px;line-height:1.6;resize:vertical;outline:none"></textarea>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button sc-camel-on-click="{{ nt.onSaveEdit }}" style="border:0;padding:4px 12px;border-radius:5px;background:#1d1b18;color:#faf9f6;font-size:12px">儲存修改</button><button sc-camel-on-click="{{ nt.onCancelEdit }}" style="border:1px solid #d6d0c4;background:#fff;padding:4px 12px;border-radius:5px;font-size:12px">取消</button><span style="font-size:11px;color:#625d55">Ctrl＋Enter 儲存・Esc 取消</span></div>
+                  </sc-if>
                 </div>
               </sc-for>
             </div>
@@ -456,8 +521,8 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             </div>
             <sc-for list="{{ paras }}" as="p" hint-placeholder-count="3">
               <div class="ly-para" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;border-radius:5px;background:{{ p.bg }}">
-                <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:14px;line-height:1.75">{{ p.zh }}</p></sc-if>
-                <p lang="{{ srcLang }}" style="margin:0;font-family:'Noto Serif TC',Georgia,serif;font-size:12px;line-height:1.6;color:#625d55">{{ p.en }}</p>
+                <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:14px;line-height:1.75"><sc-for list="{{ p.zhSegs }}" as="sg" hint-placeholder-count="1"><span class="{{ sg.cls }}" data-hid="{{ sg.hid }}" style="background:{{ sg.bg }}">{{ sg.t }}</span></sc-for></p></sc-if>
+                <p lang="{{ srcLang }}" style="margin:0;font-family:'Noto Serif TC',Georgia,serif;font-size:12px;line-height:1.6;color:#625d55"><sc-for list="{{ p.enSegs }}" as="sg" hint-placeholder-count="1"><span class="{{ sg.cls }}" data-hid="{{ sg.hid }}" style="background:{{ sg.bg }}">{{ sg.t }}</span></sc-for></p>
               </div>
             </sc-for>
           </div>
@@ -507,9 +572,9 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
           <button sc-camel-on-click="{{ openInReader }}" style="align-self:flex-start;border:1px solid #d6d0c4;background:#fff;padding:5px 12px;border-radius:5px;font-size:12px;white-space:nowrap">在閱讀器開啟</button>
           <sc-for list="{{ paras }}" as="p" hint-placeholder-count="3">
             <div class="ly-para" style="display:flex;flex-direction:column;gap:5px;padding:8px 10px;border-radius:5px;background:{{ p.bg }}">
-              <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:13px;line-height:1.75">{{ p.zh }}</p></sc-if>
-              <p style="margin:0;font-family:'Noto Serif TC',Georgia,serif;font-size:12px;line-height:1.6;color:#625d55">{{ p.en }}</p>
-              <sc-for list="{{ p.notes }}" as="pn" hint-placeholder-count="0"><div style="font-size:12px;line-height:1.55;border-left:0;background:#fff;border:1px solid #e2ddd3;padding:4px 8px;border-radius:4px">✎ {{ pn }}</div></sc-for>
+              <sc-if value="{{ p.hasZh }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:13px;line-height:1.75"><sc-for list="{{ p.zhSegs }}" as="sg" hint-placeholder-count="1"><span class="{{ sg.cls }}" data-hid="{{ sg.hid }}" style="background:{{ sg.bg }}">{{ sg.t }}</span></sc-for></p></sc-if>
+              <p style="margin:0;font-family:'Noto Serif TC',Georgia,serif;font-size:12px;line-height:1.6;color:#625d55"><sc-for list="{{ p.enSegs }}" as="sg" hint-placeholder-count="1"><span class="{{ sg.cls }}" data-hid="{{ sg.hid }}" style="background:{{ sg.bg }}">{{ sg.t }}</span></sc-for></p>
+              <sc-for list="{{ p.notes }}" as="pn" hint-placeholder-count="0"><div style="font-size:12px;line-height:1.55;border-left:0;background:#fff;border:1px solid #e2ddd3;padding:4px 8px;border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere">✎ {{ pn.text }}</div></sc-for>
             </div>
           </sc-for>
         </sc-if>
@@ -677,6 +742,25 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   </div>
 </div>
 
+<sc-if value="{{ hlPickOn }}" hint-placeholder-val="{{ false }}">
+  <div class="ly-hlbar" role="toolbar" aria-label="用螢光筆畫選取的文字" style="position:fixed;left:{{ hlPickX }};top:{{ hlPickY }};transform:{{ hlPickTf }};z-index:44;display:flex;gap:4px;align-items:center;background:#1d1b18;color:#faf9f6;border-radius:8px;padding:5px;box-shadow:0 8px 24px rgba(0,0,0,0.22)">
+    <button sc-camel-on-mouse-down="{{ keepSel }}" sc-camel-on-click="{{ hlPickYellow }}" aria-label="用黃色畫選取的文字" style="border:0;border-radius:5px;padding:5px 10px;font-size:12px;background:{{ mkY }};color:#1d1b18">黃色</button>
+    <button sc-camel-on-mouse-down="{{ keepSel }}" sc-camel-on-click="{{ hlPickBlue }}" aria-label="用藍色畫選取的文字" style="border:0;border-radius:5px;padding:5px 10px;font-size:12px;background:{{ mkB }};color:#1d1b18">藍色</button>
+    <sc-if value="{{ hlPickCanClear }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-mouse-down="{{ keepSel }}" sc-camel-on-click="{{ hlPickClear }}" aria-label="清除選取範圍裡的詞句螢光" style="border:1px solid rgba(255,255,255,0.35);border-radius:5px;padding:4px 10px;font-size:12px;background:transparent;color:#faf9f6">清除</button></sc-if>
+  </div>
+</sc-if>
+<sc-if value="{{ hlEditOn }}" hint-placeholder-val="{{ false }}">
+  <div class="ly-hlpop" role="dialog" aria-label="詞句螢光" style="position:fixed;left:{{ hlEditX }};top:{{ hlEditY }};transform:{{ hlEditTf }};z-index:44;width:min(320px,calc(100vw - 24px));max-height:calc(100vh - 16px);overflow:auto;background:#fff;border:1px solid #e2ddd3;border-radius:8px;padding:10px 12px;box-shadow:0 10px 28px rgba(0,0,0,0.18);display:flex;flex-direction:column;gap:8px;font-size:12.5px;line-height:1.6">
+    <div style="color:#1d1b18;overflow-wrap:anywhere">「{{ hlEditText }}」</div>
+    <sc-if value="{{ hlEditHasPair }}" hint-placeholder-val="{{ false }}"><div style="color:#625d55;overflow-wrap:anywhere">{{ hlEditPair }}</div></sc-if>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="ly-autofocus" sc-camel-on-click="{{ hlEditYellow }}" aria-pressed="{{ hlEditIsY }}" style="border:1px solid #d6d0c4;border-radius:5px;padding:4px 10px;font-size:12px;background:{{ mkY }}">黃色</button>
+      <button sc-camel-on-click="{{ hlEditBlue }}" aria-pressed="{{ hlEditIsB }}" style="border:1px solid #d6d0c4;border-radius:5px;padding:4px 10px;font-size:12px;background:{{ mkB }}">藍色</button>
+      <button sc-camel-on-click="{{ hlEditDel }}" style="border:1px solid #d6d0c4;border-radius:5px;padding:4px 10px;font-size:12px;background:#fff;color:oklch(0.5 0.15 25)">刪除這段螢光</button>
+      <button sc-camel-on-click="{{ hlEditClose }}" style="border:0;background:none;padding:4px 6px;font-size:12px;color:#625d55;margin-left:auto">關閉</button>
+    </div>
+  </div>
+</sc-if>
 <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
   <div style="position:fixed;inset:0;background:rgba(29,27,24,0.35);display:grid;place-items:center;z-index:52;padding:16px">
     <div id="lunyi-login" class="ly-login" role="dialog" aria-modal="true" aria-labelledby="lunyi-login-title" aria-describedby="lunyi-login-desc" style="position:relative;width:420px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,0.22);padding:38px 36px 26px;display:flex;flex-direction:column;gap:12px">
@@ -927,7 +1011,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   function sec(k){ try { return sessionStorage.getItem(k) || localStorage.getItem(k) || ''; } catch(e){ return ''; } }
   function drop(k){ try { sessionStorage.removeItem(k); localStorage.removeItem(k); } catch(e){} }
   // 需要使用者處理（登入、換金鑰）的錯誤：通知介面打開設定的對應分頁
-  function need(msg, tab){ try { window.dispatchEvent(new CustomEvent('lunyi-need-key',{detail:{msg:msg, tab:tab||'ai'}})); } catch(e){} var er=new Error(msg); er.code='NO_KEY'; return er; }
+  function need(msg, tab){ var er=new Error(msg); er.code='NO_KEY'; er.tab=tab||'ai'; return er; }
   function fail(msg){ return new Error(msg); }
   async function body(r){ try { return await r.json(); } catch(e){ return null; } }
   function errMsg(j, r){ return (j && j.error && (j.error.message || j.error.status)) || ('HTTP ' + r.status); }
@@ -1005,6 +1089,11 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   window.__lunyiAi = { provider: provider, sec: sec, drop: drop, hasNative: !!native };
   window.claude = { complete: async function(req){
     if (typeof req === 'string') req = { messages:[{ role:'user', content:req }] };
+    var quiet = !!req.quiet; if ('quiet' in req) { req = Object.assign({}, req); delete req.quiet; }
+    try { return await run(req); }
+    catch (e) { if (e && e.code === 'NO_KEY' && !quiet) { try { window.dispatchEvent(new CustomEvent('lunyi-need-key',{detail:{msg:e.message, tab:e.tab}})); } catch(x){} } throw e; }
+  } };
+  async function run(req){
     var p = provider();
     if (p === 'gemini') return gemini(req);
     if (p === 'native' && native) return native.complete(req);
@@ -1012,7 +1101,7 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
     if (p === 'claude' && key) return claudeKey(req, key);
     if (p === 'claude' && native) return native.complete(req);
     return backend(req);
-  } };
+  }
 })();
 </script>
 <script type="text/x-dc" data-dc-script="" data-props="{&quot;layout&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;reader&quot;,&quot;graph&quot;,&quot;chat&quot;,&quot;dash&quot;,&quot;matrix&quot;],&quot;default&quot;:&quot;reader&quot;,&quot;tsType&quot;:&quot;'reader'|'graph'|'chat'|'dash'|'matrix'&quot;},&quot;defaultMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;en&quot;,&quot;zh&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;'both'|'en'|'zh'&quot;},&quot;autoTranslate&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
@@ -1020,11 +1109,102 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
 const LIB_ACCT = (() => { try { return localStorage.getItem('lunyi-lib-acct') || ''; } catch (e) { return ''; } })();
 const LIB_NS = LIB_ACCT ? '@' + LIB_ACCT : '';
 // 跟著文獻庫走的設定（同步方式、自動同步、待上傳標記）：每個帳號各記一份
-const LIB_LS = new Set(['lunyi-sync-auto', 'lunyi-sync-dirty', 'lunyi-sync-target', 'lunyi-gist-id']);
+const LIB_LS = new Set(['lunyi-sync-auto', 'lunyi-sync-dirty', 'lunyi-sync-target', 'lunyi-gist-id', 'lunyi-note-drafts', 'lunyi-cite-v']);
 const libKey = k => LIB_LS.has(k) ? k + LIB_NS : k;
 const KEY = 'lunyi-v2' + LIB_NS;
 const ACC = 'oklch(0.45 0.1 200)';
 const HL = { y: 'oklch(0.94 0.07 95)', b: 'oklch(0.93 0.045 220)' };
+// 詞句螢光（自己畫的）：比整段螢光深一點，畫在整段螢光上也看得出來
+const MK = { y: 'oklch(0.87 0.13 95)', b: 'oklch(0.85 0.08 225)' };
+const SYS_ALIGN = '你負責對齊論文原文與它的繁體中文翻譯。使用者會給一段原文、它的中文翻譯，以及在其中一邊畫起來的詞句。請從另一邊找出意思對應的那一小段：必須原樣複製另一邊連續出現的文字，不要改寫、不要翻譯、不要多加標點。只輸出 JSON：{"match":"…"}；找不到明確對應時輸出 {"match":""}。';
+// 句子切分：中文看句號、問號、驚嘆號、分號；英文看 . ! ? ;（避開小數點、縮寫與人名縮寫）
+const ABBR = /(?:^|[\s(])(?:e\.g|i\.e|et al|etc|vs|cf|fig|figs|eq|eqs|no|vol|pp|dr|mr|mrs|ms|prof|inc|ltd|approx|resp|sec|ch|ref|refs|al)\.$/i;
+function sentSpans(t, zh) {
+  const out = [], n = t.length; let st = 0;
+  while (st < n && /\s/.test(t[st])) st++;
+  for (let i = st; i < n; i++) {
+    const c = t[i];
+    if (!(zh ? /[。！？；!?;]/.test(c) : /[.!?;]/.test(c))) continue;
+    if (!zh) {
+      const nx = t[i + 1];
+      if (nx !== undefined && !/[\s"'”’)\]]/.test(nx)) continue;
+      if (c === '.' && (ABBR.test(t.slice(Math.max(0, i - 9), i + 1)) || /(?:^|\s)[A-Z]$/.test(t.slice(Math.max(0, i - 2), i)))) continue;
+    }
+    let j = i + 1; while (j < n && /["'”’)\]」』）]/.test(t[j])) j++;
+    out.push([st, j]); st = j; while (st < n && /\s/.test(t[st])) st++; i = st - 1;
+  }
+  if (st < n) out.push([st, n]);
+  return out.length ? out : [[0, n]];
+}
+// 畫了一邊，找出另一邊對應的範圍：選的詞在另一邊原樣出現（例如翻譯保留的原文術語）就用它；否則用句子對齊（句數一樣就一句對一句，不一樣就照位置比例）
+function alignRange(src, dst, s, e, srcZh) {
+  const sel = src.slice(s, e).trim(), mid = (s + e) / 2 / Math.max(1, src.length);
+  const dl = dst.toLowerCase(), exact = w0 => { const w = w0.toLowerCase(); let best = -1, bd = 2; for (let k = dl.indexOf(w); k >= 0; k = dl.indexOf(w, k + 1)) { const d = Math.abs((k + w.length / 2) / Math.max(1, dst.length) - mid); if (d < bd) { bd = d; best = k; } } return best >= 0 ? [best, best + w.length] : null; };
+  if (sel.length >= 2) {
+    let r = exact(sel);
+    // 中文裡畫了「中文詞（English term）」：英文那邊對到括號裡的原文
+    // 只在幾乎只選了英文詞（中文不超過 4 個字，例如「GLUE 與 SQuAD」）或英文在括號裡時才這樣對；整句中文夾一個英文詞就交給句子對齊
+    if (!r && srcZh) { const lats = (sel.match(/[A-Za-z][A-Za-z0-9\- ']{2,}[A-Za-z0-9]/g) || []).map(x => x.trim()), cjk = sel.replace(/[A-Za-z0-9\- ']+/g, '').replace(/[\s（）()「」『』,，、:：;；]/g, '');
+      if (lats.length && (cjk.length <= 4 || (cjk.length <= 10 && lats.some(lt => new RegExp('[（(]\\s*' + reEsc(lt) + '\\s*[)）]').test(sel))))) {
+        // 好幾個英文詞：對到涵蓋它們的那一小段；離太遠就只對最長的那個
+        const rs = lats.map(lt => exact(lt)).filter(Boolean);
+        if (rs.length) { const lo = Math.min(...rs.map(x => x[0])), hi = Math.max(...rs.map(x => x[1])); r = hi - lo <= 60 ? [lo, hi] : rs.sort((a, b) => (b[1] - b[0]) - (a[1] - a[0]))[0]; } } }
+    if (r) {
+      // 英文詞在中文裡是括號保留的原文：連同括號前的中文詞一起畫
+      if (!srcZh && /[（(]/.test(dst[r[0] - 1] || '') && /[）)]/.test(dst[r[1]] || '')) { let k = r[0] - 1; const a = k; while (k > 0 && k > a - 10 && /[\u3400-\u9fff]/.test(dst[k - 1]) && !/[的是在用以與和及將把被對這那個為從於並或而且其此該由向至讓使了]/.test(dst[k - 1])) k--; r = [k, r[1] + 1]; }
+      return { r, fit: 'exact' };
+    }
+  }
+  const ss = sentSpans(src, srcZh), ds = sentSpans(dst, !srcZh);
+  let i0 = ss.findIndex(([, b]) => b > s); if (i0 < 0) i0 = ss.length - 1;
+  let i1 = ss.findIndex(([, b]) => b >= e); if (i1 < 0) i1 = ss.length - 1; i1 = Math.max(i0, i1);
+  let d0, d1;
+  if (ss.length === ds.length) { d0 = i0; d1 = i1; }
+  else {
+    const L = Math.max(1, src.length), D = Math.max(1, dst.length), r0 = ss[i0][0] / L, r1 = ss[i1][1] / L;
+    const hit = ds.map(([a, b], k) => [k, (a + b) / 2 / D]).filter(([, m]) => m >= r0 && m <= r1).map(([k]) => k);
+    if (hit.length) { d0 = hit[0]; d1 = hit[hit.length - 1]; } else { const m = (r0 + r1) / 2 * D; d0 = d1 = Math.max(0, ds.findIndex(([, b]) => b > m)); }
+  }
+  return { r: [ds[d0][0], ds[d1][1]], fit: 'sent', whole: s <= ss[i0][0] + 1 && e >= ss[i1][1] - 1 };
+}
+// 一則詞句螢光在兩邊目前的位置：翻譯改過時用記下的文字重新找，找不到就從另一邊重新對應
+function resolveMark(x, m) {
+  const find = side => { const t = x[side] || '', w = side === 'en' ? m.et : m.zt, r = m[side]; if (!t || !w) return null; if (r && t.slice(r[0], r[1]) === w) return r;
+    let best = -1, bd = Infinity; for (let k = t.indexOf(w); k >= 0; k = t.indexOf(w, k + 1)) { const d = r ? Math.abs(k - r[0]) : k; if (d < bd) { bd = d; best = k; } } return best >= 0 ? [best, best + w.length] : null; };
+  const so = m.src === 'zh' ? 'zh' : 'en', os = so === 'zh' ? 'en' : 'zh', ot = x[os] || '', ow = os === 'en' ? m.et : m.zt, orr = m[os];
+  let a = find(so), b = null, dfit = m.fit;
+  if (ot && ow && orr && ot.slice(orr[0], orr[1]) === ow) b = orr;
+  else if (a && ot) { const al = alignRange(x[so], ot, a[0], a[1], so === 'zh'); b = al.r; dfit = al.fit; }
+  else b = find(os);
+  // 畫的那一邊的字不見了（例如重新翻譯過）：從另一邊重新對應
+  let sd = false; if (!a && b && x[so]) { const al = alignRange(ot, x[so], b[0], b[1], os === 'zh'); a = al.r; sd = al.fit !== 'exact'; }
+  return so === 'en' ? { en: a, zh: b, dfit, sd } : { en: b, zh: a, dfit, sd };
+}
+// 浮動工具列放在範圍上方或下方；兩邊都放不下（範圍比畫面還高）就放在畫面裡看得到的地方
+function popAt(top, bottom, h) {
+  const H = window.innerHeight || 800;
+  if (top - 8 - h >= 8) return { y: top - 8, up: true };
+  if (bottom + 8 + h <= H - 8) return { y: bottom + 8, up: false };
+  return { y: Math.max(8, Math.min(H - h - 8, (Math.max(top, 0) + Math.min(bottom, H)) / 2 - h / 2)), up: false };
+}
+// 舊的螢光算不算和新畫的範圍重疊：只看它在這一邊「真的畫的」或對得很準的範圍；推算出來的整句不算，不然會吃掉別人
+function markOver(y, o, side, s, e) {
+  const r = resolveMark(y, o); if (o.src !== side && !(r.dfit === 'exact' || r.dfit === 'ai')) return false;
+  const q = r[side]; return !!(q && q[0] < e && q[1] > s);
+}
+// 把一段文字切成「一般／螢光」片段給畫面用；重疊時後畫的在上面
+function markSegs(t, list) {
+  if (!t) return [];
+  const rs = list.filter(r => r.r && r.r[1] > r.r[0]);
+  if (!rs.length) return [{ t, bg: 'transparent', hid: '', cls: '' }];
+  const cut = [...new Set([0, t.length, ...rs.flatMap(r => [Math.max(0, Math.min(t.length, r.r[0])), Math.max(0, Math.min(t.length, r.r[1]))])])].sort((a, b) => a - b), out = [];
+  for (let k = 0; k < cut.length - 1; k++) {
+    const a = cut[k], b = cut[k + 1]; if (b <= a) continue;
+    const top = rs.filter(r => r.r[0] <= a && r.r[1] >= b).pop(), hid = top ? top.id : '', last = out[out.length - 1];
+    if (last && last.hid === hid) last.t += t.slice(a, b); else out.push({ t: t.slice(a, b), bg: top ? MK[top.c] || MK.y : 'transparent', hid, cls: top ? 'ly-mk' : '' });
+  }
+  return out;
+}
 // 專案類別色：dataviz 參考色盤前 3 色。圖譜節點四散，任兩色都可能相鄰，validate_palette.js --pairs all
 // 只有前 3 色通過（色盲 ΔE 9.2、一般視覺 24.0）。色槽存在 fslots，第一次出現時分配，之後改名、刪除或同步都不變；
 // 沒有色槽的專案一律算「其他」灰色。綠松對比不足 3:1，所以專案名稱一定跟著色塊顯示。
@@ -1319,14 +1499,58 @@ function idbWrite(db, { puts, dels, lib, extra, check }) {
   });
 }
 
+// ---- 原始檔（PDF）：存在這台瀏覽器另一個資料庫（lunyi-files，帳號的文獻庫後面加 @帳號），不同步、不進 JSON 備份 ----
+const FILE_DB = 'lunyi-files' + LIB_NS;
+function fileDb() {
+  if (!fileDb.p) fileDb.p = new Promise((ok, fail) => {
+    let q; try { q = indexedDB.open(FILE_DB, 1); } catch (e) { fileDb.p = null; return fail(e); }
+    q.onupgradeneeded = () => { if (!q.result.objectStoreNames.contains('files')) q.result.createObjectStore('files'); };
+    q.onsuccess = () => { const db = q.result; db.onversionchange = () => { db.close(); fileDb.p = null; }; db.onclose = () => { fileDb.p = null; }; ok(db); };
+    q.onerror = () => { fileDb.p = null; fail(q.error || new Error('原始檔資料庫打不開')); };
+  });
+  return fileDb.p;
+}
+async function fileOp(mode, fn, again) {
+  const db = await fileDb();
+  // Safari 在背景時可能把連線關掉：重新連一次
+  let tx; try { tx = db.transaction('files', mode); } catch (e) { if (!again && e && e.name === 'InvalidStateError') { fileDb.p = null; return fileOp(mode, fn, true); } throw e; }
+  return new Promise((ok, fail) => { let r; try { r = fn(tx.objectStore('files')); } catch (e) { return fail(e); } tx.oncomplete = () => ok(r && r.result); tx.onerror = tx.onabort = () => fail(tx.error || new Error('原始檔存取失敗')); });
+}
+const fileGet = id => fileOp('readonly', st => st.get(id));
+const filePut = (id, blob) => fileOp('readwrite', st => st.put(blob, id));
+const fileDel = id => fileOp('readwrite', st => st.delete(id));
+const fileKeys = () => fileOp('readonly', st => st.getAllKeys());
+// 每一段在原始 PDF 的第幾頁：拿段落開頭一小段字（去掉空白與連字號）去每一頁的文字裡找，段落照順序往後找
+const pgKey = t => String(t || '').replace(/[\s\-\u00ad\u2010\u2011]+/g, '').toLowerCase();
+function paraPages(paras, pageTexts) {
+  const pk = pageTexts.map(pgKey); let from = 0;
+  return paras.map(en => {
+    const k = pgKey(en).slice(0, 32); if (k.length < 8) return 0;
+    for (let j = from; j < pk.length; j++) if (pk[j].includes(k)) { from = j; return j + 1; }
+    for (let j = 0; j < from; j++) if (pk[j].includes(k)) return j + 1;
+    return 0;
+  });
+}
+const PDF_ZOOM = [0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+// 參考文獻的標題：容許編號（7. ／VII.）、小型大寫字被拆開（R EFERENCES）、中英並列、冒號
+const REF_HEAD = /^(?:\d+\.?|[ivxlc]+\.)?(?:references|referencesandnotes|bibliography|workscited|literaturecited|literatur|literaturverzeichnis|références|bibliographie|referencias|bibliografía|參考文獻|参考文献|參考資料|参考资料|引用文獻|引用文献)+[:：]?$/i;
+// 目錄裡也會出現「參考文獻」：取文件後段的第一個；長文件的最前面不算
+function refHeadAt(lines) {
+  const hs = []; lines.forEach((l, i) => { const t = String(l || '').replace(/\s+/g, ''); if (t.length < 48 && REF_HEAD.test(t)) hs.push(i); });
+  if (!hs.length) return -1;
+  const late = hs.find(i => i >= lines.length * 0.15), at = late !== undefined ? late : hs[hs.length - 1];
+  return lines.length > 100 && at < lines.length * 0.1 ? -1 : at;
+}
 function splitParas(lines) {
   const lens = lines.filter(l => l.length > 20).map(l => l.length).sort((a, b) => a - b);
   const med = lens[Math.floor(lens.length / 2)] || 80;
   const out = [], refs = [];
   let buf = '', inRefs = false;
   const flush = () => { const t = buf.replace(/\s+/g, ' ').trim(); if (t.length >= 60) out.push(t); buf = ''; };
-  for (const l of lines) {
-    if (!inRefs && /^(\d+\.?\s*)?(references|bibliography|參考文獻|参考文献|literatur|références)\s*$/i.test(l)) { flush(); inRefs = true; continue; }
+  const refAt = refHeadAt(lines);
+  for (let li = 0; li < lines.length; li++) {
+    const l = lines[li];
+    if (li === refAt) { flush(); inRefs = true; continue; }
     if (inRefs) { refs.push(l); continue; }
     if (!l) { flush(); continue; }
     if (!buf) buf = l;
@@ -1346,6 +1570,119 @@ function splitParas(lines) {
   }
   return { paras: res.slice(0, 300), refs: refs.join(' ') };
 }
+
+// ---- 引用比對：標題正規化後找「連續的一段字」，容忍換行、連字號、標點、大小寫、重音符號與一兩個字的差異 ----
+const CITE_CJK = /[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/;
+// 全形轉半形、合字拆開、去掉重音符號、行尾連字號接回去
+const citeLite = t => String(t || '').normalize('NFKD').replace(/\p{M}/gu, '').replace(/\u00ad/g, '').toLowerCase()
+  .replace(/(\p{L})[-\u2010\u2011]\s+(?=\p{L})/gu, '$1').replace(/[-\u2010\u2011]/g, '').replace(/\s+/g, ' ');
+// 字詞：英文以空白分、中日文一個字一個
+const liteTokens = l => l.replace(/[^\p{L}\p{N}]+/gu, ' ').replace(/[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/g, ' $& ').trim().split(/\s+/).filter(Boolean);
+const citeTokens = t => liteTokens(citeLite(t));
+const reEsc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const citeDoi = t => { const m = String(t || '').match(/\b10\.\d{4,9}\/[^\s"<>]+/i); return m ? m[0].replace(/[.,;)\]]+$/, '') : ''; };
+// 會影響引用比對的欄位：k＝被引用時用的（標題、年份、DOI、開頭），h＝引用別人時用的（參考文獻）
+const citeSig = p => ({ k: [p.title, p.year, p.doi, String(p.head || '').length].join('\u0001'), h: String(p.refText || '').length });
+// 以前貼上文字建立的論文：開頭（貼上的原文）整理空白後，就是各段接起來的樣子；PDF 的開頭有頁首、短行，不會這樣
+function pasteLike(p, hd) {
+  const h = hd.replace(/\s+/g, ' ').trim(), j = (p.paras || []).map(x => x.en || '').join(' ');
+  return h.length >= 40 && j.startsWith(h.slice(0, Math.min(1500, h.length - 40)));
+}
+// 被引用那一篇的特徵：標題字串、年份、DOI、arXiv 編號（DOI 用和參考文獻一樣的方式整理，連字號才對得上）
+function citeKey(p) {
+  const tt = citeTokens(p.title), hd = String(p.head || '').slice(0, 3000), hl = hd.split('\n'), txt = p.via === 'text' || (!p.via && !p.file && pasteLike(p, hd));
+  // 開頭裡的 DOI／arXiv 只看參考文獻之前；貼上的文字另外在編號清單（[1]、1.）或 Sources／Notes 這類標題就停
+  let ri = refHeadAt(hl.map(l => l.trim()));
+  if (txt) { const own = tt.length >= 3 ? ' ' + tt.join(' ') + ' ' : '', i0 = hl.findIndex(l => l.trim());
+    const apaRef = (l, i) => i > i0 && /^\s*\p{Lu}[^()\n]{0,200}?,\s*\p{Lu}\.[^()\n]{0,600}\(\d{4}[a-z]?\)\.(?:\s|$)/u.test(l) && !(own && (' ' + citeTokens(l).join(' ') + ' ').includes(own));
+    const mk = hl.findIndex((l, i) => /^\s*(?:\[\d{1,3}\]|\d{1,3}[.)])\s/.test(l) || /^\s*(?:references?|sources?|notes|works cited|bibliography)\b/i.test(l) || apaRef(l, i)); if (mk >= 0 && (ri < 0 || mk < ri)) ri = mk; }
+  const top = ri >= 0 ? hl.slice(0, ri).join('\n') : hd;
+  // 貼上的文字只認行首標明 doi／doi.org 的（內文裡引用別篇的連結不算）
+  const lab = txt && top.match(/^\s*(?:doi\s*[:：]?\s*|https?:\/\/(?:dx\.)?doi\.org\/)(10\.\d{4,9}\/\S+)/im);
+  const ax = top.match(txt ? /^\s*arxiv:\s*(\d{4}\.\d{4,5})/im : /arxiv:\s*(\d{4}\.\d{4,5})/i), doi = p.doi || (txt ? (lab ? lab[1].replace(/[.,;)\]]+$/, '') : '') : citeDoi(top));
+  return { tt, lite: tt.join(' '), short: tt.length < 6 || tt.join('').length < 24, year: (String(p.year || '').match(/\b(19|20)\d\d\b/) || [''])[0], doi: doi ? citeLite(doi).replace(/\s+/g, '') : '', arx: ax ? ax[1] : '' };
+}
+// 引用別人的那一篇：有參考文獻就用參考文獻，沒有（沒找到標題、貼上的文字）就用全文
+const citeStrong = p => String(p.refText || '').length >= 300;
+// 整理過的文字留著重複使用（段落或參考文獻換了才重算）；字詞位置表很佔記憶體，用到才建、用完就丟
+const _hay = new Map(); let _hayN = 0;
+const hayDrop = id => { const c = _hay.get(id); if (c) { _hayN -= c.lite.length + c.flat.length; _hay.delete(id); } };
+function citeHay(p) {
+  const c = _hay.get(p.id); if (c && c.ref === p.refText && c.paras === p.paras) return c;
+  hayDrop(p.id);
+  const ref = String(p.refText || ''), lite = citeLite(citeStrong(p) ? ref : (p.paras || []).map(x => x.en || '').join('\n') + '\n' + ref);
+  const h = { ref: p.refText, paras: p.paras, lite, flat: ' ' + liteTokens(lite).join(' ') + ' ' }, n = h.lite.length + h.flat.length;
+  // 大約 800 萬字以內才留著（幾百篇全文的論文庫不會吃掉太多記憶體），超過就用完即丟
+  if (_hayN + n <= 8e6) { _hay.set(p.id, h); _hayN += n; }
+  return h;
+}
+function citeBigrams(h) {
+  const w = h.flat.trim().split(' '), m = new Map();
+  for (let i = 0; i + 1 < w.length; i++) { const k = w[i] + ' ' + w[i + 1], a = m.get(k); if (a) a.push(i); else m.set(k, [i]); }
+  return m;
+}
+// DOI 後面不能還接著 DOI 的字（10.1109/CVPR.2016.9 不算 …2016.90）；後面是字母時可能是換行後的作者名，用保留空白的文字再確認
+function doiIn(c, doi) {
+  if (!c.tight().includes(doi)) return false;
+  const a = [...doi], pat = a.map((ch, i) => reEsc(ch) + (i >= a.length - 1 ? '' : /[^0-9a-z]/.test(ch) ? '\\s?' : '(?:\\s(?!\\d{1,3}[.)\\]]\\s))?')).join('');
+  return new RegExp(pat + '(?![0-9_]|\\.[0-9])').test(c.h.lite);
+}
+function citeHit(c, k) {
+  const h = c.h;
+  if (k.doi.length > 7 && doiIn(c, k.doi)) return true;
+  if (k.arx && new RegExp('(arxiv:?|abs/)' + reEsc(k.arx)).test(c.tight())) return true;
+  const tt = k.tt, n = tt.length;
+  if (n < 2) return false;
+  if (k.short) {
+    // 短標題（例如 Deep learning）容易撞到別篇標題的開頭：前後都要是標點，附近還要有同一個出版年
+    const re = new RegExp('(?:^|[^\\p{L}\\p{N}\\s]\\s*)' + tt.map(reEsc).join(tt.some(t => CITE_CJK.test(t)) ? '[^\\p{L}\\p{N}]*' : '[^\\p{L}\\p{N}]+') + '\\s*(?:[^\\p{L}\\p{N}\\s]|$)', 'gu');
+    // 往後找下一個時要跳過整個字（表情符號這類佔兩格的字，只跳一格會一直找到同一個位置）
+    for (let m, g = 0; g < 400 && (m = re.exec(h.lite)); g++) {
+      if (!k.year || h.lite.slice(Math.max(0, m.index - 300), m.index + m[0].length + 300).includes(k.year)) return true;
+      re.lastIndex = m.index + (h.lite.codePointAt(m.index) > 0xffff ? 2 : 1);
+    }
+    return false;
+  }
+  if (h.flat.includes(' ' + k.lite + ' ')) return true;
+  // 長標題：允許少數字對不上（OCR 錯字、換行把字切開），但對上的字要集中在標題長度附近
+  const bs = [...new Set(tt.slice(1).map((t, i) => tt[i] + ' ' + t))], need = Math.ceil(bs.length * 0.75);
+  // 只比對少數幾篇時，先粗篩（對上的字不夠就不必建位置表）
+  if (c.few) { let got = 0; for (const b of bs) if (h.flat.includes(' ' + b + ' ') && ++got >= need) break; if (got < need) return false; }
+  const bm = c.map(), hits = [];
+  bs.forEach((b, j) => (bm.get(b) || []).forEach(p => hits.push([p, j])));
+  if (hits.length < need) return false;
+  hits.sort((a, b) => a[0] - b[0]);
+  const cnt = new Map(); let lo = 0, d = 0;
+  for (let hi = 0; hi < hits.length; hi++) {
+    const j = hits[hi][1], v = (cnt.get(j) || 0) + 1; cnt.set(j, v); if (v === 1) d++;
+    while (hits[hi][0] - hits[lo][0] > n + 4) { const jj = hits[lo][1], vv = cnt.get(jj) - 1; cnt.set(jj, vv); if (!vv) d--; lo++; }
+    if (d >= need) return true;
+  }
+  return false;
+}
+// 一篇論文新的引用清單。cand：要重算的對象（id → 比對不到時要不要拿掉原本的引用）
+// 沒有參考文獻的論文（貼上的文字、示範論文）原本的引用一律保留，只加新找到的
+function citeOne(p, papers, keys, cand) {
+  const old = p.cites || []; if (!cand || !cand.size) return old;
+  const kp = keys.get(p.id), strong = citeStrong(p); let bm = null;
+  let tg = null; const c = { h: citeHay(p), few: cand.size <= 20 }; c.map = () => bm || (bm = citeBigrams(c.h)); c.tight = () => tg || (tg = c.h.lite.replace(/\s+/g, ''));
+  const hit = new Set(); cand.forEach((_, id) => { const k = keys.get(id); if (k && id !== p.id && k.lite !== kp.lite && citeHit(c, k)) hit.add(id); });
+  const keep = old.filter(x => !(strong && cand.get(x))), ids = new Set([...keep, ...hit]), here = new Set(papers.map(o => o.id));
+  return [...papers.map(o => o.id).filter(id => ids.has(id)), ...keep.filter(x => !here.has(x))];
+}
+// plan(p)：這篇要重算哪些對象（見 citeOne）
+function citeMap(papers, plan) {
+  const keys = new Map(papers.map(p => [p.id, citeKey(p)])), out = new Map(papers.map(p => [p.id, citeOne(p, papers, keys, plan(p))]));
+  const live = new Set(papers.map(p => p.id)); [..._hay.keys()].forEach(id => { if (!live.has(id)) hayDrop(id); });
+  return out;
+}
+// 要算很多篇時：每幾篇讓出一次，畫面不會卡住
+async function citeMapAsync(papers, plan) {
+  const keys = new Map(papers.map(p => [p.id, citeKey(p)])), out = new Map();
+  for (let i = 0; i < papers.length; i++) { out.set(papers[i].id, citeOne(papers[i], papers, keys, plan(papers[i]))); if (i % 6 === 5) await new Promise(r => setTimeout(r, 0)); }
+  return out;
+}
+const citeAll = (papers, prune) => { const m = new Map(papers.map(o => [o.id, prune])); return () => m; };
 
 // 圖表提示框：數值在前、名稱在後。寬度固定，pos 是中心點在容器裡的比例位置（null 為靠左），
 // 用 clamp 限制在容器內，手機上也不會超出畫面。要放在沒有 opacity 的容器裡，否則會跟著變淡。
@@ -1422,7 +1759,7 @@ class Component extends DCLogic {
     // 文獻庫在 componentDidMount 時從 IndexedDB 讀進來（boot）；讀完以前是空的，畫面蓋著「正在開啟文獻庫」，也不會存檔或同步
     const d = { papers: [] };
     return { papers: d.papers, links: d.links || [], notes: d.notes || [], qa: d.qa || [], gone: d.gone || [], sel: d.papers[0] && d.papers[0].id,
-      layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '',
+      layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '', noteEdit: null, draftVer: 0, pen: null, hlPick: null, hlEdit: null, pdfOn: false, pdfPid: null, pdfState: '', pdfErr: '', pdfN: 0, pdfPg: 1, pdfGo: null, pdfZoom: 1, pdfUrl: '', pdfGoPid: null,
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
       linkTarget: '', linkNote: '', toast: '', toastAct: '', chatLive: '', editMeta: null, intro: !this.lsGet('lunyi-intro-seen'), ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
       gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
@@ -1445,16 +1782,32 @@ class Component extends DCLogic {
     this._needKey = e => { const d = e.detail || {}; this.toast((typeof d === 'string' ? d : d.msg) || '需要連結 AI'); this.openSettings(d.tab || 'ai'); };
     window.addEventListener('lunyi-need-key', this._needKey);
     // 視窗變窄時側欄改成浮動抽屜
-    this._rs = () => { const n = matchMedia('(max-width:900px)').matches, w = matchMedia('(min-width:1100px)').matches; if (n !== this.state.narrow || w !== this.state.wide) this.setState({ narrow: n, wide: w, sbOpen: w }); };
+    this._rs = () => { const n = matchMedia('(max-width:900px)').matches, w = matchMedia('(min-width:1100px)').matches; if (n !== this.state.narrow || w !== this.state.wide) { const s = this.state, pg = n !== s.narrow && s.pdfOn && s.pdfState === 'ready' && this._pdf && this._pdf.pid === this._shown; this.setState({ narrow: n, wide: w, sbOpen: w, ...(pg ? { pdfGo: s.pdfPg || 1, pdfGoPid: this._shown } : {}) }); } };
     window.addEventListener('resize', this._rs);
     this._rsL = () => { if (this.state.layout === 'graph') this.fitLabels(); };
     window.addEventListener('resize', this._rsL);
-    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.org) { if (s.org.running) this.stopOrg(); else this.closeOrg(); } else if (!s.wide && s.sbOpen) this.setState({ sbOpen: false }); else if (s.layout === 'matrix' && s.mxSel) this.closeMxCell(); };
+    this._esc = e => { if (e.key !== 'Escape') return; const s = this.state; if ((s.hlEdit || s.hlPick) && !s.showLogin && !s.showSet && !s.showAdd && !s.org) { const back = s.hlEdit; this.setState({ hlEdit: null, hlPick: null }, () => back && this.focusSoon(`.ly-para[data-pi="${back.i}"] .ly-pnum`)); return; } if (s.acctOpen) this.setState({ acctOpen: false }, () => this.focusSoon('#lunyi-acct-btn')); else if (s.showLogin) this.closeLogin(); else if (s.showSet) this.setState({ showSet: false }); else if (s.showAdd) this.setState({ showAdd: false }); else if (s.org) { if (s.org.running) this.stopOrg(); else this.closeOrg(); } else if (!s.wide && s.sbOpen) this.setState({ sbOpen: false }); else if (s.layout === 'matrix' && s.mxSel) this.closeMxCell(); };
     window.addEventListener('keydown', this._esc);
-    this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); };
+    this._down = e => { if (this.state.acctOpen && !(e.target.closest && e.target.closest('.ly-acct'))) this.setState({ acctOpen: false }); if (this.state.hlEdit && !(e.target.closest && e.target.closest('.ly-hlpop, .ly-mk'))) this.setState({ hlEdit: null }); };
+    // 詞句螢光：在段落文字上選取（滑鼠、觸控或鍵盤）後跳出畫筆；螢光筆開著時放開就畫上去
+    this._selUp = () => setTimeout(() => this.onTextSelect(), 0);
+    // 鍵盤：螢光筆開著時等放開 Shift 才畫（不然按一次方向鍵就畫一個字）
+    this._selKey = e => { if (e.key === 'Shift' || (!this.state.pen && e.shiftKey && /^Arrow|^Home$|^End$/.test(e.key))) this._selUp(); };
+    // 選取範圍改變：沒有了就收起工具列；觸控拖曳選取把手（不會有 touchend）時，停一下就照新的範圍更新工具列
+    this._selChg = () => {
+      const g = window.getSelection(); if (this.state.hlPick && (!g || g.isCollapsed)) { this.setState({ hlPick: null }); return; }
+      if (this._mouseDown || !g || g.isCollapsed) return;
+      clearTimeout(this._selT); this._selT = setTimeout(() => { if (!this._mouseDown && (this.state.hlPick || this.coarse())) this.onTextSelect(true); }, 180);
+    };
+    this._mdn = e => { if (e.pointerType === 'mouse') this._mouseDown = true; }; this._mup = () => { this._mouseDown = false; };
+    document.addEventListener('pointerdown', this._mdn, true); document.addEventListener('pointerup', this._mup, true);
+    this._hlScroll = e => { if ((this.state.hlPick || this.state.hlEdit) && !(e.target && e.target.closest && e.target.closest('.ly-hlpop'))) this.setState({ hlPick: null, hlEdit: null }); };
+    document.addEventListener('mouseup', this._selUp); document.addEventListener('touchend', this._selUp); document.addEventListener('keyup', this._selKey);
+    document.addEventListener('selectionchange', this._selChg); document.addEventListener('scroll', this._hlScroll, true);
     window.addEventListener('pointerdown', this._down);
     // 關閉或切走分頁時，把還沒存的修改寫進去（IndexedDB 是非同步的，同時在 localStorage 留一份小備份）
-    this._flush = () => this.flushLib();
+    this.loadDrafts();
+    this._flush = () => { this.saveDrafts(); this.flushLib(); };
     this._vis = () => { if (document.visibilityState === 'hidden') this._flush(); };
     window.addEventListener('pagehide', this._flush); document.addEventListener('visibilitychange', this._vis);
     // 存檔失敗、修改還沒寫進去時，關閉分頁前先提醒
@@ -1502,6 +1855,16 @@ class Component extends DCLogic {
       if (e.key === libKey('lunyi-sync-auto') && !this.syncOn()) { clearTimeout(this._push); this._push = null; }
       if (e.key === libKey('lunyi-sync-auto') || e.key === libKey('lunyi-sync-target') || e.key === libKey('lunyi-gist-id')) this._needPull = true;
       // 別的分頁剛存了文獻庫：重新讀一次（這裡還沒存的修改會保留）
+      if (e.key === libKey('lunyi-note-drafts')) {
+        // 修改中的筆記是在這個分頁打的字：別的分頁刪掉或存掉這則筆記時，這邊的內容也要留著（之後會改存成草稿或提醒衝突）
+        const dirty = this._draftDirty || new Set(), ek = this.state.noteEdit && 'e:' + this.state.noteEdit, theirs = (() => { try { const v = ek && JSON.parse(e.newValue || '{}')[ek]; return !!(v && typeof v.t === 'string' && v.t.trim()); } catch (x) { return false; } })(), mine = ek && !theirs && this._draftMine && this._draftMine.has(ek) && !dirty.has(ek) ? [ek] : [];
+        const keep = [...dirty, ...mine].map(k => [k, this._drafts && this._drafts[k]]); this.loadDrafts();
+        keep.forEach(([k, v]) => { if (v) this._drafts[k] = v; else delete this._drafts[k]; }); mine.forEach(k => this.markDraft(k));
+        // 這個分頁沒在改的框：換成別的分頁存的內容（內容一樣就不動，游標才不會跳）
+        const k = this._draftKeyNow, t = k && !dirty.has(k) && document.querySelector('textarea.ly-note'); if (t && t.value !== this.draftOf(k)) t.value = this.draftOf(k);
+        document.querySelectorAll('textarea.ly-noteedit').forEach(t => { const ek = 'e:' + t.dataset.nid, v = this.draftOf(ek); if (v && !dirty.has(ek) && t.value !== v) t.value = v; });
+        this.setState(st => ({ draftVer: (st.draftVer || 0) + 1 }));
+      }
       if (e.key === REV_KEY && e.newValue && this._boot === 'idb' && this._ready && e.newValue.split(':')[0] !== TAB) { if (!this._db && !this._vc) this.reconnect().then(() => this.rehydrate()); else this.rehydrate(); }
       // 舊版論憶的分頁還開著，還在寫 localStorage
       if (e.key === KEY && e.newValue && this._boot === 'idb' && !this._oldTabWarned) { this._oldTabWarned = true; this.toast('另一個分頁還在用舊版論憶：請重新整理那個分頁。它的修改會在下次開啟論憶時合併進來。', '', 10000); }
@@ -1515,25 +1878,47 @@ class Component extends DCLogic {
   // 執行環境只傳 prevProps，不傳 prevState，上一個 state 要自己記
   componentDidUpdate(pp) {
     const s = this.state, ps = this._ps || s;
-    const hadNote = !!this._note;
     this._ps = s;
     if (pp.layout !== this.props.layout && this.props.layout) this.setState({ layout: this.props.layout });
     if (pp.defaultMode !== this.props.defaultMode && this.props.defaultMode) this.setState({ mode: this.props.defaultMode });
     const libChanged = ps.papers !== s.papers || ps.links !== s.links || ps.notes !== s.notes || ps.qa !== s.qa || ps.gone !== s.gone || ps.projects !== s.projects || ps.projAt !== s.projAt || ps.projDel !== s.projDel || ps.projMeta !== s.projMeta || ps.mxCols !== s.mxCols;
     // 連續修改時合併成一次儲存（大文獻庫每次存檔要幾十毫秒）；關閉分頁前一定會存
     if (libChanged || ps.fslots !== s.fslots) { clearTimeout(this._save); this._save = setTimeout(() => this.saveLib(), 200); }
-    if (ps.sel !== s.sel || ps.selPara !== s.selPara) this.clearNote();
-    // 範圍切換讓閱讀器換成另一篇（sel 沒變）時，段落選取和筆記草稿不能跟過去
-    else if (this._shownPrev !== undefined && this._shown !== this._shownPrev) { this.clearNote(); if (s.selPara != null) this.setState({ selPara: null }); }
+    if (ps.papers !== s.papers && this._citeSig) this.citeWatch();
+    // 範圍切換讓閱讀器換成另一篇（sel 沒變）時，段落選取不能跟過去（草稿留在原本那篇的段落）
+    if (!(ps.sel !== s.sel || ps.selPara !== s.selPara) && this._shownPrev !== undefined && this._shown !== this._shownPrev) { if (s.selPara != null) this.setState({ selPara: null }); }
+    // 離開一段還沒儲存的草稿：說一聲草稿留著（同一份草稿只說一次）
+    const leftDraft = this._draftKeyPrev && this._draftKeyPrev !== this._draftKeyNow && this.draftOf(this._draftKeyPrev).trim() && !(this._draftTold || (this._draftTold = new Set())).has(this._draftKeyPrev) ? this._draftKeyPrev : null;
+    this._draftKeyPrev = this._draftKeyNow;
     this._shownPrev = this._shown;
     // 閱讀器因為範圍改顯示另一篇：把它當成目前的論文，回到全部論文時才不會又跳回去
     if (this._adopt) {
       const id = this._adopt, old = this.find(s.sel), y = this.find(id); this._adopt = null; this.setState({ sel: id });
       // 換了範圍（或換了範圍後回到閱讀器）：原本那篇不在這個範圍，閱讀器改顯示別篇，要明白說
-      if (old && y && (ps.folder !== s.folder || ps.layout !== s.layout)) { const cut = t => t.length > 26 ? t.slice(0, 25) + '…' : t; this.toast(`「${cut(old.title)}」不在「${this.scopeName(s.folder)}」裡，閱讀器改顯示「${cut(y.title)}」${hadNote ? '；還沒存的筆記草稿已清除' : ''}`, '', 6000); }
+      if (old && y && (ps.folder !== s.folder || ps.layout !== s.layout)) { const cut = t => t.length > 26 ? t.slice(0, 25) + '…' : t; this.toast(`「${cut(old.title)}」不在「${this.scopeName(s.folder)}」裡，閱讀器改顯示「${cut(y.title)}」${leftDraft ? '；筆記草稿留在原本那篇' : ''}`, '', 6000); if (leftDraft) this._draftTold.add(leftDraft); }
     }
-    // 筆記框切分頁或工作區回來會重新出現成空白，把草稿放回去
-    { const t = document.querySelector('textarea.ly-note'); if (t && t !== this._noteEl) { this._noteEl = t; if (this._note) t.value = this._note; } }
+    // 論文剛被刪除（畫面上有「復原刪除」）就不說；同一次更新裡已經有別的提示（例如換了範圍）就接在後面，不蓋掉它
+    if (leftDraft && !this._draftTold.has(leftDraft)) { this._draftTold.add(leftDraft); const m = /:(\d+)$/.exec(leftDraft), dp = this.find(leftDraft.slice(2, leftDraft.length - (m ? m[0].length : 0)));
+      if (dp && s.toast && s.toast !== ps.toast) this.setState(st => ({ toast: `${st.toast}；筆記草稿留在原本那段` }));
+      else if (dp) this.toast(`${dp.id !== this._shown ? `「${dp.title.length > 20 ? dp.title.slice(0, 19) + '…' : dp.title}」` : ''}第 ${m ? +m[1] + 1 : ''} 段的筆記草稿還沒儲存，已經幫你留著，回到那一段就能繼續寫`, '', 6000); }
+    // 筆記框：重新出現或換了段落時，放上這一段的草稿；修改中的筆記放上修改到一半的內容
+    { const t = document.querySelector('textarea.ly-note'), k = this._draftKeyNow; if (t && (t !== this._noteEl || k !== this._noteElKey)) { this._noteEl = t; this._noteElKey = k; t.value = k ? this.draftOf(k) : ''; } }
+    document.querySelectorAll('textarea.ly-noteedit').forEach(t => { const id = t.dataset.nid, n = s.notes.find(x => x.id === id); if (!n) return; const at = String(n.at || 0);
+      if (t.dataset.init !== id) { t.dataset.init = id; const dr = this._drafts && this._drafts['e:' + id], dt = this.draftOf('e:' + id); t.dataset.at = dr && dr.base != null && dt.trim() ? String(dr.base) : at; t.value = dt || n.text; if (t.dataset.at === at) return; }
+      // 修改中的筆記剛在別的分頁或裝置改過：還沒動手改就換成新的內容；改到一半就留著並說一聲
+      if (t.dataset.at === at) return; t.dataset.at = at;
+      if (!this.draftOf('e:' + id).trim()) t.value = n.text; else this.toast('這則筆記剛在別的地方改過了：你修改到一半的內容還在，按「儲存修改」會用你這份；按「取消」可以看新的版本', '', 10000); });
+    // 修改中的筆記在別的地方被刪除：修改到一半的內容改存成那一段的草稿
+    if (s.noteEdit && ps.notes !== s.notes && !s.notes.some(n => n.id === s.noteEdit)) {
+      const id = s.noteEdit, old = (ps.notes || []).find(n => n.id === id), d = this.draftOf('e:' + id).trim(); this.setState({ noteEdit: null });
+      if (old && !(s.gone || []).includes(old.paperId) && d) {
+        if (old.para != null && this.find(old.paperId)) { const k = `p:${old.paperId}:${old.para}`, c = this.draftOf(k).trim(); this.setDraft('e:' + id, ''); this.setDraft(k, c ? c + '\n\n' + d : d); if (k === this._draftKeyNow) { const ta = document.querySelector('textarea.ly-note'); if (ta) ta.value = this.draftOf(k); } this.toast(`這則筆記在別的地方刪除了；你修改到一半的內容已經改存成第 ${old.para + 1} 段的筆記草稿`, '', 9000); }
+        else { this.setDraft('e:' + id, ''); this.setDraft('o:' + id, d); this.toast('這則筆記在別的地方刪除了；你修改到一半的內容留在筆記面板的「未儲存的草稿」', '', 9000); }
+      }
+    }
+    // 刪除的論文或筆記過了可以復原的時間：它們的草稿一起清掉
+    if (ps.gone !== s.gone) { clearTimeout(this._pruneT); this._pruneT = setTimeout(() => this.pruneDrafts(), 9000); }
+    this.syncPdf();
     // 換範圍時，總覽的研究方向輸入框換成那個專案的
     if (ps.folder !== s.folder) { const d = ((s.projMeta || {})[s.folder] || {}).dir || ''; if (s.projDir !== d) this.setState({ projDir: d }); }
     else if (ps.projMeta !== s.projMeta && this.isProj(s.folder)) { const od = ((ps.projMeta || {})[s.folder] || {}).dir || '', nd = ((s.projMeta || {})[s.folder] || {}).dir || ''; if (nd !== od && String(s.projDir || '').trim() === od) this.setState({ projDir: nd }); }
@@ -1654,6 +2039,12 @@ class Component extends DCLogic {
   }
   afterBoot(hadLib, late, lost) {
     this._ready = true;
+    this._citeSig = new Map(this.state.papers.map(p => [p.id, citeSig(p)]));
+    // 引用改用新的比對方式：舊的文獻庫重新比對一次（只加新找到的，不拿掉原本的）
+    if (!hadLib && !LIB_ACCT) this.lsSet('lunyi-cite-v', '2'); else if (this.lsGet('lunyi-cite-v') !== '2') { if (this.syncOn()) this._citeUpgrade = true; else setTimeout(() => this.reciteAll(false, false), 600); }
+    this.pruneDrafts();
+    // 重新整理後草稿不在眼前（閱讀器開的是別篇）：提醒一次，按「前往」回到最近的那一份
+    setTimeout(() => { const ks = Object.keys(this._drafts || {}).filter(k => { const l = this.draftOf(k).trim() && this.draftLoc(k); return l && !l.orphan; }); if (!ks.length || this.state.toast) return; ks.sort((a, b) => (this._drafts[b].at || 0) - (this._drafts[a].at || 0)); this.toastGo(`有 ${ks.length} 份還沒儲存的筆記草稿`, '前往', () => this.resumeDraft(ks[0]), 10000); }, 1200);
     if (this._boot === 'idb') { this.applyPending(); if (late) this.mergeLate(late); }
     if (lost) this.toast('這台瀏覽器裡的文獻庫資料不見了（可能被瀏覽器清掉）。開啟了自動同步的話會從雲端下載；也可以到「設定 → 同步與備份」匯入 JSON 備份。', '', 12000);
     const fresh = this._firstVisit && !hadLib && !lost && !!this.gClient() && !this.provider() && !this.syncOn() && !!this.lsGet('lunyi-login-seen');
@@ -1674,7 +2065,8 @@ class Component extends DCLogic {
   }
   // 開啟網站時的下載：成功才開放上傳；失敗的話，之後的上傳一律先下載合併。回傳 pullCloud 的結果
   async pullThenReady() {
-    const r = await this.pullCloud(true); this._needPull = !(r === true || r === 'empty'); this._syncReady = true;
+    const r = await this.pullCloud(true); this.citeUpgradeAfter(r);
+    this._needPull = !(r === true || r === 'empty'); this._syncReady = true;
     // 這台有還沒上傳的修改（上次關閉前沒傳成功、或剛才合併時保留的）：現在補傳
     if (!this._needPull && this.syncOn()) setTimeout(() => { const sy = this._synced; if (this._bootDirty || this.lsGet('lunyi-sync-dirty') || !sy || this.state.papers.some(p => sy.get(p.id) !== fpOf(p)) || this.state.papers.length !== sy.size) { this._bootDirty = false; clearTimeout(this._push); this._push = setTimeout(() => { this._push = null; if (this.syncOn()) { if (this._needPull) this.pullThenPush(); else this.autoPush(); } }, 400); } }, 0);
     return r;
@@ -1683,7 +2075,7 @@ class Component extends DCLogic {
     if (this._pulling) return;
     this._pulling = true;
     // 下載失敗：這台的修改還沒上傳，記下來（重新登入時 retryPush 會再試一次）
-    try { if (this._pushing) await this._pushing; const r = await this.pullCloud(true); this._needPull = !(r === true || r === 'empty'); if (this._needPull) this._pushFailed = true; else if (this.syncOn()) this.autoPush(); }
+    try { if (this._pushing) await this._pushing; const r = await this.pullCloud(true); this.citeUpgradeAfter(r); this._needPull = !(r === true || r === 'empty'); if (this._needPull) this._pushFailed = true; else if (this.syncOn()) this.autoPush(); }
     finally { this._pulling = false; }
   }
   // 舊版分頁在搬移後寫進 localStorage 的修改：只合併它改過或新增的論文；沒改過的示範論文不合併
@@ -1907,14 +2299,359 @@ class Component extends DCLogic {
     this.toast(ok ? '瀏覽器同意保留論憶的資料，空間不足時不會自動清掉' : '瀏覽器沒有同意（由瀏覽器自行決定；加入書籤或安裝成 App 比較容易通過）。請定期匯出 JSON 或開啟雲端同步。', '', 8000);
     this.refreshStorage();
   }
-  clearNote() { this._note = ''; const t = document.querySelector('textarea.ly-note'); if (t) t.value = ''; }
+  // ---- 原始檔檢視：一頁一個畫布，捲到附近才畫，離開很遠就收掉（大檔案也不會吃光記憶體） ----
+  async pdfLoad(pid) {
+    const tok = this._pdfTok = (this._pdfTok || 0) + 1;
+    this.pdfClose(); this.setState({ pdfPid: pid, pdfState: 'loading', pdfErr: '', pdfUrl: '', pdfN: 0, pdfPg: 1 });
+    let blob = null; try { blob = await fileGet(pid); } catch (e) {}
+    if (tok !== this._pdfTok) return;
+    if (!blob) return this.setState({ pdfState: 'none' });
+    let stage = 'read';
+    try {
+      const data = new Uint8Array(await blob.arrayBuffer()); stage = 'lib';
+      const lib = await this.pdfLib(); stage = 'doc';
+      const doc = await lib.getDocument({ data }).promise;
+      if (tok !== this._pdfTok) { doc.destroy(); return; }
+      const vp = (await doc.getPage(1)).getViewport({ scale: 1 }); if (tok !== this._pdfTok) { doc.destroy(); return; }
+      const url = URL.createObjectURL(blob);
+      this._pdf = { pid, doc, url, n: doc.numPages, ratio: vp.height / vp.width, sizes: {}, live: new Set() };
+      this.setState({ pdfState: 'ready', pdfUrl: url, pdfN: doc.numPages });
+    } catch (e) { if (tok === this._pdfTok) { const m = (e && e.message) || ''; this.setState({ pdfState: 'error', pdfErr: m, pdfErrKind: stage === 'read' ? 'read' : stage === 'lib' || /fake worker|dynamically imported module|Failed to fetch|NetworkError|Load failed|importScripts/i.test(m) ? 'lib' : 'file' }); } }
+  }
+  // 收掉畫面上的頁面：停止還在畫的、釋放畫布（Safari 要把寬高設成 0 才會馬上還記憶體）
+  pdfClearBox() {
+    const box = this._pdfBox; this._pdfBox = null; if (!box) return;
+    box.querySelectorAll('.ly-pdfpage').forEach(el => { if (el._task) { try { el._task.cancel(); } catch (e) {} el._task = null; } el.querySelectorAll('canvas').forEach(c => { c.width = c.height = 0; }); });
+    box.textContent = '';
+  }
+  pdfClose() {
+    const p = this._pdf; this._pdf = null; this.pdfUnwatch(); this.pdfClearBox();
+    if (p) { try { p.doc.destroy(); } catch (e) {} setTimeout(() => URL.revokeObjectURL(p.url), 60000); }
+  }
+  pdfUnwatch() { (this._pdfIo || []).forEach(o => o.disconnect()); this._pdfIo = null; this._pdfBuilt = null; }
+  // 每次畫面更新時檢查：要不要載入、要不要重排（換論文、換寬度、縮放），要不要捲到某一頁
+  syncPdf() {
+    const s = this.state, pid = s.layout === 'reader' && s.pdfOn && this._shown;
+    if (!pid) { if (this._pdfIo) this.pdfUnwatch(); if (this._pdfBox) this.pdfClearBox(); return; }
+    if (s.pdfPid !== pid) { this.pdfLoad(pid); return; }
+    // 要跳的頁屬於別篇論文（例如那篇在這台沒有原始檔）：不要套到這篇
+    if (s.pdfGo && s.pdfGoPid && s.pdfGoPid !== pid) { this.setState({ pdfGo: null, pdfGoPid: null }); return; }
+    const p = this._pdf, box = document.querySelector('.ly-pdfpages');
+    if (s.pdfState !== 'ready' || !p || p.pid !== pid || !box) return;
+    // 桌機是 main 在捲動，預先載入的範圍要算在 main 上；手機是整頁捲動
+    const sc = box.closest('.ly-main'), root = sc && /auto|scroll/.test(getComputedStyle(sc).overflowY) ? sc : null;
+    const W = Math.max(160, Math.round(((box.parentElement && box.parentElement.clientWidth) || 700) * (s.pdfZoom || 1)) - 4), key = pid + '|' + W + (root ? '|m' : '|d');
+    if (this._pdfBuilt !== key || this._pdfBox !== box) {
+      // 只是寬度變了（收側欄、轉手機、捲軸出現）：重排後回到原本看的那一頁的同一個位置
+      const same = this._pdfBox === box && this._pdfBuilt && this._pdfBuilt.startsWith(pid + '|') && this._pdfBuilt.slice(-2) === key.slice(-2) && !s.pdfGo;
+      let keep = null;
+      if (same) { const el = box.querySelector(`.ly-pdfpage[data-pg="${s.pdfPg || 1}"]`), top0 = root ? root.getBoundingClientRect().top : 0; if (el) { const rc = el.getBoundingClientRect(); keep = { g: s.pdfPg || 1, f: rc.height ? (top0 - rc.top) / rc.height : 0 }; } }
+      this.pdfBuild(box, W, key, root);
+      if (keep) { const el = box.querySelector(`.ly-pdfpage[data-pg="${keep.g}"]`), top0 = root ? root.getBoundingClientRect().top : 0; if (el) { const rc = el.getBoundingClientRect(), d = rc.top - top0 + keep.f * rc.height; if (root) root.scrollTop += d; else window.scrollBy(0, d); } }
+    }
+    if (s.pdfGo) { const g = Math.max(1, Math.min(p.n, s.pdfGo)), el = box.querySelector(`.ly-pdfpage[data-pg="${g}"]`); if (el) el.scrollIntoView({ block: 'start' }); this.setState({ pdfGo: null, pdfGoPid: null, pdfPg: g }); }
+  }
+  pdfBuild(box, W, key, root) {
+    const p = this._pdf; this.pdfUnwatch(); if (this._pdfBox && this._pdfBox !== box) this.pdfClearBox(); this._pdfBox = box; this.pdfClearBox(); this._pdfBuilt = key; this._pdfBox = box; p.W = W;
+    p.live.forEach(i => p.live.delete(i));
+    for (let i = 1; i <= p.n; i++) {
+      const d = document.createElement('div'); d.className = 'ly-pdfpage'; d.dataset.pg = i; d.setAttribute('role', 'img'); d.setAttribute('aria-label', `原始檔第 ${i} 頁`);
+      d.style.cssText = `width:${W}px;height:${Math.round(W * (p.sizes[i] || p.ratio))}px;margin:0 auto 14px;background:#fff;box-shadow:0 1px 4px rgba(29,27,24,.16);scroll-margin-top:64px`;
+      box.appendChild(d);
+    }
+    const near = new IntersectionObserver(es => es.forEach(e => { const i = +e.target.dataset.pg; if (e.isIntersecting) this.pdfRender(i, e.target); else this.pdfDrop(i, e.target); }), { root, rootMargin: '900px 0px' });
+    // 目前在第幾頁：畫面上露出最多的那一頁
+    const vis = new Map(), seen = new IntersectionObserver(es => {
+      es.forEach(e => vis.set(+e.target.dataset.pg, e.isIntersecting ? e.intersectionRatio : 0));
+      let best = 0, bv = 0; vis.forEach((v, i) => { if (v > bv || (v === bv && v > 0 && i < best)) { bv = v; best = i; } });
+      if (best && best !== this.state.pdfPg && !this.state.pdfGo) this.setState({ pdfPg: best });
+    }, { root, threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+    box.querySelectorAll('.ly-pdfpage').forEach(d => { near.observe(d); seen.observe(d); });
+    this._pdfIo = [near, seen];
+  }
+  async pdfRender(i, el) {
+    const p = this._pdf; if (!p || p.live.has(i)) return; p.live.add(i);
+    let cv = null;
+    try {
+      const page = await p.doc.getPage(i); if (this._pdf !== p || !p.live.has(i) || !el.isConnected) return;
+      const v1 = page.getViewport({ scale: 1 }), r = v1.height / v1.width;
+      if (Math.abs((p.sizes[i] || p.ratio) - r) > 0.002) { p.sizes[i] = r; el.style.height = Math.round(p.W * r) + 'px'; }
+      // 畫布像素有上限（iPhone／iPad 約 1,600 萬像素，超過就畫不出來）：放大很多時降低解析度，用 CSS 拉大
+      const dpr = Math.min(2, window.devicePixelRatio || 1), ios = /iP(ad|hone|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1), lim = ios ? 16e6 : 32e6;
+      let sc = p.W / v1.width * dpr; const area = v1.width * v1.height * sc * sc; if (area > lim) sc *= Math.sqrt(lim / area);
+      const vp = page.getViewport({ scale: sc }); cv = document.createElement('canvas');
+      cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+      const task = page.render({ canvasContext: cv.getContext('2d'), viewport: vp }); el._task = task; await task.promise; el._task = null;
+      if (this._pdf !== p || !p.live.has(i)) { cv.width = cv.height = 0; return; }
+      el.textContent = ''; el.appendChild(cv);
+    } catch (e) { if (cv) cv.width = cv.height = 0; p.live.delete(i); }
+  }
+  pdfDrop(i, el) {
+    const p = this._pdf; if (!p || !p.live.has(i)) return; p.live.delete(i);
+    if (el._task) { try { el._task.cancel(); } catch (e) {} el._task = null; }
+    el.querySelectorAll('canvas').forEach(c => { c.width = c.height = 0; c.remove(); });
+  }
+  pdfZoomBy(d) { const z = this.state.pdfZoom || 1, k = PDF_ZOOM.indexOf(z), n = PDF_ZOOM[Math.max(0, Math.min(PDF_ZOOM.length - 1, (k < 0 ? 2 : k) + d))]; if (n !== z) this.setState(st => ({ pdfZoom: n, pdfGo: st.pdfPg, pdfGoPid: this._shown })); }
+  // 之前匯入的論文（或貼上文字的）：附加同一份 PDF，順便對出每段的頁碼
+  async attachPdf(file) {
+    const cur = this._shown && this.find(this._shown); if (!file || !cur) return;
+    if (!/pdf/i.test(file.type || '') && !/\.pdf$/i.test(file.name || '')) return this.toast('請選擇 PDF 檔');
+    this.setState({ pdfState: 'loading' }, () => this.focusSoon('.ly-pdfbar'));
+    try {
+      const lib = await this.pdfLib(), doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise, texts = [];
+      for (let i = 1; i <= Math.min(doc.numPages, 150); i++) texts.push((await (await doc.getPage(i)).getTextContent()).items.map(it => (it.str || '') + (it.hasEOL ? ' ' : '')).join(''));
+      const n = doc.numPages; doc.destroy();
+      const pg = paraPages(cur.paras.map(x => x.en), texts), hit = pg.filter(Boolean).length;
+      await filePut(cur.id, file);
+      this.upd(cur.id, p => ({ ...p, file: { name: file.name, size: file.size || 0, pages: n, at: Date.now() }, paras: p.paras.map((x, i) => { const { pg: _o, ...r } = x; return pg[i] ? { ...r, pg: pg[i] } : r; }) }));
+      this.setState(st => st.pdfPid === cur.id ? { pdfPid: null } : null);
+      this.toast(hit ? `已附加原始檔（${n} 頁）：${hit} 段對到頁碼，點段落可以「在原始檔看這頁」` : `已附加原始檔（${n} 頁）；段落文字和這份 PDF 對不起來，沒有標出頁碼`, '', 8000);
+    } catch (e) { this.setState(st => st.pdfPid === cur.id ? { pdfPid: null } : null); this.toast('附加失敗：' + ((e && e.message) || '這個檔案打不開')); }
+  }
+  async removePdf() {
+    const cur = this._shown && this.find(this._shown); if (!cur) return;
+    if (!window.confirm('從這台裝置移除這篇的原始 PDF？段落、翻譯、螢光與筆記都不受影響；別台裝置上的原始檔也不受影響。')) return;
+    try { await fileDel(cur.id); } catch (e) {}
+    this.pdfClose(); this.setState({ pdfPid: null }, () => this.focusSoon('.ly-pdfbar')); this.toast('已從這台裝置移除原始檔');
+  }
+  // 刪除的論文過了可以復原的時間：原始檔一起刪掉
+  async pruneFiles() { let ks; try { ks = await fileKeys(); } catch (e) { return; } const g = new Set(this.state.gone || []); (ks || []).filter(k => g.has(k) && !this.find(k)).forEach(k => fileDel(k).catch(() => {})); }
+  // ---- 引用比對 ----
+  // 更新後的一次重算要等雲端下載合併成功（下載失敗時先不算，不然雲端的修改會被當成這台改過的而蓋掉）
+  citeUpgradeAfter(r) { if (this._citeUpgrade && (r === true || r === 'empty' || r === 'off')) { this._citeUpgrade = false; setTimeout(() => this.reciteAll(false, r !== 'off'), 400); } }
+  // 標題、年份、DOI 改了（編輯資訊、AI 整理書目）或同步、匯入進來新的論文：重新比對跟它們有關的引用
+  citeWatch() {
+    const old = this._citeSig, now = new Map(this.state.papers.map(p => [p.id, citeSig(p)])); this._citeSig = now;
+    const skip = this._citeSkip; this._citeSkip = null;
+    const pend = this._citePend || (this._citePend = { K: new Set(), H: new Set(), N: new Set() }); let any = false;
+    now.forEach((v, id) => { if (skip && skip.has(id)) return; const o = old.get(id); if (!o) { pend.N.add(id); any = true; return; } if (o.k !== v.k) { pend.K.add(id); any = true; } if (o.h !== v.h) { pend.H.add(id); any = true; } });
+    if (!any) return;
+    clearTimeout(this._citeT); this._citeT = setTimeout(() => this.citeRun(), 400);
+  }
+  // 依改到的地方決定重算什麼：標題、年份、DOI 改了只重算「誰引用它」；參考文獻換了才重算「它引用誰」；
+  // 新進來的論文（同步、匯入、復原刪除）只加不減，原本帶著的引用不拿掉
+  async citeRun() {
+    const pd = this._citePend; this._citePend = null; if (!pd) return;
+    const papers = this.state.papers, ids = new Set(papers.map(p => p.id)), K = [...pd.K].filter(id => ids.has(id)), N = [...pd.N].filter(id => ids.has(id)), H = new Set([...pd.H].filter(id => ids.has(id)));
+    if (!K.length && !N.length && !H.size) return;
+    const others = new Map([...K.map(id => [id, true]), ...N.map(id => [id, false])]), Ns = new Set(N), allT = new Map(papers.map(o => [o.id, true])), allF = new Map(papers.map(o => [o.id, false]));
+    const plan = p => Ns.has(p.id) ? allF : H.has(p.id) ? allT : others;
+    const snap = new Map(papers.map(p => [p.id, p]));
+    this.applyCites(await citeMapAsync(papers, plan), snap, plan);
+  }
+  // 套用新的引用清單；算的期間被改過的論文（例如剛加了一條引用）改用最新的資料重算這一篇
+  applyCites(map, snap, plan) {
+    let add = 0, rem = 0; const before = new Map(), stale = [];
+    this.state.papers.forEach(p => { const n = map.get(p.id); if (!n) return; if (snap && snap.get(p.id) !== p) { stale.push(p.id); return; } const o = p.cites || [], a = n.filter(x => !o.includes(x)).length, r = o.filter(x => !n.includes(x)).length; if (a || r) { add += a; rem += r; before.set(p.id, o); } });
+    if (stale.length && plan) { const ps = this.state.papers, keys = new Map(ps.map(p => [p.id, citeKey(p)])); stale.forEach(id => { const p = ps.find(x => x.id === id), n = p && citeOne(p, ps, keys, plan(p)); if (!n) return; const o = p.cites || [], a = n.filter(x => !o.includes(x)).length, r = o.filter(x => !n.includes(x)).length; if (a || r) { add += a; rem += r; before.set(id, o); map.set(id, n); snap.set(id, p); } }); }
+    if (before.size) this.setState(st => { const ids = new Set(st.papers.map(p => p.id)); return { papers: st.papers.map(p => before.has(p.id) && map.has(p.id) && (!snap || snap.get(p.id) === p) ? { ...p, cites: map.get(p.id).filter(c => ids.has(c)) } : p) }; });
+    return { add, rem, before };
+  }
+  // 重新比對整個文獻庫。manual：使用者按的（有參考文獻的論文，比對不到的舊引用會拿掉，可以復原）
+  async reciteAll(manual, pulled) {
+    // 自動重算還在跑：使用者按的那一次排在後面
+    if (this._reciting) { if (manual) { this._reciteQueued = true; this.setState({ reciting: true }); } return; }
+    this._reciting = true; if (manual) this.setState({ reciting: true });
+    let r;
+    let snap;
+    try { const papers = this.state.papers, plan = citeAll(papers, !!manual); snap = new Map(papers.map(p => [p.id, p])); r = this.applyCites(await citeMapAsync(papers, plan), snap, plan); }
+    finally { this._reciting = false; if (manual || this._reciteQueued) this.setState({ reciting: false }); }
+    // 雲端還沒下載合併過：只多了引用的論文仍算「和雲端一樣」，之後下載時照樣以雲端的版本為準（漏掉的引用之後重新比對會再找到）
+    if (!manual && !pulled && r.before.size) this.setState(() => null, () => { let ch = false; r.before.forEach((_, id) => { const o = snap.get(id), p = this.find(id); if (!o || !p || p === o) return; const { cites: c1, ...a } = o, { cites: c2, ...b } = p; if (JSON.stringify(a) !== JSON.stringify(b)) return; if (this._synced && this._synced.get(id) === fpOf(o)) { this._synced.set(id, fpOf(p)); ch = true; } if (this._syncBase && this._syncBase.get(id) === o) this._syncBase.set(id, p); }); if (ch) this.persistSynced(); });
+    if (!manual) { const pend = !pulled && r.before.size && this._synced && this._synced.size; this.lsSet('lunyi-cite-v', pend ? '2p' : '2'); if (pend) this._citeUpgrade = true; if (this._reciteQueued) { this._reciteQueued = false; return this.reciteAll(true); } if (r.add && !this.state.toast) this.toast(`已用新的比對方式找到 ${r.add} 條之前漏掉的引用`, '', 7000); return; }
+    const total = this.state.papers.reduce((x, p) => x + (p.cites || []).length, 0);
+    if (!r.add && !r.rem) return this.toast(`重新比對完成：引用沒有變動（共 ${total} 條）`);
+    const back = r.before;
+    this.toastGo(`重新比對完成：新增 ${r.add} 條、移除 ${r.rem} 條引用`, '復原', () => this.setState(st => ({ papers: st.papers.map(p => back.has(p.id) ? { ...p, cites: back.get(p.id) } : p) })), 10000);
+  }
+  // ---- 筆記草稿：每一段各一份（p:論文:段落），修改中的筆記也是（e:筆記）；存在這台瀏覽器 ----
+  loadDrafts() { let d = null; try { d = JSON.parse(this.lsGet('lunyi-note-drafts') || '{}'); } catch (e) {} this._drafts = d && typeof d === 'object' && !Array.isArray(d) ? d : {}; }
+  draftOf(k) { const d = k && this._drafts && this._drafts[k]; return d && typeof d.t === 'string' ? d.t : ''; }
+  // 打字時不重繪整篇論文；只有「有沒有草稿」改變時才更新畫面上的標示
+  setDraft(k, v) {
+    if (!k) return; if (!this._drafts) this._drafts = {};
+    const had = !!this.draftOf(k).trim(), has = !!String(v || '').trim();
+    const prev = this._drafts[k], eid = /^e:(.+)$/.exec(k), en = eid && has && !(prev && prev.base != null) && this.state.notes.find(n => n.id === eid[1]);
+    if (has) this._drafts[k] = { t: String(v), at: Date.now(), ...(prev && prev.base != null ? { base: prev.base } : en ? { base: Number(en.at) || 0 } : {}) }; else delete this._drafts[k];
+    this.markDraft(k);
+    const mine = this._draftMine || (this._draftMine = new Set()); if (has) mine.add(k); else mine.delete(k);
+    // 草稿存掉或捨棄了：同一段之後的新草稿要再提醒一次
+    if (had && !has && this._draftTold) this._draftTold.delete(k);
+    clearTimeout(this._dT); this._dT = setTimeout(() => this.saveDrafts(), 300);
+    if (had !== has) this.setState(st => ({ draftVer: (st.draftVer || 0) + 1 }));
+  }
+  // 只寫回這個分頁改過的草稿，其他分頁同時存的不會被蓋掉
+  saveDrafts() {
+    clearTimeout(this._dT); this._dT = null; const dirty = this._draftDirty; if (!dirty || !dirty.size) return;
+    // 讀不到（或內容壞了）就以記憶體裡的為準
+    let d = null; try { const raw = localStorage.getItem(libKey('lunyi-note-drafts')); d = raw ? JSON.parse(raw) : {}; } catch (e) { d = null; } if (!d || typeof d !== 'object' || Array.isArray(d)) d = { ...(this._drafts || {}) };
+    const ks = [...dirty]; ks.forEach(k => { const v = this._drafts && this._drafts[k]; if (v) d[k] = v; else delete d[k]; });
+    if (!this.lsSet('lunyi-note-drafts', Object.keys(d).length ? JSON.stringify(d) : '')) return;
+    ks.forEach(k => dirty.delete(k)); this._drafts = { ...d };
+  }
+  markDraft(k) { (this._draftDirty || (this._draftDirty = new Set())).add(k); }
+  // 草稿屬於哪篇論文的哪一段（筆記已刪除時 para 是 undefined）
+  draftLoc(k) {
+    if (/^o:/.test(k)) return { orphan: true };
+    const m = /^p:(.+):(\d+)$/.exec(k); if (m) return this.find(m[1]) ? { pid: m[1], para: +m[2] } : null;
+    const e = /^e:(.+)$/.exec(k); if (!e) return null; const n = this.state.notes.find(x => x.id === e[1]);
+    return n ? (this.find(n.paperId) ? { pid: n.paperId, para: n.para, nid: n.id } : null) : { orphan: true };
+  }
+  pruneDrafts() {
+    const g = new Set(this.state.gone || []); let ch = false;
+    Object.keys(this._drafts || {}).forEach(k => { const m = /^p:(.+):\d+$/.exec(k), e = /^e:(.+)$/.exec(k); if ((m && g.has(m[1]) && !this.find(m[1])) || (e && g.has(e[1]) && !this.state.notes.some(n => n.id === e[1]))) { delete this._drafts[k]; this.markDraft(k); ch = true; } });
+    const d = this._drafts || {}, ns = this.state.notes;
+    const same = new Set([...Object.keys(d).filter(k => /^e:/.test(k)).map(k => this.draftOf(k).trim()), ...ns.map(n => String(n.text || '').trim())].filter(Boolean));
+    Object.keys(d).forEach(k => { if (/^o:/.test(k) && same.has(this.draftOf(k).trim())) { delete d[k]; this.markDraft(k); ch = true; } });
+    Object.keys(d).forEach(k => { const e = /^e:(.+)$/.exec(k), n = e && ns.find(x => x.id === e[1]), t = this.draftOf(k).trim(); if (!n || n.para == null || !t) return; const pk = `p:${n.paperId}:${n.para}`, pv = this.draftOf(pk); if (!pv || (pk === this._draftKeyNow && this._draftDirty && this._draftDirty.has(pk))) return;
+      if (pv.trim() === t) delete d[pk]; else if (pv.endsWith('\n\n' + t)) d[pk] = { ...d[pk], t: pv.slice(0, -(t.length + 2)) }; else return; this.markDraft(pk); ch = true;
+      if (pk === this._draftKeyNow) { const ta = document.querySelector('textarea.ly-note'); if (ta) ta.value = this.draftOf(pk); } });
+    if (ch) { this.saveDrafts(); this.setState(st => ({ draftVer: (st.draftVer || 0) + 1 })); }
+    this.pruneFiles();
+  }
+  // ---- 詞句螢光 ----
+  // 目前選取的文字在哪一段、哪一邊、第幾個字到第幾個字（只算同一段的同一邊）
+  textRange() {
+    const g = window.getSelection && window.getSelection(); if (!g || g.isCollapsed || !g.rangeCount) return null;
+    const rg = g.getRangeAt(0), el = n => n && (n.nodeType === 1 ? n : n.parentElement), a = el(rg.startContainer), b = el(rg.endContainer);
+    const ta = a && a.closest && a.closest('.ly-tx'), tb = b && b.closest && b.closest('.ly-tx');
+    if (!ta) return null;
+    // 三擊選整段時，結尾會落在下一個區塊的最前面：當成選到這段的結尾
+    let toEnd = false;
+    if (ta !== tb) { if (!(ta.compareDocumentPosition(rg.endContainer) & Node.DOCUMENT_POSITION_FOLLOWING)) return null; const inTa = document.createRange(); inTa.setStart(rg.startContainer, rg.startOffset); inTa.setEnd(ta, ta.childNodes.length); if (rg.toString().slice(inTa.toString().length).trim()) return null; toEnd = true; }
+    const pre = document.createRange(); pre.selectNodeContents(ta); pre.setEnd(rg.startContainer, rg.startOffset);
+    const text = ta.textContent; let s0 = pre.toString().length, e0 = toEnd ? text.length : s0 + rg.toString().length;
+    while (s0 < e0 && /\s/.test(text[s0])) s0++; while (e0 > s0 && /\s/.test(text[e0 - 1])) e0--;
+    if (e0 <= s0) return null;
+    return { side: ta.dataset.side, i: +ta.dataset.pi, s: s0, e: e0, rect: rg.getBoundingClientRect() };
+  }
+  onTextSelect(fromSel) {
+    const s = this.state; if (s.layout !== 'reader' || s.showAdd || s.showSet || s.showLogin || s.org) return;
+    if (fromSel && s.pen && !this.coarse()) return;
+    const t = this.textRange(); if (!t) return;
+    const cur = this._shown && this.find(this._shown); if (!cur || !cur.paras[t.i]) return;
+    // 觸控螢幕上拖曳是捲動頁面：螢光筆開著時也跳出工具列，選好範圍再按顏色
+    if (s.pen && !this.coarse()) { this.addMark(cur.id, t.i, t.side, t.s, t.e, s.pen); try { window.getSelection().removeAllRanges(); } catch (e) {} return; }
+    this.setState({ hlPick: { pid: cur.id, i: t.i, side: t.side, s: t.s, e: t.e, x: t.rect.left + t.rect.width / 2, top: t.rect.top, bottom: t.rect.bottom }, hlEdit: null });
+  }
+  aiSig() { return [this.lsGet('lunyi-ai'), this.lsGet('lunyi-code'), this.secGet('lunyi-apikey').slice(-6), this.secGet('lunyi-gemini-key').slice(-6), this.lsGet('lunyi-gemini-model'), this.lsGet('lunyi-claude-model')].join('|'); }
+  coarse() { try { return window.matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } }
+  setMarks(pid, i, fn) { this.upd(pid, p => ({ ...p, paras: p.paras.map((y, j) => j !== i ? y : { ...y, marks: fn(y.marks || [], y) }) })); }
+  addMark(pid, i, side, s, e, c) {
+    const p = this.find(pid), x = p && p.paras[i]; if (!x) return;
+    const zh = x.zh || '', src = side === 'zh' ? zh : x.en, dst = side === 'zh' ? x.en : zh, al = dst ? alignRange(src, dst, s, e, side === 'zh') : null;
+    const r = side === 'zh' ? { zh: [s, e], en: al && al.r } : { en: [s, e], zh: al && al.r };
+    const m = { id: 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), c, src: side, en: r.en || null, zh: r.zh || null, et: r.en ? x.en.slice(r.en[0], r.en[1]) : '', zt: r.zh ? zh.slice(r.zh[0], r.zh[1]) : '', fit: al ? al.fit : 'none', at: Date.now() };
+    // 和這次畫的範圍重疊的舊螢光拿掉，新的畫在上面；拿掉的可以在提示裡復原
+    const gone = (x.marks || []).filter(o => markOver(x, o, side, s, e));
+    this.setMarks(pid, i, ms => [...ms.filter(o => !gone.some(g => g.id === o.id)), m]);
+    this.setState({ hlPick: null });
+    if (gone.length) this.toastGo(`已取代 ${gone.length} 段螢光`, '復原', () => this.setMarks(pid, i, ms => [...ms.filter(o => o.id !== m.id), ...gone.filter(g => !ms.some(o => o.id === g.id))]));
+    if (al && al.fit === 'sent' && !al.whole && this.hasCloud() && this._refineOff !== this.aiSig()) this.refineMark(pid, i, m.id);
+  }
+  // 有連結 AI 時，把「整句」的對應縮到真正對應的詞句（只送這一段的原文與譯文）；AI 給的字要在另一邊原樣找得到才採用
+  async refineMark(pid, i, id) {
+    const p0 = this.find(pid), x = p0 && p0.paras[i], m = x && (x.marks || []).find(o => o.id === id); if (!m || !x.zh) return;
+    const srcZh = m.src === 'zh', sel = srcZh ? m.zt : m.et;
+    let out;
+    // 背景的對齊：AI 沒設定好時不跳出設定，這次開啟網站內也不再試
+    try { out = await window.claude.complete({ quiet: true, system: SYS_ALIGN, max_tokens: 300, messages: [{ role: 'user', content: `原文：\n${x.en}\n\n中文翻譯：\n${x.zh}\n\n使用者在${srcZh ? '中文翻譯' : '原文'}畫了：「${sel}」\n請從${srcZh ? '原文' : '中文翻譯'}裡找出意思對應的那一小段。` }] }); } catch (e) { if (e && e.code === 'NO_KEY') this._refineOff = this.aiSig(); return; }
+    const w = String((J(out) || {}).match || '').trim(); if (!w) return;
+    const p = this.find(pid), y = p && p.paras[i], mm = y && (y.marks || []).find(o => o.id === id);
+    if (!mm || y.en !== x.en || y.zh !== x.zh || mm.fit !== 'sent') return;
+    const dst = srcZh ? y.en : y.zh, near = srcZh ? mm.en : mm.zh; let best = -1, bd = Infinity;
+    for (let k = dst.indexOf(w); k >= 0; k = dst.indexOf(w, k + 1)) { const d = near ? Math.abs(k - near[0]) : k; if (d < bd) { bd = d; best = k; } }
+    // 要落在原本對到的整句附近，不然不採用
+    if (best < 0 || (near && (best < near[0] - 40 || best + w.length > near[1] + 40))) return;
+    const r = [best, best + w.length];
+    this.setMarks(pid, i, ms => ms.map(o => o.id !== id ? o : srcZh ? { ...o, en: r, et: w, fit: 'ai' } : { ...o, zh: r, zt: w, fit: 'ai' }));
+  }
+  delMark(pid, i, id) {
+    const p = this.find(pid), x = p && p.paras[i], m = x && (x.marks || []).find(o => o.id === id); if (!m) return;
+    this.setMarks(pid, i, ms => ms.filter(o => o.id !== id)); this.setState({ hlEdit: null });
+    this.toastGo('已刪除這段螢光', '復原', () => this.setMarks(pid, i, ms => ms.some(o => o.id === id) ? ms : [...ms, m]));
+  }
+  clearMarksIn(pid, i, side, s, e) {
+    const p = this.find(pid), x = p && p.paras[i], gone = x ? (x.marks || []).filter(o => markOver(x, o, side, s, e)) : [];
+    if (gone.length) this.setMarks(pid, i, ms => ms.filter(o => !gone.some(g => g.id === o.id)));
+    this.setState({ hlPick: null }); try { window.getSelection().removeAllRanges(); } catch (y) {}
+    if (gone.length) this.toastGo(`已清除 ${gone.length} 段螢光`, '復原', () => this.setMarks(pid, i, ms => [...ms, ...gone.filter(g => !ms.some(o => o.id === g.id))]));
+  }
+  // 打開一則已存的筆記來修改
+  editNote(id, from) {
+    const n = this.state.notes.find(x => x.id === id); if (!n) return;
+    this._editFrom = from === 'inline' ? id : null;
+    this.setState(st => ({ tab: 'note', noteEdit: id, selPara: n.para != null ? n.para : st.selPara }), () => this.focusSoon(() => { const t = document.querySelector(`textarea.ly-noteedit[data-nid="${id}"]`); if (t) { const l = t.value.length; try { t.setSelectionRange(l, l); } catch (e) {} if (this.state.narrow) t.scrollIntoView({ block: 'center' }); } return t; }));
+  }
+  // 刪除筆記可以復原：復原時換一個新的 id（舊的 id 可能已經同步成「已刪除」），修改到一半的內容也一起回來
+  deleteNote(x, ev) {
+    if (ev && ev.detail > 1) return;
+    const s = this.state, at = s.notes.findIndex(y => y.id === x.id), ta = document.querySelector(`textarea.ly-noteedit[data-nid="${x.id}"]`), pend = String(ta ? ta.value : this.draftOf('e:' + x.id)), wasEd = s.noteEdit === x.id;
+    this.setDraft('e:' + x.id, '');
+    this.setState(st => ({ notes: st.notes.filter(y => y.id !== x.id), gone: [...st.gone, x.id], noteEdit: st.noteEdit === x.id ? null : st.noteEdit }), () => this.focusSoon('#lunyi-notes-h'));
+    // 連按兩次（下一則筆記移到同一個位置）：「復原」一次全部找回來
+    const chain = this._noteDels && Date.now() < (this._noteDelUntil || 0) && this._toastFn === this._noteDelFn, list = chain ? this._noteDels : (this._noteDels = []);
+    list.push({ x, at, pend, wasEd }); this._noteDelUntil = Date.now() + 8000;
+    this.toastGo(list.length > 1 ? `已刪除 ${list.length} 則筆記` : '已刪除筆記', '復原', this._noteDelFn = () => {
+      this._noteDelUntil = 0; const back = list.splice(0).filter(it => this.find(it.x.paperId)).map((it, k) => ({ ...it, nid: 'n' + Date.now().toString(36) + k })); if (!back.length) return;
+      this.setState(st => { const ns = [...st.notes]; [...back].reverse().forEach(it => ns.splice(Math.min(it.at < 0 ? ns.length : it.at, ns.length), 0, { ...it.x, id: it.nid, at: Date.now() })); return { notes: ns }; },
+        () => back.forEach(it => {
+          const ok = 'o:' + it.x.id, op = this.draftOf(ok), txt = op.trim() ? op : it.pend;
+          if (txt.trim() && txt.trim() !== String(it.x.text || '').trim()) this.setDraft('e:' + it.nid, txt);
+          if (op.trim()) this.setDraft(ok, '');
+          if (it.x.para != null && txt.trim()) { const pk = `p:${it.x.paperId}:${it.x.para}`, pv = this.draftOf(pk); if (pv.trim() === txt.trim()) this.setDraft(pk, ''); else if (pv.endsWith('\n\n' + txt.trim())) this.setDraft(pk, pv.slice(0, -(txt.trim().length + 2))); }
+          if (it.wasEd) this.editNote(it.nid); }));
+    });
+  }
+  // 改完回到開始修改的地方：從段落下方點進來的回到那則筆記，從筆記面板來的回到「編輯」
+  editBack(id) { const inl = this._editFrom === id; this._editFrom = null; this.focusSoon(inl ? `.ly-noteline[data-nid="${id}"]` : `button.ly-noteeditbtn[data-nid="${id}"]`); }
+  saveEdit(id) {
+    const t = document.querySelector(`textarea.ly-noteedit[data-nid="${id}"]`), v = String(t ? t.value : this.draftOf('e:' + id)).trim(), n0 = this.state.notes.find(n => n.id === id);
+    if (!v) return this.toast('筆記不能是空的；要刪掉這則筆記請按「刪除」');
+    // 沒有改：不記修改時間（不然這份舊的內容同步時會蓋過別台裝置真的修改）
+    if (n0 && v === String(n0.text || '').trim()) { this.setDraft('e:' + id, ''); this.setState(st => ({ noteEdit: st.noteEdit === id ? null : st.noteEdit }), () => this.editBack(id)); return this.toast('沒有修改'); }
+    this.setState(st => ({ notes: st.notes.map(n => n.id === id ? { ...n, text: v, at: Date.now(), edited: today() } : n), noteEdit: st.noteEdit === id ? null : st.noteEdit }), () => this.editBack(id));
+    this.setDraft('e:' + id, ''); this.toast('筆記已更新');
+  }
+  // 取消修改：改過的內容可以在提示裡復原
+  cancelEdit(id) {
+    const n = this.state.notes.find(x => x.id === id), t = document.querySelector(`textarea.ly-noteedit[data-nid="${id}"]`), v = String(t ? t.value : this.draftOf('e:' + id));
+    this.setDraft('e:' + id, ''); this.setState(st => ({ noteEdit: st.noteEdit === id ? null : st.noteEdit }), () => this.editBack(id));
+    if (n && v.trim() && v.trim() !== String(n.text || '').trim()) this.toastGo('已取消修改', '復原', () => { this.setDraft('e:' + id, v); this.editNote(id); });
+  }
+  // 筆記面板的草稿清單：回去繼續寫、或捨棄（可以復原）
+  resumeDraft(k, n = 0) {
+    const loc = this.draftLoc(k); if (!loc || loc.orphan) return;
+    // 草稿在別篇論文：先打開那篇，畫面換過去之後再接著做
+    if (loc.pid !== this._shown || this.state.layout !== 'reader') { if (n > 4) return; if (!n) this.open(loc.pid, 'reader'); return setTimeout(() => this.resumeDraft(k, n + 1), 30); }
+    if (loc.nid) return this.editNote(loc.nid);
+    this.setState({ tab: 'note', selPara: loc.para }, () => this.focusSoon(() => { const t = document.querySelector('textarea.ly-note'); if (t) { const l = t.value.length; try { t.setSelectionRange(l, l); } catch (x) {} if (this.state.narrow) t.scrollIntoView({ block: 'center' }); } return t; }));
+  }
+  // 連按好幾次「捨棄」（雙擊、按住 Enter）時，「復原」一次全部找回來
+  discardDraft(k, ev) {
+    if (ev && ev.detail > 1) return;
+    const old = this._drafts && this._drafts[k]; if (!old) return;
+    const chain = this._discards && Date.now() < (this._discardUntil || 0) && this._toastFn === this._discardFn;
+    // 畫面上的「復原」是別的動作（例如刪除論文）：這次捨棄沒辦法復原，先問一聲
+    if (!chain && this._toastFn && Date.now() < (this._undoUntil || 0) && !window.confirm('捨棄這份草稿？現在提示上的「復原」只能復原剛才的刪除，捨棄的草稿沒辦法找回。')) return;
+    const live = chain ? this._discards : (this._discards = []); live.push([k, old]); this._discardUntil = Date.now() + 8000;
+    this.setDraft(k, ''); const t = k === this._draftKeyNow && document.querySelector('textarea.ly-note'); if (t) t.value = '';
+    this.toastGo(live.length > 1 ? `已捨棄 ${live.length} 份草稿` : '已捨棄草稿', '復原', this._discardFn = () => {
+      let merged = 0; this._discardUntil = 0;
+      // 捨棄之後同一段又寫了新的：新的留著，捨棄的接在後面
+      live.splice(0).forEach(([k, o]) => { const c = this.draftOf(k).trim(); if (c && c !== o.t.trim()) { this._drafts[k] = { t: c + '\n\n' + o.t, at: Date.now() }; merged++; } else this._drafts[k] = o; this.markDraft(k); if (k === this._draftKeyNow) this._noteElKey = null; });
+      this.saveDrafts(); this.setState(st => ({ draftVer: (st.draftVer || 0) + 1 }));
+      if (merged) this.toast('這一段已經有新的草稿，捨棄的內容接在後面');
+    });
+    this.focusSoon(() => document.querySelector('.ly-draftgo') || document.querySelector('textarea.ly-note') || document.getElementById('lunyi-notes-h'));
+  }
   ensureSlots() {
     const { map, changed } = slotMap(this.slotNames(), this.state.fslots);
     if (changed) this.setState({ fslots: map });
   }
-  componentWillUnmount() { if (this._ro) this._ro.disconnect(); window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('beforeunload', this._bu); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
+  componentWillUnmount() { this.pdfClose(); document.removeEventListener('pointerdown', this._mdn, true); document.removeEventListener('pointerup', this._mup, true); clearTimeout(this._selT); document.removeEventListener('mouseup', this._selUp); document.removeEventListener('touchend', this._selUp); document.removeEventListener('keyup', this._selKey); document.removeEventListener('selectionchange', this._selChg); document.removeEventListener('scroll', this._hlScroll, true); if (this._ro) this._ro.disconnect(); window.removeEventListener('lunyi-need-key', this._needKey); window.removeEventListener('resize', this._rs); window.removeEventListener('resize', this._rsL); cancelAnimationFrame(this._fitL); window.removeEventListener('keydown', this._esc); window.removeEventListener('pointerdown', this._down); window.removeEventListener('storage', this._store); window.removeEventListener('pagehide', this._flush); window.removeEventListener('beforeunload', this._bu); window.removeEventListener('popstate', this._pop); document.removeEventListener('visibilitychange', this._vis); this._flush && this._flush(); clearTimeout(this._push); clearTimeout(this._qT); }
   lsGet(k) { try { return localStorage.getItem(libKey(k)) || ''; } catch (e) { return ''; } }
-  lsSet(k, v) { try { k = libKey(k); v ? localStorage.setItem(k, v) : localStorage.removeItem(k); } catch (e) {} }
+  lsSet(k, v) { try { k = libKey(k); v ? localStorage.setItem(k, v) : localStorage.removeItem(k); return true; } catch (e) { return false; } }
   openSettings(tab) {
     if (!this.state.showSet && !this.state.showAdd && !this.state.showLogin) this._retFocus = document.activeElement;
     const t = tab || this.state.setTab || 'account';
@@ -1975,8 +2712,8 @@ class Component extends DCLogic {
       const lk = l => [l.a, l.b].sort().join('|') + '|' + l.note;
       const links = [...st.links]; const seen = new Set(links.map(lk));
       (d.links || []).forEach(l => { if (l && l.a && l.b && !seen.has(lk(l))) { seen.add(lk(l)); links.push(l); } });
-      const nid = new Set(st.notes.map(n => n.id));
-      const notes = [...st.notes, ...(d.notes || []).filter(n => n && n.id && !nid.has(n.id))].filter(n => !gone.has(n.id) && !gone.has(n.paperId));
+      const nid = new Set(st.notes.map(n => n.id)), nin = new Map((d.notes || []).filter(n => n && n.id && n.paperId && typeof n.text === 'string').map(n => [n.id, n]));
+      const notes = [...st.notes.map(n => { const r = nin.get(n.id); return r && (Number(r.at) || 0) > (Number(n.at) || 0) ? r : n; }), ...[...nin.values()].filter(n => !nid.has(n.id))].filter(n => !gone.has(n.id) && !gone.has(n.paperId));
       const qa = [...st.qa, ...(d.qa || []).filter(x => x && x.q && !st.qa.some(y => y.q === x.q && y.a === x.a))];
       const sel = papers.some(p => p.id === st.sel) ? st.sel : (papers[0] && papers[0].id);
       if (o.sync) {
@@ -2078,6 +2815,7 @@ class Component extends DCLogic {
       const n = this.mergeData(d, { base, sync: true, sy: sy0 });
       this.setState({ syncStatus: `最後下載：${this.stamp()}` });
       if (!quiet) this.toast(`已從雲端合併 ${n} 篇論文`);
+      this.citeUpgradeAfter(true);
       return true;
     } catch (e) { this.setState({ syncStatus: e.empty ? '雲端還沒有論憶的資料，之後的修改會上傳' : '下載失敗：' + e.message }); if (!quiet && !e.switched) this.toast(e.empty ? '雲端還沒有論憶的資料' : '下載失敗：' + e.message); return e.empty ? 'empty' : false; }
   }
@@ -2218,6 +2956,9 @@ class Component extends DCLogic {
     // 只帶這些論文和它們的筆記、串聯；訪客刪除的紀錄、只有示範論文用的專案、刪除專案的紀錄不帶過來；比較矩陣的欄位只在這個帳號還沒設定時帶過來
     const n = this.mergeData({ papers, notes: (g.notes || []).filter(x => x && ids.has(String(x.paperId))), links: (g.links || []).filter(l => l && ids.has(String(l.a)) && ids.has(String(l.b))), qa: g.qa || [], gone: [],
       projects: (g.projects || []).filter(x => used.has(x) || !seedProj.has(x)), projAt: g.projAt, projMeta: g.projMeta, mxCols: this.state.mxCols ? null : g.mxCols }, { quiet: true });
+    // 這些論文在訪客那邊存著的原始 PDF 也複製過來
+    const fp = papers.filter(p => p.file);
+    if (fp.length) { let src = null; try { src = await new Promise((ok, no) => { const q = indexedDB.open('lunyi-files', 1); q.onupgradeneeded = () => { if (!q.result.objectStoreNames.contains('files')) q.result.createObjectStore('files'); }; q.onsuccess = () => ok(q.result); q.onerror = () => no(q.error); }); for (const p of fp) { const b = await new Promise(ok => { try { const r = src.transaction('files', 'readonly').objectStore('files').get(String(p.id)); r.onsuccess = () => ok(r.result || null); r.onerror = () => ok(null); } catch (e) { ok(null); } }); if (b) await filePut(String(p.id), b).catch(() => {}); } } catch (e) {} finally { if (src) src.close(); } }
     this.toast(`已把 ${n} 篇論文複製到這個帳號的文獻庫`);
   }
   tokNoEmail() { const rec = J(this.lsGet('lunyi-g-token') || 'null'); return !!rec && !this.tokEmail(rec); }
@@ -2296,7 +3037,7 @@ class Component extends DCLogic {
       this._syncReady = false;
       if (this._pushing) await this._pushing;
       const r = await this.pullCloud(true); // pullCloud 與進行中的上傳都不會丟出錯誤
-      this._syncReady = true;
+      this._syncReady = true; this.citeUpgradeAfter(r);
       // 下載失敗就不上傳，之後的上傳也會先下載合併
       this._needPull = !(r === true || r === 'empty');
       if (!this._needPull && this.syncOn()) this.autoPush();
@@ -2371,7 +3112,7 @@ class Component extends DCLogic {
     this.setState({ pdf: null, drivePicked: f.id, pdfStatus: `下載「${f.name}」…` });
     try {
       const blob = await (await this.gFetch(`/drive/v3/files/${f.id}?alt=media`, {}, G_DRIVE_RO)).blob();
-      await this.parsePdf(new File([blob], f.name, { type: 'application/pdf' }));
+      await this.parsePdf(new File([blob], f.name, { type: 'application/pdf' }), f.id);
     } catch (e) { this.setState({ pdfStatus: '下載失敗：' + e.message }); }
   }
 
@@ -2492,12 +3233,12 @@ class Component extends DCLogic {
     this.setState({ tAll: null });
   }
 
-  async parsePdf(file) {
+  pdfLib() { if (!this._pdfLib) this._pdfLib = import(PDFJS + 'pdf.min.mjs').then(lib => { lib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.mjs'; return lib; }, e => { this._pdfLib = null; throw e; }); return this._pdfLib; }
+  async parsePdf(file, drive) {
     if (!file) return;
     this.setState({ pdf: null, pdfStatus: '載入解析器…' });
     try {
-      const lib = await import(PDFJS + 'pdf.min.mjs');
-      lib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.mjs';
+      const lib = await this.pdfLib();
       const doc = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
       const n = Math.min(doc.numPages, 150), pages = [], scan = [];
       for (let i = 1; i <= n; i++) {
@@ -2535,7 +3276,8 @@ class Component extends DCLogic {
       const { paras, refs } = splitParas(pages.flatMap(l => [...l, '']));
       if (!paras.length) throw new Error('empty');
       const ocrNote = ocrN ? ` · OCR ${ocrN} 頁${scan.length > ocrN ? `（掃描頁超過 ${OCR_MAX} 頁，其餘略過）` : ''}` : '';
-      this.setState({ pdf: { name: file.name, paras, refs, full: paras.join('\n\n'), head: pages.flat().join('\n').slice(0, 3000) }, pdfStatus: `已解析 ${n} 頁 · ${paras.length} 段${refs ? ' · 含參考文獻' : ''}${ocrNote}` });
+      // 原始檔一起留著（存檔時放進這台瀏覽器）；每段記下在第幾頁
+      this.setState({ pdf: { name: file.name, file, drive: drive || '', pages: doc.numPages, pg: paraPages(paras, pages.map(l => l.join(' '))), paras, refs, full: paras.join('\n\n'), head: pages.flat().join('\n').slice(0, 3000) }, pdfStatus: `已解析 ${n} 頁 · ${paras.length} 段${refs ? ' · 含參考文獻' : ''}${ocrNote}` });
     } catch (e) { this.setState({ pdfStatus: '無法解析此 PDF，請改用貼上文字' }); }
   }
 
@@ -2550,6 +3292,8 @@ class Component extends DCLogic {
       if (!paras.length) return this.toast('請貼上內文');
       full = paras.join('\n\n');
       head = f.text.slice(0, 3000);
+      // 貼上的文字裡有「References／參考文獻」：後面那段拿來比對引用（段落照舊保留）
+      const ls = f.text.split('\n').map(l => l.trim()), ri = refHeadAt(ls); if (ri >= 0) refs = ls.slice(ri + 1).join(' ');
     }
     let meta = {}, aiErr = '';
     if (this.hasCloud()) {
@@ -2559,17 +3303,22 @@ class Component extends DCLogic {
     const id = 'p' + Date.now().toString(36);
     const paper = { id, title: f.title || meta.title || (s.pdf && s.pdf.name.replace(/\.pdf$/i, '')) || '未命名論文', authors: f.authors || meta.authors || '', journal: f.journal || meta.journal || '', year: f.year || String(meta.year || ''),
       projects: [f.folder.trim() !== '全部' && f.folder.trim() !== NOPROJ && f.folder.trim()].filter(Boolean), lang: meta.language || '', tags: Array.isArray(meta.tags) ? meta.tags.slice(0, 3) : [], keywords: (() => { const u = [...new Set(String(f.keywords || '').split(/[,，、;；]/).map(norm).filter(Boolean))]; return (u.length ? u : Array.isArray(meta.keywords) ? [...new Set(meta.keywords.map(norm).filter(Boolean))] : []).slice(0, 8); })(),
-      paras: paras.map(en => ({ en, zh: '' })), cites: [], refText: (refs || '').slice(0, 20000), head: (head || '').slice(0, 3000) };
+      paras: paras.map((en, i) => { const g = s.addTab !== 'text' && s.pdf && s.pdf.pg && s.pdf.pg[i]; return g ? { en, zh: '', pg: g } : { en, zh: '' }; }), cites: [],
+      ...(s.addTab === 'text' ? { via: 'text' } : {}),
+      ...(s.addTab !== 'text' && s.pdf && s.pdf.file ? { file: { name: s.pdf.name, size: s.pdf.file.size || 0, pages: s.pdf.pages || 0, at: Date.now(), ...(s.pdf.drive ? { drive: s.pdf.drive } : {}) } } : {}), refText: (refs || '').slice(0, 60000), head: (head || '').slice(0, 3000) };
     Object.assign(paper, normProj(paper));
-    const low = (full + ' ' + refs).toLowerCase(), tkey = paper.title.toLowerCase().slice(0, 50);
-    paper.cites = s.papers.filter(o => o.title.length > 12 && low.includes(o.title.toLowerCase().slice(0, 50))).map(o => o.id);
-    const citedBy = tkey.length > 12 ? s.papers.filter(o => o.refText && o.refText.toLowerCase().includes(tkey)).map(o => o.id) : [];
+    const lib = [...this.state.papers, paper], allT = new Map(lib.map(o => [o.id, true])), one = new Map([[id, false]]);
+    const cm = citeMap(lib, p => p.id === id ? allT : one);
+    paper.cites = cm.get(id);
+    const citedBy = this.state.papers.filter(o => !(o.cites || []).includes(id) && cm.get(o.id).includes(id)).map(o => o.id);
+    (this._citeSkip || (this._citeSkip = new Set())).add(id);
     // 存到目前範圍以外的專案：換到它所在的專案（沒有專案就是全部論文），提示裡說明
     const f0 = this.state.folder, moveTo = this.inScope(f0)(paper) ? f0 : paper.projects[0] || '全部', moved = moveTo !== f0 ? `；已切換範圍到「${this.scopeName(moveTo)}」` : '';
     this.setState(st => ({ papers: [...st.papers.map(o => citedBy.includes(o.id) ? { ...o, cites: [...(o.cites || []), id] } : o), paper], sel: id, selPara: null, showAdd: false, form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '', layout: 'reader', folder: moveTo, projOpen: { ...st.projOpen, [paper.folder]: true }, projects: [...new Set([...st.projects, ...paper.projects])],
       projAt: { ...st.projAt, ...Object.fromEntries(paper.projects.filter(x => (st.projDel[x] || 0) >= (st.projAt[x] || 0) && st.projDel[x]).map(x => [x, Date.now()])) } }));
     const rel = paper.keywords.length ? s.papers.filter(o => o.keywords.some(k => paper.keywords.includes(norm(k)))).length : 0;
     this.toast((aiErr ? `已儲存，但 AI 沒有辨識出標題與關鍵詞：${aiErr}` : this.hasCloud() ? `已儲存 · 串聯 ${rel} 篇相關、${paper.cites.length + citedBy.length} 條引用` : '已儲存。連結雲端 AI 後可自動辨識標題與關鍵詞、串聯相關論文') + moved, null, aiErr || moved ? 9000 : undefined);
+    if (paper.file) filePut(id, s.pdf.file).catch(() => { this.upd(id, p => { const { file, ...r } = p; return r; }); this.toast('原始 PDF 沒有存成功（這台瀏覽器的空間可能不夠）；論文內容已經儲存', '', 9000); });
     if (this.props.autoTranslate !== false) setTimeout(() => this.translateAll(id), 50);
   }
 
@@ -2665,7 +3414,8 @@ class Component extends DCLogic {
     const scope = s.folder, inScope = this.inScope(scope), pool = s.papers.filter(inScope), poolIds = new Set(pool.map(p => p.id));
     const ctx = pool.map(p => {
       const nts = s.notes.filter(n => n.paperId === p.id).map(n => n.text).join('；');
-      const hl = p.paras.filter(x => x.hl).map(x => x.zh || x.en).join(' ').slice(0, 500);
+      const mk = [...new Set(p.paras.flatMap(x => (x.marks || []).map(m => (m.src === 'zh' ? m.zt : m.et) || m.zt || m.et).filter(Boolean)))].join('；').slice(0, 300);
+      const hl = [mk, p.paras.filter(x => x.hl).map(x => x.zh || x.en).join(' ').slice(0, 500)].filter(Boolean).join(' ');
       return `[${p.id}] ${p.title}（${p.authors}, ${p.journal} ${p.year}）\n關鍵詞：${p.keywords.join(', ')}\n引用：${(p.cites || []).join(', ') || '無'}\n內容：${p.paras.slice(0, 8).map(x => x.zh || x.en).join(' ').slice(0, 1400)}${hl ? '\n螢光重點：' + hl : ''}${nts ? '\n我的筆記：' + nts : ''}`;
     }).join('\n\n');
     const links = s.links.filter(l => poolIds.has(l.a) && poolIds.has(l.b)).map(l => `${l.a}↔${l.b}：${l.note}`).join('\n');
@@ -3460,7 +4210,7 @@ class Component extends DCLogic {
   // 跳到閱讀器的那一段；閱讀器上方會有「回到比較矩陣」
   mxJump(pid, i) {
     const back = this.state.mxSel;
-    this.setState({ selPara: null }, () => this.setState({ sel: pid, selPara: i, layout: 'reader', hov: null, mxBack: back, mxSel: null },
+    this.setState({ selPara: null }, () => this.setState({ sel: pid, selPara: i, layout: 'reader', hov: null, mxBack: back, mxSel: null, pdfOn: false },
       () => this.focusSoon(() => { const el = document.querySelector(`.ly-para[data-pi="${i}"]`); if (el) el.scrollIntoView({ block: 'center' }); return el && el.querySelector('.ly-pnum'); })));
   }
   mxBackGo() {
@@ -4031,22 +4781,38 @@ class Component extends DCLogic {
       citedBy = s.papers.filter(o => (o.cites || []).includes(cur.id)).map(card);
     }
     const noteMap = {};
-    s.notes.filter(n => cur && n.paperId === cur.id).forEach(n => { (noteMap[n.para] = noteMap[n.para] || []).push(n.text); });
+    s.notes.filter(n => cur && n.paperId === cur.id).forEach(n => { (noteMap[n.para] = noteMap[n.para] || []).push(n); });
+    // 目前筆記框對應的草稿（閱讀器裡選了段落時）
+    // 範圍切換讓閱讀器暫時顯示別篇（sel 還沒換過去）時，選取的段落屬於原本那篇，不算數
+    this._draftKeyNow = L === 'reader' && cur && cur.id === s.sel && s.selPara != null ? `p:${cur.id}:${s.selPara}` : null;
     const paras = cur && (L === 'reader' || L === 'graph' || L === 'chat') ? cur.paras.map((x, i) => {
       const busy = !!s.busy[cur.id + ':' + i], sel = s.selPara === i && L === 'reader';
       const stop = fn => e => { e && e.stopPropagation(); fn(); };
       const setHl = hl => stop(() => this.upd(cur.id, p => ({ ...p, paras: p.paras.map((y, j) => j === i ? { ...y, hl } : y) })));
       return { n: String(i + 1).padStart(2, '0'), en: x.en, zh: x.zh, hasZh: !!x.zh, busy, idle: !x.zh && !busy, sel,
         showEn: s.mode !== 'zh', showZh: s.mode !== 'en', cols: s.mode === 'both' ? 'minmax(0,1fr) minmax(0,1fr)' : 'minmax(0,1fr)',
-        bg: x.hl ? HL[x.hl] : 'transparent', ring: sel ? 'inset 0 0 0 1.5px #1d1b18' : 'none', notes: noteMap[i] || [],
-        onClick: () => this.setState({ selPara: s.selPara === i ? null : i }),
-        idx: String(i), selAttr: String(sel), numLabel: `第 ${i + 1} 段的工具${x.hl ? `（${x.hl === 'y' ? '黃色' : '藍色'}螢光）` : ''}${(noteMap[i] || []).length ? `，${noteMap[i].length} 則筆記` : ''}`,
+        bg: x.hl ? HL[x.hl] : 'transparent', ring: sel ? 'inset 0 0 0 1.5px #1d1b18' : 'none', notes: (noteMap[i] || []).map(n => ({ id: n.id, text: String(n.text || ''), sr: `修改第 ${i + 1} 段的筆記：`, pending: !!this.draftOf('e:' + n.id).trim() && s.noteEdit !== n.id, onEdit: stop(() => this.editNote(n.id, 'inline')) })),
+        ...(() => { const dt = L === 'reader' && !(sel && s.tab === 'note') ? this.draftOf(`p:${cur.id}:${i}`).trim() : ''; return { hasDraft: !!dt, draftText: dt.length > 40 ? dt.slice(0, 39) + '…' : dt, onDraft: stop(() => this.resumeDraft(`p:${cur.id}:${i}`)) }; })(),
+        onClick: e => { const g = window.getSelection && window.getSelection(), dt = (e && e.detail) || 0;
+          // 雙擊、三擊選字：第一下已經開關過這段，改回點之前的樣子
+          if (g && !g.isCollapsed && String(g).trim()) { const pv = this._preSel; if (dt >= 2 && pv && pv.i === i) { this._preSel = null; if (this.state.selPara !== pv.v) this.setState({ selPara: pv.v }); } return; }
+          if (dt >= 2) return; this._preSel = { i, v: s.selPara };
+          const mk = e && e.target && e.target.closest && e.target.closest('.ly-mk[data-hid]'); if (mk && L === 'reader') { const rc = mk.getBoundingClientRect(); return this.setState({ hlEdit: { pid: cur.id, i, id: mk.dataset.hid, x: rc.left + rc.width / 2, top: rc.top, bottom: rc.bottom }, hlPick: null }, () => this.focusSoon('.ly-hlpop .ly-autofocus')); }
+          this.setState({ selPara: s.selPara === i ? null : i }); },
+        ...(() => { const ms = (x.marks || []).map(m => ({ m, ...resolveMark(x, m) }));
+          const ord = side => ms.map((k, n) => ({ k, n, d: (k.m.src === side ? !k.sd : (k.dfit === 'exact' || k.dfit === 'ai')) ? 1 : 0 })).sort((a, b) => a.d - b.d || a.n - b.n).map(({ k }) => ({ r: k[side], c: k.m.c, id: k.m.id }));
+          return { enSegs: markSegs(x.en, ord('en')), zhSegs: markSegs(x.zh || '', ord('zh')), hasMarks: sel && ms.length > 0,
+            markList: ms.map(k => { const sl = (side, r) => r ? (x[side] || '').slice(r[0], r[1]) : '', t = (k.m.src === 'zh' ? sl('zh', k.zh) : sl('en', k.en)) || sl('en', k.en) || sl('zh', k.zh) || k.m.zt || k.m.et, to = k.m.c === 'b' ? 'y' : 'b';
+              return { text: t, bg: MK[k.m.c] || MK.y, delAria: `刪除詞句螢光「${t.slice(0, 30)}」`, onDel: stop(() => this.delMark(cur.id, i, k.m.id)),
+                swapLabel: to === 'y' ? '黃' : '藍', swapBg: MK[to], swapAria: `把「${t.slice(0, 30)}」改成${to === 'y' ? '黃' : '藍'}色`, onSwap: stop(() => this.setMarks(cur.id, i, ms2 => ms2.map(o => o.id === k.m.id ? { ...o, c: to } : o))) }; }) }; })(),
+        idx: String(i), selAttr: String(sel), numLabel: `第 ${i + 1} 段的工具${x.hl ? `（${x.hl === 'y' ? '黃色' : '藍色'}螢光）` : ''}${(noteMap[i] || []).length ? `，${noteMap[i].length} 則筆記` : ''}${(x.marks || []).length ? `，${x.marks.length} 處詞句螢光` : ''}`,
         onNum: stop(() => { const open = s.selPara !== i; this.setState({ selPara: open ? i : null }, () => open && this.focusSoon(`.ly-para[data-pi="${i}"] .ly-ptools button`)); }),
         onHlY: setHl('y'), onHlB: setHl('b'), onHlClear: setHl(null),
         // 打開筆記框並把游標放進去；手機上筆記框在下方，要捲到畫面裡
         onNote: stop(() => this.setState({ tab: 'note', selPara: i }, () => this.focusSoon(() => { const t = document.querySelector('textarea.ly-note'); if (t && this.state.narrow) t.scrollIntoView({ block: 'center' }); return t; }))),
         byBuiltin: x.zhBy === 'builtin', trLabel: !x.zh ? '翻譯此段' : x.zhBy === 'builtin' && this.hasCloud() ? '用 AI 重新翻譯' : '重新翻譯',
-        onTranslate: stop(() => this.translateIdx(cur.id, [i], x.zhBy === 'builtin' && this.hasCloud() ? 'ai' : undefined)) };
+        onTranslate: stop(() => this.translateIdx(cur.id, [i], x.zhBy === 'builtin' && this.hasCloud() ? 'ai' : undefined)),
+        hasPg: !!(x.pg && cur.file), pg: String(x.pg || ''), onPdfPage: stop(() => this.setState({ pdfOn: true, pdfGo: x.pg, pdfGoPid: cur.id, hlPick: null }, () => this.focusSoon('.ly-pdfbar'))) };
     }) : [];
     const missing = cur ? cur.paras.filter(x => !x.zh).length : 0;
     const doneN = cur ? cur.paras.length - missing : 0;
@@ -4090,6 +4856,7 @@ class Component extends DCLogic {
     // 1d 總覽：所有數字都以目前的專案範圍與搜尋計算，彼此一致
     const ids = new Set(filtered.map(p => p.id));
     const pTot = filtered.reduce((n, p) => n + p.paras.length, 0), pDone = filtered.reduce((n, p) => n + p.paras.filter(x => x.zh).length, 0);
+    const nMk = filtered.reduce((n, p) => n + p.paras.reduce((k, x) => k + (x.marks || []).length, 0), 0);
     const hlY = filtered.reduce((n, p) => n + p.paras.filter(x => x.hl === 'y').length, 0), hlB = filtered.reduce((n, p) => n + p.paras.filter(x => x.hl === 'b').length, 0);
     const dNotes = s.notes.filter(x => ids.has(x.paperId));
     const citeN = filtered.reduce((n, p) => n + (p.cites || []).filter(c => ids.has(c)).length, 0), manN = s.links.filter(l => ids.has(l.a) && ids.has(l.b)).length;
@@ -4098,7 +4865,7 @@ class Component extends DCLogic {
     const kpis = [
       { label: '論文', value: `${filtered.length} 篇`, sub: this.isProj(s.folder) ? `${filtered.filter(p => projOf(p).length > 1).length} 篇也在其他專案` : `分布在 ${new Set(filtered.flatMap(projOf)).size} 個專案` },
       { label: '翻譯進度', value: `${tPct}%`, sub: `已譯 ${pDone} / ${pTot} 段`, hasMeter: true, pct: tPct + '%' },
-      { label: '螢光標記', value: `${hlY + hlB} 段`, sub: `黃色 ${hlY} · 藍色 ${hlB}` },
+      { label: '螢光標記', value: `${hlY + hlB} 段`, sub: `黃色 ${hlY} · 藍色 ${hlB}${nMk ? ` · 詞句 ${nMk} 處` : ''}` },
       { label: '筆記', value: `${dNotes.length} 則`, sub: `${new Set(dNotes.map(x => x.paperId)).size} 篇有筆記` },
       { label: '串聯', value: `${citeN + manN} 條`, sub: `引用 ${citeN} · 手動 ${manN}` }
     ].map(k => ({ hasMeter: false, pct: '0%', ...k }));
@@ -4111,7 +4878,22 @@ class Component extends DCLogic {
     // 關閉的連線類型：灰字、刪除線、線條變淡，看得出是「關」
     const efBtn = (k, label, swatch, dash) => ({ label, swatch, dash, bg: s.ef[k] ? '#fff' : 'transparent', line: s.ef[k] ? '#1d1b18' : '#d6d0c4', color: s.ef[k] ? '#1d1b18' : '#625d55', deco: s.ef[k] ? 'none' : 'line-through', op: s.ef[k] ? 1 : 0.35, pressed: String(!!s.ef[k]), title: `${s.ef[k] ? '隱藏' : '顯示'}${label}的連線`, onClick: () => this.setState(st => ({ ef: { ...st.ef, [k]: !st.ef[k] } })) });
 
-    const curNotes = cur ? s.notes.filter(x => x.paperId === cur.id).map(x => ({ text: x.text, date: x.date, where: x.para != null ? `第 ${x.para + 1} 段` : '整篇', onDelete: () => this.setState(st => ({ notes: st.notes.filter(y => y.id !== x.id), gone: [...st.gone, x.id] })) })) : [];
+    const cut = (t, n) => (t = String(t || '').replace(/\s+/g, ' ').trim(), t.length > n ? t.slice(0, n - 1) + '…' : t);
+    const curNotes = cur ? s.notes.filter(x => x.paperId === cur.id).map(x => { const editing = s.noteEdit === x.id, where = x.para != null ? `第 ${x.para + 1} 段` : '整篇論文', ex = cut(x.text, 16);
+      return { id: x.id, text: x.text, date: x.date, where, editedText: (x.edited ? ` · 已修改${x.edited !== x.date ? ' ' + x.edited : ''}` : '') + (!editing && this.draftOf('e:' + x.id).trim() ? ' · 有還沒儲存的修改' : ''), editing, notEditing: !editing, editAria: `修改${where}的筆記「${ex}」`, delAria: `刪除${where}的筆記「${ex}」`,
+        onEdit: () => this.editNote(x.id), onEditDraft: e => this.setDraft('e:' + x.id, e.target.value === x.text ? '' : e.target.value),
+        onEditKey: e => { if ((e.nativeEvent && e.nativeEvent.isComposing) || e.keyCode === 229) return; if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); this.saveEdit(x.id); } else if (e.key === 'Escape') { e.stopPropagation(); this.cancelEdit(x.id); } },
+        onSaveEdit: () => this.saveEdit(x.id), onCancelEdit: () => this.cancelEdit(x.id),
+        // 刪除可以復原：復原時換一個新的 id（舊的 id 可能已經同步成「已刪除」）
+        onDelete: e => this.deleteNote(x, e) }; }) : [];
+    // 所有還沒儲存的草稿：這篇的排前面，別篇的標上論文標題（目前打開的那一份不重複列）
+    const draftList = Object.keys(this._drafts || {}).map(k => {
+      const t = this.draftOf(k).trim(), loc = t && this.draftLoc(k); if (!loc) return null;
+      if (loc.orphan) return { k, here: false, at: 0, canResume: false, label: '已刪除的筆記（修改到一半的內容，可以複製後捨棄）', text: t };
+      const here = !!cur && loc.pid === cur.id, pre = here ? '' : `「${cut(this.find(loc.pid).title, 22)}」`, where = loc.para != null ? `第 ${loc.para + 1} 段` : '整篇論文';
+      if (here && (loc.nid ? s.noteEdit === loc.nid : L === 'reader' && s.tab === 'note' && s.selPara === loc.para)) return null;
+      return { k, here, at: this._drafts[k].at || 0, canResume: true, label: `${pre}${where}${loc.nid ? '筆記的修改' : '的新筆記'}`, text: t };
+    }).filter(Boolean).sort((a, b) => (b.here - a.here) || (b.at - a.at)).map(d => ({ ...d, resumeAria: `繼續寫${d.label}`, discardAria: `捨棄${d.label}`, onResume: () => this.resumeDraft(d.k), onDiscard: e => this.discardDraft(d.k, e) }));
     const setF = k => e => { const v = e.target.value; this.setState(st => ({ form: { ...st.form, [k]: v } })); };
     // 建議問題用目前範圍裡真的有的論文；有兩篇以上時挑一對有共同關鍵詞的來比較
     const scoped = s.papers.filter(inScope);
@@ -4190,7 +4972,7 @@ class Component extends DCLogic {
       saveSync: () => { this.lsSet('lunyi-gh-token', s.tokenDraft.trim()); try { sessionStorage.removeItem('lunyi-gh-token'); } catch (e) {} this.lsSet('lunyi-gist-id', s.gistDraft.trim()); this.toast('同步設定已儲存'); this._needPull = true; if (this.syncOn() && s.gistDraft.trim()) { clearTimeout(this._push); this._push = null; this._syncReady = false; this.pullCloud(true).then(r => { this._syncReady = true; this._needPull = !(r === true || r === 'empty'); }); } },
       pushCloud: () => this.pushCloud(), pullCloud: () => this.pullCloud(),
       ...(() => { const guest = !LIB_ACCT && s.syncTarget === 'drive', on = !guest && this.lsGet('lunyi-sync-auto') === '1', paused = on && !this.syncOn(); return { autoLabel: guest ? '自動同步：登入 Google 後開啟' : paused ? '自動同步：已暫停（缺少設定）' : on ? '自動同步：開' : '自動同步：關', autoBg: on && !paused ? '#1d1b18' : '#fff', autoColor: on && !paused ? '#faf9f6' : '#1d1b18', autoLine: on ? '#1d1b18' : '#d6d0c4' }; })(),
-      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1', drive = this.cloudTarget() === 'drive'; if (on && drive && !LIB_ACCT) return this.openLogin('雲端硬碟同步要先用 Google 登入；登入後會開啟你自己的文獻庫，並自動同步到你的雲端硬碟。'); if (on && drive && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); this._syncReady = !!this._ready; if (on) this._needPull = true; if (on && !drive && this.syncOn() && this._ready) this.pullThenPush(); this.setState({ syncStatus: this.state.syncStatus }); if (on && drive) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : drive ? '已開啟，填好 Google 用戶端 ID 後生效' : '已開啟，填好權杖與 Gist ID 後生效') : '已關閉自動同步'); },
+      toggleAuto: async () => { const on = this.lsGet('lunyi-sync-auto') !== '1', drive = this.cloudTarget() === 'drive'; if (on && drive && !LIB_ACCT) return this.openLogin('雲端硬碟同步要先用 Google 登入；登入後會開啟你自己的文獻庫，並自動同步到你的雲端硬碟。'); if (on && drive && this.tokNoEmail() && !(await this.gFillEmail())) return this.toast('讀不到目前登入的 Google 帳號，請到「我的帳號」按「重新登入」後再開啟自動同步', '', 6000); this.lsSet('lunyi-sync-auto', on ? '1' : ''); if (!on) this.citeUpgradeAfter('off'); this._syncReady = !!this._ready; if (on) this._needPull = true; if (on && !drive && this.syncOn() && this._ready) this.pullThenPush(); this.setState({ syncStatus: this.state.syncStatus }); if (on && drive) this.syncPullPush(); this.toast(on ? (this.syncOn() ? '已開啟自動同步' : drive ? '已開啟，填好 Google 用戶端 ID 後生效' : '已開啟，填好權杖與 Gist ID 後生效') : '已關閉自動同步'); },
       exportJson: () => this.exportJson(), onImport: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.importJson(f); },
       openAdd: () => this.openAddDlg(), closeAdd: () => this.setState({ showAdd: false, importStatus: '' }),
       folderNames,
@@ -4242,7 +5024,37 @@ class Component extends DCLogic {
       curLang: cur && cur.lang ? `原文 ${cur.lang}` : '',
       curTags: cur ? cur.tags || [] : [],
       curKeywords: cur ? cur.keywords.map(k => ({ label: k, onClick: () => this.setState({ kw: norm(k) }) })) : [],
-      modeBtns: [['both', '對照'], ['en', '原文'], ['zh', '中文']].map(([k, label]) => ({ label, pressed: String(s.mode === k), bg: s.mode === k ? '#fff' : 'transparent', onClick: () => this.setState({ mode: k }) })),
+      penBtns: [['y', '黃'], ['b', '藍']].map(([k, label]) => ({ label, sw: MK[k], pressed: String(s.pen === k), bg: s.pen === k ? '#fff' : 'transparent', aria: `螢光筆（${label}色）`, title: s.pen === k ? `螢光筆（${label}色）開著：在原文或中文上拖曳就畫上去，再按一次關閉` : `開啟螢光筆（${label}色）：在原文或中文上拖曳就畫上去`, onClick: () => this.setState(st => ({ pen: st.pen === k ? null : k, hlPick: null })) })),
+      readHint: s.pdfOn ? '原始檔：用上方的按鈕翻頁、縮放；在新分頁開啟可以用瀏覽器內建的 PDF 檢視器搜尋與列印。' : s.pen ? `螢光筆（${s.pen === 'y' ? '黃' : '藍'}色）開著：${this.coarse() ? '長按選取文字、拖曳選取把手調整範圍，再按顏色' : '在原文或中文上拖曳就畫上去'}，有翻譯時另一邊對應的詞句也會一起畫。再按一次「螢光筆」關閉。` : '點選段落可加整段螢光、筆記或重新翻譯；選取一段文字可以用螢光筆畫起來，另一邊對應的詞句也會一起畫。',
+      articleCls: s.pen ? 'ly-article ly-penon' : 'ly-article', readHintColor: s.pen ? 'oklch(0.36 0.09 200)' : '#625d55', mkY: MK.y, mkB: MK.b,
+      keepSel: e => e.preventDefault(),
+      ...(() => { const h = s.hlPick, W = window.innerWidth; if (!h) return { hlPickOn: false, hlPickX: '0px', hlPickY: '0px', hlPickTf: 'none', hlPickCanClear: false, hlPickYellow: () => {}, hlPickBlue: () => {}, hlPickClear: () => {} };
+        const p = this.find(h.pid), x = p && p.paras[h.i], can = !!(x && (x.marks || []).some(o => markOver(x, o, h.side, h.s, h.e))), pl = popAt(h.top, h.bottom, 44);
+        // 按下去的當下再讀一次選取範圍（觸控時可能拖過選取把手）
+        const now = () => { const t = this.textRange(); return t && t.i === h.i && t.side === h.side ? t : h; }, paint = c => { const r = now(); this.addMark(h.pid, h.i, h.side, r.s, r.e, c); try { window.getSelection().removeAllRanges(); } catch (e) {} };
+        return { hlPickOn: true, hlPickX: Math.max(90, Math.min(W - 90, h.x)) + 'px', hlPickY: pl.y + 'px', hlPickTf: pl.up ? 'translate(-50%,-100%)' : 'translate(-50%,0)', hlPickCanClear: can,
+          hlPickYellow: () => paint('y'), hlPickBlue: () => paint('b'), hlPickClear: () => { const r = now(); this.clearMarksIn(h.pid, h.i, h.side, r.s, r.e); } }; })(),
+      ...(() => { const h = s.hlEdit, W = window.innerWidth, p = h && this.find(h.pid), x = p && p.paras[h.i], m = x && (x.marks || []).find(o => o.id === h.id);
+        if (!m) return { hlEditOn: false, hlEditX: '0px', hlEditY: '0px', hlEditTf: 'none', hlEditText: '', hlEditHasPair: false, hlEditPair: '', hlEditIsY: 'false', hlEditIsB: 'false', hlEditYellow: () => {}, hlEditBlue: () => {}, hlEditDel: () => {}, hlEditClose: () => {} };
+        const r = resolveMark(x, m), et = r.en ? x.en.slice(r.en[0], r.en[1]) : '', zt = r.zh ? (x.zh || '').slice(r.zh[0], r.zh[1]) : '', mine = m.src === 'zh' ? zt : et, pair = m.src === 'zh' ? et : zt, pl = popAt(h.top, h.bottom, 260), up = pl.up;
+        // 另一邊是用整句推算的才說明；已經連結 AI 就不叫人去連
+        const how = r.dfit === 'exact' || r.dfit === 'ai' ? '' : this.hasCloud() ? '（對到整句）' : '（對到整句；連結 AI 後新畫的會對到詞句）';
+        const color = c => () => { this.setMarks(h.pid, h.i, ms => ms.map(o => o.id === m.id ? { ...o, c } : o)); this.setState({ hlEdit: null }); };
+        return { hlEditOn: true, hlEditX: Math.max(170, Math.min(W - 170, h.x)) + 'px', hlEditY: pl.y + 'px', hlEditTf: up ? 'translate(-50%,-100%)' : 'translate(-50%,0)',
+          hlEditText: (t => t.length > 160 ? t.slice(0, 159) + '…' : t)(mine || pair), hlEditHasPair: !!(mine && pair), hlEditPair: `對應的${m.src === 'zh' ? '原文' : '中文'}：「${pair.length > 120 ? pair.slice(0, 119) + '…' : pair}」${how}`,
+          hlEditIsY: String(m.c === 'y'), hlEditIsB: String(m.c === 'b'), hlEditYellow: color('y'), hlEditBlue: color('b'), hlEditDel: () => this.delMark(h.pid, h.i, m.id), hlEditClose: () => this.setState({ hlEdit: null }) }; })(),
+      modeBtns: [['both', '對照'], ['en', '原文'], ['zh', '中文'], ['pdf', '原始檔']].map(([k, label]) => { const on = k === 'pdf' ? !!s.pdfOn : !s.pdfOn && s.mode === k;
+        return { label, pressed: String(on), bg: on ? '#fff' : 'transparent', onClick: () => this.setState(k === 'pdf' ? { pdfOn: true, hlPick: null, pen: null, ...(s.pdfState === 'error' ? { pdfPid: null } : {}) } : { mode: k, pdfOn: false }) }; }),
+      ...(() => { const on = !!(s.pdfOn && cur), st = s.pdfState, n = s.pdfN || 0, z = s.pdfZoom || 1, f = cur && cur.file;
+        return { pdfOn: on, textOn: !on, pdfReady: on && st === 'ready', pdfNotReady: on && st !== 'ready', pdfNone: on && st === 'none', pdfErrOn: on && st === 'error', pdfErrFile: on && st === 'error' && s.pdfErrKind !== 'lib', pdfRetry: () => this.setState({ pdfPid: null }, () => this.focusSoon('.ly-pdfbar')),
+          pdfMsg: st === 'loading' ? '正在開啟原始檔…' : st === 'error' ? (s.pdfErrKind === 'read' ? '這台裝置存的原始檔讀不出來（瀏覽器儲存的資料可能損壞）：可以按「移除原始檔」，再重新附加同一份 PDF' : s.pdfErrKind === 'file' ? `這份 PDF 打不開${s.pdfErr ? '：' + s.pdfErr : ''}` : '載入 PDF 檢視元件失敗（需要網路；原始檔本身沒有問題），連上網路後按「重試」') : st === 'none' ? '這台裝置沒有這篇的原始檔' : '',
+          pdfNoneText: f ? `這台裝置沒有這篇的原始檔「${f.name}」（原始檔不會同步；在別台裝置匯入或附加過的話，那台還有）。可以在這裡附加同一份 PDF。` : '這篇沒有保存原始檔（之前匯入的論文，或是貼上文字建立的）。附加 PDF 之後就能在這裡瀏覽，段落也會標出在第幾頁。',
+          pdfDrive: !!(f && f.drive), pdfDriveUrl: f && f.drive ? `https://drive.google.com/file/d/${encodeURIComponent(f.drive)}/view` : '',
+          pdfPgText: `第 ${Math.min(s.pdfPg || 1, n || 1)} / ${n} 頁`, pdfZoomText: Math.round(z * 100) + '%', pdfFitAria: `符合寬度（目前 ${Math.round(z * 100)}%）`, pdfUrl: s.pdfUrl || '', pdfName: (f && f.name) || (cur ? cur.title.slice(0, 60) + '.pdf' : 'paper.pdf'),
+          pdfPrevOff: String((s.pdfPg || 1) <= 1), pdfNextOff: String((s.pdfPg || 1) >= n), pdfOutOff: String(z <= PDF_ZOOM[0]), pdfInOff: String(z >= PDF_ZOOM[PDF_ZOOM.length - 1]),
+          pdfPrev: () => { if ((s.pdfPg || 1) > 1) this.setState({ pdfGo: (s.pdfPg || 1) - 1, pdfGoPid: cur.id }); }, pdfNext: () => { if ((s.pdfPg || 1) < n) this.setState({ pdfGo: (s.pdfPg || 1) + 1, pdfGoPid: cur.id }); },
+          pdfOut: () => this.pdfZoomBy(-1), pdfIn: () => this.pdfZoomBy(1), pdfFit: () => { if (z !== 1) this.setState(st2 => ({ pdfZoom: 1, pdfGo: st2.pdfPg, pdfGoPid: cur.id })); },
+          removePdf: () => this.removePdf(), onPdfAttach: e => { const fl = e.target.files && e.target.files[0]; e.target.value = ''; this.attachPdf(fl); } }; })(),
       hasMissing: missing > 0, transProg: `已譯 ${doneN}/${cur ? cur.paras.length : 0}`,
       translateAllLabel: s.tAll ? `翻譯中… ${doneN}/${cur ? cur.paras.length : 0}` : `翻譯其餘 ${missing} 段`,
       translateAll: () => cur && this.translateAll(cur.id),
@@ -4253,11 +5065,13 @@ class Component extends DCLogic {
         this.toastAct(`已刪除「${cur.title}」`, '復原刪除', () => this.setState(st => ({ papers: (() => { const ps = st.papers.map(p => snap.citedBy.includes(p.id) ? { ...p, cites: [...new Set([...(p.cites || []), snap.paper.id])] } : p);
           ps.splice(Math.max(0, Math.min(snap.idx, ps.length)), 0, normProj({ ...snap.paper, projects: projOf(snap.paper).filter(x => RESERVED(x) && (st.projects || []).includes(x) && !((st.projDel[x] || 0) > (st.projAt[x] || 0))) }));
           return ps; })(), notes: [...st.notes, ...snap.notes], links: [...st.links, ...snap.links], gone: st.gone.filter(g => g !== snap.paper.id && !snap.notes.some(n => n.id === g)), sel: snap.paper.id }), () => { this.toast('已復原'); this.focusSoon(() => [...document.querySelectorAll('.ly-tools button')].find(b => b.innerText.trim() === '刪除')); }));
-        this.setState(st => { const papers = st.papers.filter(p => p.id !== cur.id).map(p => (p.cites || []).includes(cur.id) ? { ...p, cites: p.cites.filter(c => c !== cur.id) } : p); return { papers, links: st.links.filter(l => l.a !== cur.id && l.b !== cur.id), notes: st.notes.filter(x => x.paperId !== cur.id), gone: [...st.gone, cur.id], sel: papers[0] && papers[0].id, selPara: null, folder: st.folder === '全部' || papers.some(this.inScope(st.folder)) || this.liveProjects().includes(st.folder) ? st.folder : '全部' }; }); },
+        this.setState(st => { const papers = st.papers.filter(p => p.id !== cur.id).map(p => (p.cites || []).includes(cur.id) ? { ...p, cites: p.cites.filter(c => c !== cur.id) } : p); return { papers, links: st.links.filter(l => l.a !== cur.id && l.b !== cur.id), notes: st.notes.filter(x => x.paperId !== cur.id), gone: [...st.gone, cur.id, ...snap.notes.map(n => n.id)], sel: papers[0] && papers[0].id, selPara: null, folder: st.folder === '全部' || papers.some(this.inScope(st.folder)) || this.liveProjects().includes(st.folder) ? st.folder : '全部' }; }); },
       paras,
       panelTabs: [['link', '串聯'], ['note', `筆記 ${curNotes.length || ''}`]].map(([k, label]) => ({ label, pressed: String(s.tab === k), color: s.tab === k ? '#1d1b18' : '#625d55', line: s.tab === k ? '#1d1b18' : 'transparent', onClick: () => this.setState({ tab: k }) })),
       tabLink: s.tab === 'link', tabNote: s.tab === 'note',
       cites, citedBy, citesCount: cites.length, citedByCount: citedBy.length,
+      citeHint: cur && citeStrong(cur) ? '引用是拿參考文獻去比對論憶裡其他論文的標題、DOI 與 arXiv 編號，只會連到已經在論憶裡的論文。' : '這篇沒有找到「References／參考文獻」段落，改用全文比對，可能會漏掉；只會連到已經在論憶裡的論文。',
+      reciteLabel: s.reciting ? '比對中…' : '重新比對整個文獻庫的引用', recitingOff: String(!!s.reciting), reciteAll: () => { if (!s.reciting) this.reciteAll(true); },
       related: rel.map(r => ({ title: r.o.title, hasShared: r.shared.length > 0, shared: r.shared.join(', '), hasManual: r.man.length > 0, manual: r.man.map(m => m.note).join('；'), onOpen: () => this.open(r.o.id) })),
       noRelated: !rel.length,
       linkTarget: s.linkTarget, onLinkTarget: e => this.setState({ linkTarget: e.target.value }),
@@ -4266,8 +5080,9 @@ class Component extends DCLogic {
       addLink: () => { if (!cur || !s.linkTarget) return this.toast('請選擇要串聯的論文'); this.setState(st => ({ links: [...st.links, { a: cur.id, b: st.linkTarget, note: st.linkNote.trim() || '手動串聯' }], linkTarget: '', linkNote: '' })); this.toast('已建立連結'); },
       hasSelPara: s.selPara != null && !!cur, noSelPara: s.selPara == null || !cur,
       selParaNum: s.selPara != null ? s.selPara + 1 : '', selParaText: cur && s.selPara != null && cur.paras[s.selPara] ? (cur.paras[s.selPara].zh || cur.paras[s.selPara].en) : '',
-      onNoteDraft: e => { this._note = e.target.value; },
-      saveNote: () => { const t = String(this._note || '').trim(); if (!t || !cur) return this.toast('請先寫下筆記內容'); this.setState(st => ({ notes: [...st.notes, { id: 'n' + Date.now().toString(36), paperId: cur.id, para: st.selPara, text: t, date: today() }] })); this.clearNote(); this.toast('筆記已儲存'); },
+      onNoteDraft: e => this.setDraft(this._draftKeyNow, e.target.value),
+      saveNote: () => { const k = this._draftKeyNow, ta = document.querySelector('textarea.ly-note'), t = String(ta ? ta.value : this.draftOf(k)).trim(); if (!t || !cur) return this.toast('請先寫下筆記內容'); this.setState(st => ({ notes: [...st.notes, { id: 'n' + Date.now().toString(36), paperId: cur.id, para: st.selPara, text: t, date: today(), at: Date.now() }] })); this.setDraft(k, ''); if (ta) ta.value = ''; this.toast('筆記已儲存'); },
+      draftList, hasDrafts: draftList.length > 0, draftCount: draftList.length,
       curNotes, curNoteCount: curNotes.length,
       graphSvg, nodes, edgeLabels: labels,
       graphEmpty: L === 'graph' && !vis.length,
