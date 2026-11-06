@@ -475,9 +475,31 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
   <sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
     <div class="ly-cols2" style="display:grid;grid-template-columns:minmax(0,1fr) 420px;min-height:0">
       <main class="ly-gmain" style="display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;background:#faf9f6">
-        <div style="padding:20px 28px 0;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-          <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">關聯圖譜</h2>
-          <div style="display:flex;gap:6px">
+        <div style="padding:20px 28px 0;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-size:20px;font-weight:600">關聯圖譜</h2>
+            <div role="group" aria-label="文獻計量分析方法" style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:7px;flex-wrap:wrap">
+              <sc-for list="{{ methodBtns }}" as="mb" hint-placeholder-count="5"><button sc-camel-on-click="{{ mb.onClick }}" aria-pressed="{{ mb.pressed }}" style="border:0;padding:4px 11px;border-radius:5px;font-size:12px;white-space:nowrap;background:{{ mb.bg }};color:{{ mb.color }}">{{ mb.label }}</button></sc-for>
+            </div>
+            <div role="group" aria-label="版面" style="display:flex;gap:2px;background:#ece8e0;padding:3px;border-radius:7px;flex-wrap:wrap">
+              <sc-for list="{{ layoutBtns }}" as="lb" hint-placeholder-count="2"><button sc-camel-on-click="{{ lb.onClick }}" aria-pressed="{{ lb.pressed }}" style="border:0;padding:4px 11px;border-radius:5px;font-size:12px;white-space:nowrap;background:{{ lb.bg }};color:{{ lb.color }}">{{ lb.label }}</button></sc-for>
+            </div>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#625d55">節點指標
+              <sc-raw-select value="{{ gMetric }}" sc-camel-on-change="{{ onGMetric }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:5px;font-size:12px;padding:4px 6px">
+                <option value="none">不顯示</option><option value="lcs">本地被引次數（LCS）</option><option value="lcr">本地引用數（LCR）</option><option value="deg">度中心性</option><option value="btw">中介中心性</option>
+              </sc-raw-select></label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#625d55">顏色
+              <sc-raw-select value="{{ gColor }}" sc-camel-on-change="{{ onGColor }}" style="border:1px solid #d6d0c4;background:#fff;border-radius:5px;font-size:12px;padding:4px 6px">
+                <option value="proj">依專案</option><option value="clu">依研究群集</option>
+              </sc-raw-select></label>
+          </div>
+          <div style="font-size:12px;line-height:1.6;color:#4a463f;max-width:900px">{{ methodDesc }} {{ layoutDesc }}</div>
+          <sc-if value="{{ hasCluLegend }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:#2c2925">
+              <sc-for list="{{ cluLegend }}" as="cg" hint-placeholder-count="2"><span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:{{ cg.color }};flex-shrink:0"></span>{{ cg.text }}</span></sc-for>
+            </div>
+          </sc-if>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
             <sc-for list="{{ edgeFilters }}" as="ef" hint-placeholder-count="3">
               <button sc-camel-on-click="{{ ef.onClick }}" aria-pressed="{{ ef.pressed }}" title="{{ ef.title }}" style="border:1px solid {{ ef.line }};background:{{ ef.bg }};color:{{ ef.color }};border-radius:5px;padding:4px 10px;font-size:12px;display:flex;align-items:center;gap:7px;white-space:nowrap;flex-shrink:0;text-decoration:{{ ef.deco }}"><span style="width:18px;height:0;border-top:2px {{ ef.dash }} {{ ef.swatch }};opacity:{{ ef.op }}"></span>{{ ef.label }}</button>
             </sc-for>
@@ -485,10 +507,14 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
         </div>
         <div class="ly-graph" style="position:relative;margin:36px 110px 56px">
           {{ graphSvg }}
+          <sc-if value="{{ hasYearTicks }}" hint-placeholder-val="{{ false }}">
+            <sc-for list="{{ yearTicks }}" as="yt" hint-placeholder-count="0"><div aria-hidden="true" style="position:absolute;left:{{ yt.x }};top:calc(100% + 18px);transform:translateX(-50%);font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55;white-space:nowrap">{{ yt.text }}</div></sc-for>
+          </sc-if>
           <sc-for list="{{ nodes }}" as="nd" hint-placeholder-count="0">
             <button sc-camel-on-click="{{ nd.onClick }}" class="{{ nd.cls }}" title="{{ nd.full }}" aria-label="{{ nd.aria }}" style="position:absolute;left:{{ nd.x }};top:{{ nd.y }};transform:translate(-50%,-50%);width:196px;text-align:left;padding:10px 12px;border-radius:8px;border:1px solid {{ nd.line }};border-left:4px solid {{ nd.swatch }};background:{{ nd.bg }};color:{{ nd.color }};display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 3px rgba(0,0,0,0.05)">
               <span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.35">{{ nd.title }}</span>
               <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:0.75;overflow-wrap:anywhere">{{ nd.meta }}</span>
+              <sc-if value="{{ nd.hasBar }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px"><span style="flex:1;height:4px;border-radius:2px;background:rgba(127,127,127,0.18);overflow:hidden"><span style="display:block;height:100%;width:{{ nd.barW }};background:{{ nd.barColor }}"></span></span><span style="flex-shrink:0">{{ nd.barText }}</span></span></sc-if>
             </button>
           </sc-for>
           <sc-if value="{{ graphEmpty }}" hint-placeholder-val="{{ false }}"><div style="min-height:320px;display:grid;place-items:center;color:#625d55;font-size:14px;line-height:1.7;text-align:center;padding:24px">{{ graphEmptyText }}</div></sc-if>
@@ -515,6 +541,35 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             <sc-for list="{{ related }}" as="r" hint-placeholder-count="2"><button sc-camel-on-click="{{ r.onOpen }}" style="text-align:left;border:0;background:none;padding:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;line-height:1.45;text-decoration:underline;text-decoration-color:#bdb6a9">{{ r.title }}</span><sc-if value="{{ r.hasShared }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">共同 · {{ r.shared }}</span></sc-if><sc-if value="{{ r.hasManual }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;line-height:1.55;color:oklch(0.36 0.09 200)">{{ r.manual }}</span></sc-if></button></sc-for>
             <sc-if value="{{ noRelated }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55">尚無共同關鍵詞或手動串聯的論文。</div></sc-if>
           </div>
+          <sc-if value="{{ hasBibCur }}" hint-placeholder-val="{{ false }}">
+            <div style="border-top:1px solid #e2ddd3;padding-top:14px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:12px;font-weight:500">文獻計量指標</span><button sc-camel-on-click="{{ toggleGHelp }}" aria-expanded="{{ gHelp }}" style="border:0;background:none;padding:0;font-size:12px;color:oklch(0.42 0.1 200)">{{ gHelpLabel }}</button></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <sc-for list="{{ bibCur }}" as="bm" hint-placeholder-count="5"><div title="{{ bm.t }}" style="background:#fff;border:1px solid #e2ddd3;border-radius:6px;padding:7px 9px;display:flex;flex-direction:column;gap:2px"><span style="font-size:11px;color:#625d55">{{ bm.k }}</span><span style="font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:500">{{ bm.v }}</span></div></sc-for>
+              </div>
+              <sc-if value="{{ hasCplTop }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;font-weight:500;margin-top:2px">書目耦合最強（共同參考文獻）</div>
+                <sc-for list="{{ cplTop }}" as="c" hint-placeholder-count="0"><button sc-camel-on-click="{{ c.onOpen }}" style="text-align:left;border:0;background:none;padding:0;display:flex;justify-content:space-between;gap:10px;font-size:12px;line-height:1.45"><span style="text-decoration:underline;text-decoration-color:#bdb6a9">{{ c.title }}</span><span style="font-family:'IBM Plex Mono',monospace;flex-shrink:0">{{ c.n }}</span></button></sc-for>
+              </sc-if>
+              <sc-if value="{{ hasCocTop }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;font-weight:500;margin-top:2px">共被引最強（一起被引用的次數）</div>
+                <sc-for list="{{ cocTop }}" as="c" hint-placeholder-count="0"><button sc-camel-on-click="{{ c.onOpen }}" style="text-align:left;border:0;background:none;padding:0;display:flex;justify-content:space-between;gap:10px;font-size:12px;line-height:1.45"><span style="text-decoration:underline;text-decoration-color:#bdb6a9">{{ c.title }}</span><span style="font-family:'IBM Plex Mono',monospace;flex-shrink:0">{{ c.n }}</span></button></sc-for>
+              </sc-if>
+              <sc-if value="{{ noBibPair }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55;line-height:1.6">目前範圍內沒有和這篇書目耦合或共被引的論文。匯入附參考文獻的 PDF 越多，這兩項越準。</div></sc-if>
+              <sc-if value="{{ gHelp }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;line-height:1.7;color:#2c2925;background:#fff;border:1px solid #e2ddd3;border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+                  <div><b>直接引用</b>：A 的參考文獻列了 B，知識由 B 流向 A。</div>
+                  <div><b>書目耦合</b>（Kessler, 1963）：兩篇引用相同的文獻；共同參考文獻越多越相近。論文一發表就能算，適合找研究前沿。</div>
+                  <div><b>共被引</b>（Small, 1973）：兩篇同時被第三篇引用；一起被引用越多次越相關，適合找知識基礎。</div>
+                  <div><b>關鍵詞共現</b>：共同關鍵詞越多，主題越接近（co-word analysis）。</div>
+                  <div><b>LCS／LCR</b>：本地被引次數／本地引用數，只算目前範圍內的論文（HistCite 的指標）。</div>
+                  <div><b>度中心性</b>：和幾篇論文相連；<b>中介中心性</b>：其他論文之間的最短路徑有多少比例經過這篇，越高越像連接不同主題的橋樑。</div>
+                  <div><b>研究群集</b>：依目前開著的連線分群（加權標籤傳播），以群內最常見的關鍵詞命名。</div>
+                  <div style="color:#625d55">書目耦合比對的是參考文獻文字，屬於估計值；共被引只計算文獻庫內的施引論文，和 Web of Science、Scopus 的全庫數字不同。</div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
           <div style="border-top:1px solid #e2ddd3;padding-top:14px;display:flex;flex-direction:column;gap:12px">
             <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;font-weight:500">內容（{{ transProg }}）</span>
               <sc-if value="{{ hasMissing }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ translateAll }}" style="border:0;background:none;padding:0;font-size:12px;color:oklch(0.42 0.1 200)">{{ translateAllLabel }}</button></sc-if>
@@ -1113,6 +1168,9 @@ const LIB_LS = new Set(['lunyi-sync-auto', 'lunyi-sync-dirty', 'lunyi-sync-targe
 const libKey = k => LIB_LS.has(k) ? k + LIB_NS : k;
 const KEY = 'lunyi-v2' + LIB_NS;
 const ACC = 'oklch(0.45 0.1 200)';
+// 圖譜的書目耦合（紫）與共被引（琥珀）連線；避開專案色與手動串聯的藍綠色
+const BIB_CPL = 'oklch(0.5 0.15 310)';
+const BIB_COC = 'oklch(0.6 0.13 65)';
 const HL = { y: 'oklch(0.94 0.07 95)', b: 'oklch(0.93 0.045 220)' };
 // 詞句螢光（自己畫的）：比整段螢光深一點，畫在整段螢光上也看得出來
 const MK = { y: 'oklch(0.87 0.13 95)', b: 'oklch(0.85 0.08 225)' };
@@ -1690,6 +1748,81 @@ async function citeMapAsync(papers, plan) {
 }
 const citeAll = (papers, prune) => { const m = new Map(papers.map(o => [o.id, prune])); return () => m; };
 
+// ---- 文獻計量：書目耦合、共被引、中心性與研究群集（只在圖譜分頁計算）----
+// 參考文獻的指紋：DOI，加上 4 個字一組的連續字串。數字和單一字母（作者名縮寫）先去掉，
+// APA、IEEE 等不同格式的同一筆參考文獻才對得上；同一份清單裡重複出現的字串多半是期刊或會議名稱，不算。
+const BIB_VENUE = new Set('a an and of the in on for to proceedings proc conference conf international intl journal j annual meeting symposium workshop ieee acm springer elsevier transactions trans advances neural information processing systems computer vision pattern recognition association computational linguistics learning representations machine research science nature letters review press university vol pp et al'.split(' '));
+const _bibFp = new Map();
+function bibPrints(p) {
+  const ref = String(p.refText || ''), c = _bibFp.get(p.id);
+  if (c && c.ref === ref) return c;
+  const lite = citeLite(ref), doi = new Set((lite.match(/\b10\.\d{4,9}\/[^\s"<>]+/g) || []).map(d => d.replace(/[.,;)\]]+$/, '')));
+  const w = liteTokens(lite.replace(/\b10\.\d{4,9}\/[^\s"<>]+/g, ' ')).filter(t => !/^\d+$/.test(t) && (t.length > 1 || CITE_CJK.test(t)));
+  const sh = [], cnt = new Map();
+  for (let i = 0; i + 4 <= w.length; i++) { const g = w.slice(i, i + 4); const k = g.join(' '); sh.push(g.every(t => BIB_VENUE.has(t)) ? '' : k); cnt.set(k, (cnt.get(k) || 0) + 1); }
+  const uniq = new Set(sh.filter(k => k && cnt.get(k) === 1));
+  const out = { ref, doi, sh, uniq };
+  _bibFp.set(p.id, out);
+  return out;
+}
+// 兩份參考文獻清單大約有幾筆相同：連續 3 組以上的共同字串算一筆，中間斷開 4 組以內仍算同一筆
+function bibShared(a, b) {
+  if (!a.sh.length || !b.sh.length) return 0;
+  const [x, y] = a.sh.length <= b.sh.length ? [a, b] : [b, a];
+  let n = 0, run = 0, gap = 99, open = false;
+  for (const k of x.sh) {
+    if (k && x.uniq.has(k) && y.uniq.has(k)) { run++; gap = 0; if (run === 3 && !open) { n++; open = true; } }
+    else { run = 0; if (++gap > 4) open = false; }
+  }
+  return Math.max(n, [...x.doi].filter(d => y.doi.has(d)).length);
+}
+const bibPair = (a, b) => a < b ? a + '\u0001' + b : b + '\u0001' + a;
+// cpl：書目耦合（共同參考文獻數，取「文獻庫內共同引用」與「參考文獻比對」較大者，是估計值）
+// coc：共被引（目前範圍內同時引用這兩篇的論文數）
+function bibAnalyze(vis) {
+  const ids = new Set(vis.map(p => p.id)), cpl = new Map(), coc = new Map(), fp = new Map(vis.map(p => [p.id, bibPrints(p)]));
+  for (let i = 0; i < vis.length; i++) for (let j = i + 1; j < vis.length; j++) {
+    const A = vis[i], B = vis[j], ca = new Set(A.cites || []);
+    const lib = (B.cites || []).filter(c => ca.has(c) && c !== A.id && c !== B.id).length;
+    const n = Math.max(lib, bibShared(fp.get(A.id), fp.get(B.id)));
+    if (n) cpl.set(bibPair(A.id, B.id), n);
+  }
+  vis.forEach(X => { const cs = [...new Set(X.cites || [])].filter(c => ids.has(c) && c !== X.id);
+    for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) { const k = bibPair(cs[i], cs[j]); coc.set(k, (coc.get(k) || 0) + 1); } });
+  const live = new Set(vis.map(p => p.id)); [..._bibFp.keys()].forEach(id => { if (!live.has(id) && _bibFp.size > 400) _bibFp.delete(id); });
+  return { cpl, coc };
+}
+// 中介中心性（Brandes 演算法，不加權），以 (n-1)(n-2)/2 正規化到 0–1
+function bibBetween(ids, adj) {
+  const bc = new Map(ids.map(v => [v, 0]));
+  ids.forEach(s => {
+    const S = [], P = new Map(ids.map(v => [v, []])), sig = new Map(ids.map(v => [v, 0])), d = new Map(ids.map(v => [v, -1]));
+    sig.set(s, 1); d.set(s, 0); const Q = [s];
+    while (Q.length) { const v = Q.shift(); S.push(v); (adj.get(v) || new Map()).forEach((_, w) => {
+      if (d.get(w) < 0) { Q.push(w); d.set(w, d.get(v) + 1); }
+      if (d.get(w) === d.get(v) + 1) { sig.set(w, sig.get(w) + sig.get(v)); P.get(w).push(v); } }); }
+    const dl = new Map(ids.map(v => [v, 0]));
+    while (S.length) { const w = S.pop(); P.get(w).forEach(v => dl.set(v, dl.get(v) + sig.get(v) / sig.get(w) * (1 + dl.get(w)))); if (w !== s) bc.set(w, bc.get(w) + dl.get(w)); }
+  });
+  const n = ids.length, norm = n > 2 ? (n - 1) * (n - 2) : 1;
+  // 無向圖每對算了兩次，所以除以 (n-1)(n-2) 而不是一半
+  return new Map(ids.map(v => [v, bc.get(v) / norm]));
+}
+// 研究群集：加權標籤傳播（固定順序、同分取較小的標籤，每次結果一樣）
+function bibClusters(ids, adj) {
+  const lab = new Map(ids.map((v, i) => [v, i]));
+  for (let it = 0; it < 30; it++) {
+    let moved = false;
+    ids.forEach(v => { const sc = new Map(); (adj.get(v) || new Map()).forEach((w, u) => { const l = lab.get(u); sc.set(l, (sc.get(l) || 0) + w); });
+      if (!sc.size) return;
+      let best = lab.get(v), bw = sc.get(best) || 0;
+      sc.forEach((w, l) => { if (w > bw + 1e-9 || (Math.abs(w - bw) <= 1e-9 && l < best)) { best = l; bw = w; } });
+      if (best !== lab.get(v)) { lab.set(v, best); moved = true; } });
+    if (!moved) break;
+  }
+  return lab;
+}
+
 // 圖表提示框：數值在前、名稱在後。寬度固定，pos 是中心點在容器裡的比例位置（null 為靠左），
 // 用 clamp 限制在容器內，手機上也不會超出畫面。要放在沒有 opacity 的容器裡，否則會跟著變淡。
 function chartTip(value, label, lines, pos) {
@@ -1767,12 +1900,20 @@ class Component extends DCLogic {
     return { papers: d.papers, links: d.links || [], notes: d.notes || [], qa: d.qa || [], gone: d.gone || [], sel: d.papers[0] && d.papers[0].id,
       layout: this.props.layout || 'reader', tab: 'link', mode: this.props.defaultMode || 'both', folder: '全部', selPara: null, q: '', noteDraft: '', noteEdit: null, draftVer: 0, pen: null, hlPick: null, hlEdit: null, pdfOn: false, pdfPid: null, pdfState: '', pdfErr: '', pdfN: 0, pdfPg: 1, pdfGo: null, pdfZoom: 1, pdfUrl: '', pdfGoPid: null,
       ask: '', asking: false, busy: {}, tAll: null, showAdd: false, showSet: false, keyDraft: '', codeDraft: '', addTab: 'pdf', form: { ...EMPTY_FORM }, pdf: null, pdfStatus: '', importStatus: '',
-      linkTarget: '', linkNote: '', toast: '', toastAct: '', chatLive: '', editMeta: null, intro: !this.lsGet('lunyi-intro-seen'), ef: { kw: true, cite: true, man: true }, tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
+      linkTarget: '', linkNote: '', toast: '', toastAct: '', chatLive: '', editMeta: null, intro: !this.lsGet('lunyi-intro-seen'), ...this.gInitState(), tokenDraft: '', gistDraft: '', syncStatus: '', toastLink: '', aiDraft: 'claude', gemKeyDraft: '', gemModelDraft: '', clientDraft: '', syncTarget: 'drive',
       gUser: null, driveQ: '', driveFiles: [], driveMsg: '', drivePicked: '', planOpen: false, planAt: '', hov: null, kw: '', kwFocus: false, fslots: d.fslots || {},
       projects: [...new Set([...(Array.isArray(d.projects) ? d.projects : []), ...d.papers.flatMap(projOf)])].filter(RESERVED), projAt: d.projAt || {}, projDel: d.projDel || {}, projOpen: d.papers[0] ? { [projOf(d.papers[0])[0] || NOPROJ]: true } : {}, projMeta: d.projMeta && typeof d.projMeta === 'object' ? d.projMeta : {}, projDir: '', newProjDir: '', newProjFor: null, projMenu: null, renameDraft: '', newProjOpen: false, newProj: '',
       sbOpen: matchMedia('(min-width:1100px)').matches, narrow: matchMedia('(max-width:900px)').matches, wide: matchMedia('(min-width:1100px)').matches, acctOpen: false, setTab: 'account', trEngine: '', builtinState: '',
       showLogin: false, loginMsg: '', loginBusy: '', remember: this.lsGet('lunyi-remember') !== '0', claudeModelDraft: '', gemMsg: '', claudeMsg: '', mxCols: null, boot: 'pending', bootSlow: false, bootMsg: '', bootAtStart: false, saveErr: '', storeInfo: null, persistBusy: false, ...this.mxInitState() };
   }
+  // 圖譜的分析方法（開著的連線）、版面、節點指標與顏色記在這台裝置
+  gInitState() {
+    let u = {}; try { u = JSON.parse(this.lsGet('lunyi-graph-ui') || '{}') || {}; } catch (e) {}
+    const ef = { kw: true, cite: true, man: true, cpl: false, coc: false };
+    if (u.ef && typeof u.ef === 'object') Object.keys(ef).forEach(k => { if (typeof u.ef[k] === 'boolean') ef[k] = u.ef[k]; });
+    return { ef, gLayout: u.gLayout === 'hist' ? 'hist' : 'net', gMetric: ['lcs', 'lcr', 'deg', 'btw'].includes(u.gMetric) ? u.gMetric : 'none', gColor: u.gColor === 'clu' ? 'clu' : 'proj', gHelp: false };
+  }
+  gPref(o) { this.setState(o); let cur = {}; try { cur = JSON.parse(this.lsGet('lunyi-graph-ui') || '{}') || {}; } catch (e) {} this.lsSet('lunyi-graph-ui', JSON.stringify({ ...cur, ...o })); }
   // 比較矩陣的畫面狀態；檢視方式、排序、概念來源與匯出選項記在這台裝置
   mxInitState() {
     let u = {}; try { u = JSON.parse(this.lsGet('lunyi-mx-ui') || '{}') || {}; } catch (e) {}
@@ -4829,36 +4970,110 @@ class Component extends DCLogic {
     // 論文很多時節點改成小卡（作者＋年份），完整標題放在提示
     const compact = vis.length > 12;
     const n = vis.length, pos = {};
-    vis.forEach((p, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / Math.max(n, 1); pos[p.id] = n === 1 ? [50, 50] : [50 + 44 * Math.cos(a), 50 + 42 * Math.sin(a)]; });
+    // 書目耦合與共被引要比對參考文獻，結果留著，論文、引用或範圍變了才重算
+    const bibKey = vis.map(p => p.id + ':' + String(p.refText || '').length + ':' + (p.cites || []).join(',')).join('|');
+    if (L === 'graph' && (!this._bib || this._bib.key !== bibKey)) this._bib = { key: bibKey, ...bibAnalyze(vis) };
+    const bib = L === 'graph' ? this._bib : { cpl: new Map(), coc: new Map() };
+    // 第一輪：每一對論文有哪些關係；同時建出「目前開著的連線」組成的網絡，給中心性與群集用
+    const rels = [], adj = new Map(vis.map(p => [p.id, new Map()]));
+    const link = (a, b, w) => { adj.get(a).set(b, (adj.get(a).get(b) || 0) + w); adj.get(b).set(a, (adj.get(b).get(a) || 0) + w); };
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const A = vis[i], B = vis[j], k = bibPair(A.id, B.id);
+      const r = { A, B, shared: A.keywords.filter(kw => B.keywords.map(norm).includes(norm(kw))), man: s.links.find(l => (l.a === A.id && l.b === B.id) || (l.a === B.id && l.b === A.id)),
+        ab: (A.cites || []).includes(B.id), ba: (B.cites || []).includes(A.id), cpl: bib.cpl.get(k) || 0, coc: bib.coc.get(k) || 0 };
+      let w = 0;
+      if (s.ef.kw && r.shared.length) w += r.shared.length;
+      if (s.ef.cite && (r.ab || r.ba)) w += 2;
+      if (s.ef.man && r.man) w += 2;
+      if (s.ef.cpl && r.cpl) w += r.cpl;
+      if (s.ef.coc && r.coc) w += r.coc;
+      if (w) link(A.id, B.id, w);
+      rels.push(r);
+    }
+    const vIds = vis.map(p => p.id), visCited = citedIn(vis);
+    const btw = L === 'graph' && n > 2 ? bibBetween(vIds, adj) : new Map();
+    // 研究群集：兩篇以上的群依大小編號，以群內最常見的關鍵詞命名；只有自己一篇的算「未分群」
+    const lab = L === 'graph' ? bibClusters(vIds, adj) : new Map(), grp = new Map();
+    vIds.forEach(id => { const l = lab.get(id); if (!grp.has(l)) grp.set(l, []); grp.get(l).push(id); });
+    const clusters = [...grp.values()].filter(m => m.length > 1).sort((a, b) => b.length - a.length || vIds.indexOf(a[0]) - vIds.indexOf(b[0])).map((m, i) => {
+      const kc = new Map(); m.forEach(id => [...new Set(this.find(id).keywords.map(norm))].forEach(kw => kc.set(kw, (kc.get(kw) || 0) + 1)));
+      const top = [...kc.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).filter(([, c]) => c > 1 || m.length === 2).slice(0, 2).map(([kw]) => kw);
+      return { i, ids: m, name: `群集 ${i + 1}`, kws: top.join(', ') || '（無共同關鍵詞）', color: i < CAT.length ? CAT[i] : CAT_OTHER };
+    });
+    const cluOf = new Map(); clusters.forEach(c => c.ids.forEach(id => cluOf.set(id, c)));
+    // 版面：網絡圖（圓形，依群集排在一起）或歷史引文圖（依發表年份由左到右）
+    const yearOf = p => +(String(p.year || '').match(/\b(1[5-9]|20)\d\d\b/) || [0])[0];
+    const years = [...new Set(vis.map(yearOf).filter(Boolean))].sort((a, b) => a - b), noYear = vis.some(p => !yearOf(p));
+    const yearTicks = [], hCols = [...years, ...(noYear ? [0] : [])];
+    // 年份超過 3 個時改用小卡，相鄰年份上下錯開，橫向的引用線才不會被卡片蓋住
+    const small = compact || (s.gLayout === 'hist' && hCols.length > 3);
+    if (s.gLayout === 'hist' && n) {
+      const cx = c => hCols.length === 1 ? 50 : 4 + 92 * hCols.indexOf(c) / (hCols.length - 1);
+      hCols.forEach((c, ci) => { const col = vis.filter(p => yearOf(p) === c).sort((a, b) => visCited(b.id) - visCited(a.id) || a.title.localeCompare(b.title));
+        const sh = hCols.length > 1 ? (ci % 2 ? 0.25 : -0.25) : 0;
+        col.forEach((p, k) => { pos[p.id] = [cx(c), Math.min(94, Math.max(6, 8 + 84 * (k + 0.5 + sh) / col.length))]; });
+        yearTicks.push({ x: cx(c) + '%', text: c ? String(c) : '年份不明' }); });
+    } else {
+      const order = s.gColor === 'clu' ? [...vis].sort((a, b) => (cluOf.has(a.id) ? cluOf.get(a.id).i : 1e9) - (cluOf.has(b.id) ? cluOf.get(b.id).i : 1e9) || vIds.indexOf(a.id) - vIds.indexOf(b.id)) : vis;
+      order.forEach((p, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / Math.max(n, 1); pos[p.id] = n === 1 ? [50, 50] : [50 + 44 * Math.cos(a), 50 + 42 * Math.sin(a)]; });
+    }
+    // 第二輪：畫線與標籤
     const edges = [], labels = [];
     const nbr = new Set();
-    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
-      const A = vis[i], B = vis[j], [x1, y1] = pos[A.id], [x2, y2] = pos[B.id];
-      const shared = A.keywords.filter(k => B.keywords.map(norm).includes(norm(k)));
-      const man = s.links.find(l => (l.a === A.id && l.b === B.id) || (l.a === B.id && l.b === A.id));
-      const ab = (A.cites || []).includes(B.id), ba = (B.cites || []).includes(A.id);
+    rels.forEach(({ A, B, shared, man, ab, ba, cpl, coc }) => {
+      const [x1, y1] = pos[A.id], [x2, y2] = pos[B.id];
       const parts = [];
       let color = '#625d55';
       const ls = [];
       if (s.ef.kw && shared.length) { ls.push({ stroke: '#bdb6a9', w: 1 + shared.length * 1.5 }); parts.push(shared.join(', ')); }
       if (s.ef.cite && (ab || ba)) { ls.push({ stroke: '#1d1b18', w: 1.2, dash: '1 4' }); parts.unshift(ab ? `${surname(A)} → ${surname(B)} 引用` : `${surname(B)} → ${surname(A)} 引用`); }
+      if (s.ef.cpl && cpl) { ls.push({ stroke: BIB_CPL, w: 1 + Math.min(cpl, 6) * 0.6, dash: '5 2' }); parts.push(`書目耦合 ${cpl}`); }
+      if (s.ef.coc && coc) { ls.push({ stroke: BIB_COC, w: 1 + Math.min(coc, 6) * 0.6, dash: '2 2' }); parts.push(`共被引 ${coc}`); }
       if (s.ef.man && man) { ls.push({ stroke: ACC, w: 2, dash: '6 4' }); parts.push(man.note); color = 'oklch(0.36 0.09 200)'; }
-      // 同一對論文有兩三種關係時，沿垂直方向平行錯開，不然三種線型疊在一起分不出來
+      // 同一對論文有兩三種關係時，沿垂直方向平行錯開，不然幾種線型疊在一起分不出來
       const len = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / len, ny = (x2 - x1) / len;
       ls.forEach((e, k) => { const o = (k - (ls.length - 1) / 2) * 1.6; edges.push({ ...e, x1: x1 + nx * o, y1: y1 + ny * o, x2: x2 + nx * o, y2: y2 + ny * o }); });
       if (parts.length) {
         const touches = cur && (A.id === cur.id || B.id === cur.id);
         if (touches) { nbr.add(A.id); nbr.add(B.id); }
         if (touches || !cur) { const t = cur && A.id === cur.id ? 0.58 : 0.42; const full = parts.join(' · '), short = parts.length > 1 || full.length > 22 ? (parts[0].length > 22 ? parts[0].slice(0, 21) + '…' : parts[0]) : full;
-          labels.push({ seg: [x1, y1, x2, y2, t].join(','), x: (x1 + (x2 - x1) * t) + '%', y: (y1 + (y2 - y1) * t) + '%', text: s.narrow || compact ? short : full.length > 40 ? full.slice(0, 39) + '…' : full, full, color }); }
+          labels.push({ seg: [x1, y1, x2, y2, t].join(','), x: (x1 + (x2 - x1) * t) + '%', y: (y1 + (y2 - y1) * t) + '%', text: s.narrow || small ? short : full.length > 40 ? full.slice(0, 39) + '…' : full, full, color }); }
       }
-    }
+    });
     const graphSvg = React.createElement('svg', { viewBox: '0 0 100 100', preserveAspectRatio: 'none', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' } },
       edges.map((e, i) => React.createElement('line', { key: i, x1: e.x1, y1: e.y1, x2: e.x2, y2: e.y2, stroke: e.stroke, strokeWidth: e.w, strokeDasharray: e.dash, strokeLinecap: 'round', vectorEffect: 'non-scaling-stroke' })));
-    const visCited = citedIn(vis);
-    const nodes = vis.map(p => { const on = cur && p.id === cur.id; const dim = cur && !on && nbr.size && !nbr.has(p.id), cn = visCited(p.id);
+    // 節點指標：LCS＝本地被引次數、LCR＝本地引用數（HistCite 的說法），度中心性＝相連的論文數
+    const lcr = id => (this.find(id).cites || []).filter(c => c !== id && adj.has(c)).length;
+    const metricOf = id => s.gMetric === 'lcs' ? visCited(id) : s.gMetric === 'lcr' ? lcr(id) : s.gMetric === 'deg' ? adj.get(id).size : s.gMetric === 'btw' ? btw.get(id) || 0 : 0;
+    const mMax = s.gMetric === 'none' ? 0 : Math.max(0, ...vIds.map(metricOf));
+    const mFmt = v => s.gMetric === 'btw' ? v.toFixed(2) : String(v);
+    const mName = { lcs: '被引', lcr: '引用', deg: '連結', btw: '中介' }[s.gMetric] || '';
+    const nodes = vis.map(p => { const on = cur && p.id === cur.id; const dim = cur && !on && nbr.size && !nbr.has(p.id), cn = visCited(p.id), mv = metricOf(p.id), cl = cluOf.get(p.id);
+      const sw = s.gColor === 'clu' ? (cl ? cl.color : CAT_OTHER) : fColor(pKey(p));
       // 「被引 n」用 word joiner 與不換行空白黏在一起，換行時整組移到下一行
-      return { x: pos[p.id][0] + '%', y: pos[p.id][1] + '%', cls: compact ? 'ly-node ly-node-sm' : 'ly-node', full: p.title, aria: `${p.title}（${shortName(p)}）`, title: compact ? shortName(p) : p.title.length > 58 ? p.title.slice(0, 58) + '…' : p.title, meta: `${shortName(p)} · ${projText(p)}${cn ? ` · 被\u2060引\u00a0${cn}` : ''}`, swatch: dim ? '#d6d0c4' : fColor(pKey(p)), bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : dim ? '#8a8479' : '#1d1b18', line: dim ? '#e2ddd3' : '#d6d0c4', onClick: () => { this.open(p.id); if (s.narrow) this.focusSoon(() => { const h = document.querySelector('.ly-side h2'); h && h.scrollIntoView({ block: 'start' }); return null; }); } }; });
+      return { x: pos[p.id][0] + '%', y: pos[p.id][1] + '%', cls: small ? 'ly-node ly-node-sm' : 'ly-node', full: p.title, aria: `${p.title}（${shortName(p)}）${mName ? `，${mName} ${mFmt(mv)}` : ''}`, title: small ? shortName(p) : p.title.length > 58 ? p.title.slice(0, 58) + '…' : p.title,
+        meta: `${shortName(p)} · ${s.gColor === 'clu' ? (cl ? cl.name : '未分群') : projText(p)}${cn && s.gMetric !== 'lcs' ? ` · 被⁠引 ${cn}` : ''}`, swatch: dim ? '#d6d0c4' : sw, bg: on ? '#1d1b18' : '#fff', color: on ? '#faf9f6' : dim ? '#8a8479' : '#1d1b18', line: dim ? '#e2ddd3' : '#d6d0c4',
+        hasBar: s.gMetric !== 'none', barW: (mMax ? Math.max(4, mv / mMax * 100) : 4) + '%', barText: `${mName} ${mFmt(mv)}`, barColor: on ? '#faf9f6' : dim ? '#bdb6a9' : '#1d1b18',
+        onClick: () => { this.open(p.id); if (s.narrow) this.focusSoon(() => { const h = document.querySelector('.ly-side h2'); h && h.scrollIntoView({ block: 'start' }); return null; }); } }; });
+    // 右側面板：目前這篇的指標與最強的書目耦合／共被引
+    const bibTop = m => cur && adj.has(cur.id) ? [...m.entries()].map(([k, v]) => { const [a, b] = k.split('\u0001'); return a === cur.id ? [b, v] : b === cur.id ? [a, v] : null; }).filter(Boolean)
+      .sort((a, b) => b[1] - a[1]).slice(0, 4).map(([id, v]) => { const o = this.find(id); return { title: `${shortName(o)} · ${o.title.length > 30 ? o.title.slice(0, 30) + '…' : o.title}`, n: String(v), onOpen: () => this.open(id) }; }) : [];
+    const bibCur = cur && adj.has(cur.id) ? [
+      { k: '本地被引（LCS）', v: String(visCited(cur.id)), t: '目前範圍內有幾篇論文引用這篇' },
+      { k: '本地引用（LCR）', v: String(lcr(cur.id)), t: '這篇引用了目前範圍內的幾篇論文' },
+      { k: '度中心性', v: String(adj.get(cur.id).size), t: '用目前開著的連線，和幾篇論文相連' },
+      { k: '中介中心性', v: (btw.get(cur.id) || 0).toFixed(2), t: '其他論文之間的最短路徑有多少比例經過這篇（0–1），越高越像跨主題的橋樑' },
+      { k: '研究群集', v: cluOf.has(cur.id) ? cluOf.get(cur.id).name : '未分群', t: cluOf.has(cur.id) ? `主題：${cluOf.get(cur.id).kws}` : '和其他論文的連結不足以分群' }
+    ] : [];
+    const METHODS = [
+      ['all', '綜合', { kw: true, cite: true, man: true, cpl: false, coc: false }, '同時看共同關鍵詞、直接引用與手動串聯，是一般瀏覽用的總覽。'],
+      ['cite', '直接引用', { kw: false, cite: true, man: false, cpl: false, coc: false }, '直接引用（citation）：A 的參考文獻列了 B，代表知識由 B 流向 A。搭配「歷史引文圖」版面可看出概念的傳承順序（Garfield 的 HistCite）。'],
+      ['cpl', '書目耦合', { kw: false, cite: false, man: false, cpl: true, coc: false }, '書目耦合（bibliographic coupling，Kessler 1963）：兩篇論文引用了相同的文獻，共同參考文獻越多、線越粗，研究取向越接近。論文一發表就能計算，適合找研究前沿。數字是比對參考文獻得到的估計值。'],
+      ['coc', '共被引', { kw: false, cite: false, man: false, cpl: false, coc: true }, '共被引（co-citation，Small 1973）：兩篇論文同時被第三篇引用，被一起引用的次數越多越相關，反映學界怎麼把它們放在一起看，適合找知識基礎。這裡只計算文獻庫目前範圍內的施引論文。'],
+      ['kw', '關鍵詞共現', { kw: true, cite: false, man: false, cpl: false, coc: false }, '關鍵詞共現（co-word analysis）：兩篇論文有相同的關鍵詞，共同的詞越多、線越粗，用來看文獻庫的主題結構。']
+    ];
+    const cplTop = bibTop(bib.cpl), cocTop = bibTop(bib.coc);
+    const efOf = s.ef, mNow = METHODS.find(([, , e]) => Object.keys(e).every(k => !!efOf[k] === e[k]));
 
     // 1d 總覽：所有數字都以目前的專案範圍與搜尋計算，彼此一致
     const ids = new Set(filtered.map(p => p.id));
@@ -4883,7 +5098,7 @@ class Component extends DCLogic {
         aria: `${p.title}：已譯 ${done}/${tot} 段，螢光 ${p.paras.filter(x => x.hl).length}、筆記 ${s.notes.filter(x => x.paperId === p.id).length}、被引 ${dashCited(p.id)}。在閱讀器開啟`,
         hl: String(p.paras.filter(x => x.hl).length), notes: String(s.notes.filter(x => x.paperId === p.id).length), cited: String(dashCited(p.id)), onClick: () => this.open(p.id, 'reader') }; });
     // 關閉的連線類型：灰字、刪除線、線條變淡，看得出是「關」
-    const efBtn = (k, label, swatch, dash) => ({ label, swatch, dash, bg: s.ef[k] ? '#fff' : 'transparent', line: s.ef[k] ? '#1d1b18' : '#d6d0c4', color: s.ef[k] ? '#1d1b18' : '#625d55', deco: s.ef[k] ? 'none' : 'line-through', op: s.ef[k] ? 1 : 0.35, pressed: String(!!s.ef[k]), title: `${s.ef[k] ? '隱藏' : '顯示'}${label}的連線`, onClick: () => this.setState(st => ({ ef: { ...st.ef, [k]: !st.ef[k] } })) });
+    const efBtn = (k, label, swatch, dash) => ({ label, swatch, dash, bg: s.ef[k] ? '#fff' : 'transparent', line: s.ef[k] ? '#1d1b18' : '#d6d0c4', color: s.ef[k] ? '#1d1b18' : '#625d55', deco: s.ef[k] ? 'none' : 'line-through', op: s.ef[k] ? 1 : 0.35, pressed: String(!!s.ef[k]), title: `${s.ef[k] ? '隱藏' : '顯示'}${label}的連線`, onClick: () => this.gPref({ ef: { ...s.ef, [k]: !s.ef[k] } }) });
 
     const cut = (t, n) => (t = String(t || '').replace(/\s+/g, ' ').trim(), t.length > n ? t.slice(0, n - 1) + '…' : t);
     const curNotes = cur ? s.notes.filter(x => x.paperId === cur.id).map(x => { const editing = s.noteEdit === x.id, where = x.para != null ? `第 ${x.para + 1} 段` : '整篇論文', ex = cut(x.text, 16);
@@ -5094,7 +5309,19 @@ class Component extends DCLogic {
       graphSvg, nodes, edgeLabels: labels,
       graphEmpty: L === 'graph' && !vis.length,
       graphEmptyText: ql || s.kw ? '沒有符合目前搜尋或關鍵詞的論文，清除篩選後就會畫出圖譜。' : !s.papers.length ? '文獻庫是空的，新增論文後這裡會畫出論文之間的關聯。' : `「${s.folder === '全部' ? '全部論文' : s.folder}」還沒有論文，加入論文後這裡會畫出它們之間的關聯。`,
-      edgeFilters: [efBtn('kw', '共同關鍵詞', '#bdb6a9', 'solid'), efBtn('cite', '引用', '#1d1b18', 'dotted'), efBtn('man', '手動串聯', ACC, 'dashed')],
+      edgeFilters: [efBtn('kw', '共同關鍵詞', '#bdb6a9', 'solid'), efBtn('cite', '引用', '#1d1b18', 'dotted'), efBtn('cpl', '書目耦合', BIB_CPL, 'dashed'), efBtn('coc', '共被引', BIB_COC, 'dotted'), efBtn('man', '手動串聯', ACC, 'dashed')],
+      methodBtns: METHODS.map(([k, label, e]) => { const on = !!mNow && mNow[0] === k; return { label, pressed: String(on), bg: on ? '#fff' : 'transparent', color: on ? '#1d1b18' : '#625d55', onClick: () => this.gPref({ ef: { ...e } }) }; }),
+      methodDesc: mNow ? mNow[3] : '自訂：用下面的開關自行組合要看的連線。',
+      layoutBtns: [['net', '網絡圖'], ['hist', '歷史引文圖']].map(([k, label]) => { const on = s.gLayout === k; return { label, pressed: String(on), bg: on ? '#fff' : 'transparent', color: on ? '#1d1b18' : '#625d55', onClick: () => this.gPref({ gLayout: k }) }; }),
+      layoutDesc: s.gLayout === 'hist' ? '歷史引文圖：論文依發表年份由左（早）到右（晚）排列，同一年裡被引次數多的在上面；引用連線由右指向左，就是知識傳承的方向。' : '',
+      gMetric: s.gMetric, onGMetric: e => this.gPref({ gMetric: e.target.value }),
+      gColor: s.gColor, onGColor: e => this.gPref({ gColor: e.target.value }),
+      yearTicks, hasYearTicks: L === 'graph' && s.gLayout === 'hist' && !!n,
+      cluLegend: s.gColor === 'clu' ? [...clusters.slice(0, CAT.length).map(c => ({ color: c.color, text: `${c.name}（${c.ids.length} 篇）· ${c.kws}` })),
+        ...(clusters.length > CAT.length || vIds.some(id => !cluOf.has(id)) ? [{ color: CAT_OTHER, text: `${clusters.length > CAT.length ? `其他 ${clusters.length - CAT.length} 個群集與` : ''}未分群（${vIds.filter(id => !cluOf.has(id) || cluOf.get(id).i >= CAT.length).length} 篇）` }] : [])] : [],
+      hasCluLegend: s.gColor === 'clu' && L === 'graph' && !!n,
+      bibCur, hasBibCur: !!bibCur.length, cplTop, cocTop, hasCplTop: !!cplTop.length, hasCocTop: !!cocTop.length, noBibPair: !!bibCur.length && !cplTop.length && !cocTop.length,
+      gHelp: s.gHelp, toggleGHelp: () => this.setState(st => ({ gHelp: !st.gHelp })), gHelpLabel: s.gHelp ? '收起說明' : '這些指標是什麼？',
       openInReader: () => cur && (cur.id !== s.sel || !inScope(cur)) ? this.open(cur.id, 'reader', s.selFrom) : this.setState({ layout: 'reader', hov: null }),
       askAbout: () => cur && this.submitAsk(`用三點摘要「${cur.title}」，並說明它和文獻庫中其他論文的關係。`),
       ...(() => { const qs = s.qa.filter(x => (x.proj || '全部') === s.folder); return { qa: qs.map(x => ({ q: x.q, segs: this.segs(x.a) })), qaEmpty: !qs.length && !s.asking }; })(), asking: s.asking, askingText: !s.asking || (s.askScope || '全部') === s.folder ? '正在翻閱文獻庫…' : `AI 正在回答「${this.scopeName(s.askScope)}」的問題，回答會留在那裡的對話。`,
