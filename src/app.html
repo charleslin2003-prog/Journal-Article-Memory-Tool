@@ -76,6 +76,8 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 .ly-mxcard[data-st="ai"],.ly-mxcard[data-st="na-ai"]{border:1px dashed oklch(0.45 0.1 200)}
 .ly-mxcard[data-st="warn"]{border:1px dashed #7a2e12;background:#fbeee6}
 .ly-mxcard[aria-expanded="true"]{box-shadow:inset 0 0 0 2px #1d1b18}
+.ly-relcard:has(>button:hover){border-color:#1d1b18!important}
+.ly-linkdel{min-width:24px;min-height:24px}
 @media (max-width:900px){
 .ly-mx{padding:16px 14px 48px!important}
 .ly-mx button,.ly-mx select,.ly-mx summary{min-height:40px}
@@ -84,6 +86,7 @@ button:focus-visible,a:focus-visible{outline:2px solid oklch(0.45 0.1 200);outli
 .ly-pdfbar button,.ly-pdfbar a{min-height:40px}
 .ly-pdfbar{top:var(--ly-toph,96px)!important}.ly-pdfpage{scroll-margin-top:118px!important}
 .ly-notecard button,.ly-draftcard button{min-height:40px;padding:0 12px!important}.ly-notebtns{gap:6px!important}
+.ly-linkdel{min-height:40px;min-width:44px;padding:0 10px!important;align-self:center}
 .ly-mxfill{flex:1 1 100%;flex-wrap:wrap!important}.ly-mxfill button{flex:1 1 auto}
 .ly-root{display:block!important;height:auto!important;min-height:100vh}
 .ly-sb{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);z-index:30;transform:translateX(-105%);transition:transform .2s ease;box-shadow:0 0 40px rgba(0,0,0,0.18)}
@@ -413,15 +416,19 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
                 <button class="ly-recite" sc-camel-on-click="{{ reciteAll }}" aria-disabled="{{ recitingOff }}" aria-describedby="lunyi-cite-note" style="align-self:flex-start;border:1px solid #d6d0c4;background:#fff;padding:5px 12px;border-radius:5px;font-size:12px">{{ reciteLabel }}</button>
               </div>
               <div style="display:flex;flex-direction:column;gap:8px;border-top:1px solid #e2ddd3;padding-top:14px">
-                <div style="font-size:12px;font-weight:500">主題相關</div>
+                <div id="lunyi-rel-h" tabindex="-1" style="font-size:12px;font-weight:500;outline:none">主題相關與手動串聯</div>
                 <sc-for list="{{ related }}" as="r" hint-placeholder-count="2">
-                  <button sc-camel-on-click="{{ r.onOpen }}" style="text-align:left;border:1px solid #e2ddd3;background:#fff;border-radius:6px;padding:10px 11px;display:flex;flex-direction:column;gap:6px" style-hover="border-color:#1d1b18">
-                    <span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.4">{{ r.title }}</span>
-                    <sc-if value="{{ r.hasShared }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">共同 · {{ r.shared }}</span></sc-if>
-                    <sc-if value="{{ r.hasManual }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;line-height:1.55;color:oklch(0.36 0.09 200);background:oklch(0.95 0.025 200);padding:5px 8px;border-radius:4px">{{ r.manual }}</span></sc-if>
-                  </button>
+                  <div class="ly-relcard" style="border:1px solid #e2ddd3;background:#fff;border-radius:6px;display:flex;flex-direction:column">
+                    <button sc-camel-on-click="{{ r.onOpen }}" style="text-align:left;border:0;background:none;padding:10px 11px;display:flex;flex-direction:column;gap:6px">
+                      <span style="font-family:'Noto Serif TC',serif;font-size:13px;font-weight:600;line-height:1.4">{{ r.title }}</span>
+                      <sc-if value="{{ r.hasShared }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">共同 · {{ r.shared }}</span></sc-if>
+                    </button>
+                    <sc-if value="{{ r.hasManual }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-direction:column;gap:6px;padding:0 11px 10px">
+                      <sc-for list="{{ r.mans }}" as="mn" hint-placeholder-count="1"><div style="display:flex;align-items:baseline;gap:8px;font-size:12px;line-height:1.55;color:oklch(0.36 0.09 200);background:oklch(0.95 0.025 200);padding:5px 8px;border-radius:4px"><span style="flex:1;min-width:0;overflow-wrap:anywhere">{{ mn.note }}</span><button class="ly-linkdel" data-lk="{{ mn.key }}" sc-camel-on-click="{{ mn.onDel }}" aria-label="{{ mn.delAria }}" style="border:0;background:none;padding:0;font-size:11px;color:#625d55;flex-shrink:0">刪除</button></div></sc-for>
+                    </div></sc-if>
+                  </div>
                 </sc-for>
-                <sc-if value="{{ noRelated }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55">尚無共同關鍵詞的論文。</div></sc-if>
+                <sc-if value="{{ noRelated }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55">尚無共同關鍵詞或手動串聯的論文。</div></sc-if>
               </div>
               <div style="border-top:1px solid #e2ddd3;padding-top:14px;display:flex;flex-direction:column;gap:8px">
                 <div style="font-size:12px;font-weight:500">手動串聯</div>
@@ -511,8 +518,8 @@ button[aria-label="開啟側欄"]{width:44px!important;height:44px!important}
             <div style="display:flex;flex-direction:column;gap:6px"><div style="font-size:12px;font-weight:500">被引用 {{ citedByCount }}</div><sc-for list="{{ citedBy }}" as="c" hint-placeholder-count="1"><button sc-camel-on-click="{{ c.onOpen }}" style="text-align:left;border:0;background:none;padding:0;font-size:12px;line-height:1.45;text-decoration:underline;text-decoration-color:#bdb6a9">{{ c.short }}</button></sc-for></div>
           </div>
           <div style="border-top:1px solid #e2ddd3;padding-top:14px;display:flex;flex-direction:column;gap:8px">
-            <div style="font-size:12px;font-weight:500">主題相關與手動串聯</div>
-            <sc-for list="{{ related }}" as="r" hint-placeholder-count="2"><button sc-camel-on-click="{{ r.onOpen }}" style="text-align:left;border:0;background:none;padding:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;line-height:1.45;text-decoration:underline;text-decoration-color:#bdb6a9">{{ r.title }}</span><sc-if value="{{ r.hasShared }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">共同 · {{ r.shared }}</span></sc-if><sc-if value="{{ r.hasManual }}" hint-placeholder-val="{{ false }}"><span style="font-size:12px;line-height:1.55;color:oklch(0.36 0.09 200)">{{ r.manual }}</span></sc-if></button></sc-for>
+            <div id="lunyi-grel-h" tabindex="-1" style="font-size:12px;font-weight:500;outline:none">主題相關與手動串聯</div>
+            <sc-for list="{{ related }}" as="r" hint-placeholder-count="2"><div style="display:flex;flex-direction:column;gap:3px"><button sc-camel-on-click="{{ r.onOpen }}" style="text-align:left;border:0;background:none;padding:0;display:flex;flex-direction:column;gap:3px"><span style="font-size:12px;line-height:1.45;text-decoration:underline;text-decoration-color:#bdb6a9">{{ r.title }}</span><sc-if value="{{ r.hasShared }}" hint-placeholder-val="{{ true }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#625d55">共同 · {{ r.shared }}</span></sc-if></button><sc-for list="{{ r.mans }}" as="mn" hint-placeholder-count="0"><div style="display:flex;align-items:baseline;gap:8px;font-size:12px;line-height:1.55;color:oklch(0.36 0.09 200)"><span style="flex:1;min-width:0;overflow-wrap:anywhere">{{ mn.note }}</span><button class="ly-linkdel" data-lk="{{ mn.key }}" sc-camel-on-click="{{ mn.onDel }}" aria-label="{{ mn.delAria }}" style="border:0;background:none;padding:0;font-size:11px;color:#625d55;flex-shrink:0">刪除</button></div></sc-for></div></sc-for>
             <sc-if value="{{ noRelated }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#625d55">尚無共同關鍵詞或手動串聯的論文。</div></sc-if>
           </div>
           <div style="border-top:1px solid #e2ddd3;padding-top:14px;display:flex;flex-direction:column;gap:12px">
@@ -1741,6 +1748,22 @@ function recommend(name, dir, papers, links, n = 3) {
     return { p, score, why: why.slice(0, 3) };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score || String(b.p.year).localeCompare(String(a.p.year))).slice(0, n);
 }
+// 手動串聯的識別：兩篇論文（不分順序）＋理由，和合併時去重複的規則一樣
+const linkSig = l => [String(l.a), String(l.b)].sort().join('|') + '|' + l.note;
+// 刪除串聯時在 gone 記一筆「link:刪除時間:識別」：刪除當下或更早建立的同一條串聯（包括別台裝置上的）不會被同步或匯入加回來；
+// 之後重新建立的串聯 at 比較晚，照常保留。舊資料的串聯沒有 at，當作很早以前建立的
+function linkDels(gone) {
+  const m = new Map();
+  (gone || []).forEach(g => { if (typeof g !== 'string' || !g.startsWith('link:')) return; const i = g.indexOf(':', 5), t = Number(g.slice(5, i)); if (i > 5 && t > 0 && !(m.get(g.slice(i + 1)) >= t)) m.set(g.slice(i + 1), t); });
+  return m;
+}
+// 還算數的手動串聯：兩篇都還在，也沒有在建立之後被刪除
+function liveLinks(links, gone) {
+  const g = gone instanceof Set ? gone : new Set(Array.isArray(gone) ? gone : []), del = linkDels(g);
+  return (Array.isArray(links) ? links : []).filter(l => l && l.a && l.b && !g.has(l.a) && !g.has(l.b) && !(del.get(linkSig(l)) >= (Number(l.at) || 0)));
+}
+// 新建立（或復原）串聯的時間：要晚於已知的刪除紀錄。別台裝置時鐘比較快時，刪除紀錄的時間可能比這台的現在還晚
+const linkAt = (l, gone) => Math.max(Date.now(), (linkDels(gone).get(linkSig(l)) || 0) + 1);
 // 專案裡可以串聯的論文：有共同關鍵詞或引用、但還沒有手動串聯
 function suggestLinks(name, papers, links, n = 4) {
   const mine = papers.filter(p => projOf(p).includes(name)), out = [];
@@ -1965,7 +1988,7 @@ class Component extends DCLogic {
     (Array.isArray(d.papers) ? d.papers : []).filter(p => p && p.id != null && typeof p.title === 'string' && Array.isArray(p.paras))
       .map(p => withMx(fromStore({ ...p, id: String(p.id), keywords: Array.isArray(p.keywords) ? p.keywords : [], cites: Array.isArray(p.cites) ? p.cites : [] })))
       .forEach(p => { if (!seen.has(p.id)) { seen.add(p.id); papers.push(p); } });
-    const o = { papers, links: Array.isArray(d.links) ? d.links : [], notes: Array.isArray(d.notes) ? d.notes : [], qa: Array.isArray(d.qa) ? d.qa : [], gone: Array.isArray(d.gone) ? d.gone : [], fslots: d.fslots && typeof d.fslots === 'object' ? d.fslots : {},
+    const o = { papers, links: liveLinks(d.links, d.gone), notes: Array.isArray(d.notes) ? d.notes : [], qa: Array.isArray(d.qa) ? d.qa : [], gone: Array.isArray(d.gone) ? d.gone : [], fslots: d.fslots && typeof d.fslots === 'object' ? d.fslots : {},
       projects: [...new Set([...(Array.isArray(d.projects) ? d.projects : []), ...papers.flatMap(projOf)])].filter(RESERVED), projAt: d.projAt || {}, projDel: d.projDel || {}, projMeta: d.projMeta && typeof d.projMeta === 'object' ? d.projMeta : {}, mxCols: validMxCols(d.mxCols) };
     if (first) { o.sel = papers[0] && papers[0].id; o.projOpen = papers[0] ? { [projOf(papers[0])[0] || NOPROJ]: true } : {}; }
     return o;
@@ -2609,6 +2632,22 @@ class Component extends DCLogic {
           if (it.wasEd) this.editNote(it.nid); }));
     });
   }
+  // 刪除手動串聯可以復原：同一對論文、同樣理由的一起拿掉，gone 記下刪除時間；復原時用新的建立時間放回去，舊的刪除紀錄留著也不會擋到
+  deleteLink(l, ev) {
+    if (ev && ev.detail > 1) return;
+    const k = linkSig(l), same = this.state.links.filter(x => linkSig(x) === k), at = this.state.links.findIndex(x => linkSig(x) === k); if (at < 0) return;
+    // 刪除時間不早於要刪的串聯（別台時鐘比較快時建立的 at 可能在未來），否則那台的副本下次同步又會回來
+    const t = Math.max(Date.now(), ...same.map(x => Number(x.at) || 0));
+    this.setState(st => ({ links: st.links.filter(x => linkSig(x) !== k), gone: [...st.gone, `link:${t}:${k}`] }), () => this.focusSoon(() => document.querySelector('#lunyi-rel-h') || document.querySelector('#lunyi-grel-h')));
+    // 連續刪幾條：「復原」一次全部找回來
+    const chain = this._linkDels && Date.now() < (this._linkDelUntil || 0) && this._toastFn === this._linkDelFn, list = chain ? this._linkDels : (this._linkDels = []);
+    list.push({ l, at }); this._linkDelUntil = Date.now() + 8000;
+    this.toastGo(list.length > 1 ? `已刪除 ${list.length} 條串聯` : '已刪除串聯', '復原', this._linkDelFn = () => {
+      this._linkDelUntil = 0; const back = list.splice(0).filter(it => this.find(it.l.a) && this.find(it.l.b)); if (!back.length) return;
+      this.setState(st => { const ls = [...st.links]; [...back].reverse().forEach(it => { if (!ls.some(x => linkSig(x) === linkSig(it.l))) ls.splice(Math.min(it.at, ls.length), 0, { ...it.l, at: linkAt(it.l, st.gone) }); }); return { links: ls }; },
+        () => this.focusSoon(() => [...document.querySelectorAll('button.ly-linkdel')].find(b => b.dataset.lk === linkSig(back[0].l))));
+    });
+  }
   // 改完回到開始修改的地方：從段落下方點進來的回到那則筆記，從筆記面板來的回到「編輯」
   editBack(id) { const inl = this._editFrom === id; this._editFrom = null; this.focusSoon(inl ? `.ly-noteline[data-nid="${id}"]` : `button.ly-noteeditbtn[data-nid="${id}"]`); }
   saveEdit(id) {
@@ -2691,7 +2730,7 @@ class Component extends DCLogic {
     this.setState({ showSet: false });
     this.toast(`已匯入 ${n} 篇論文`);
   }
-  // 合併外部資料：同一篇以外部為準；gone 記錄已刪除的論文與筆記 id，避免同步時被別台裝置加回來。
+  // 合併外部資料：同一篇以外部為準；gone 記錄已刪除的論文與筆記 id（還有刪除的串聯，見 linkDels），避免同步時被別台裝置加回來。
   mergeData(d, o = {}) {
     const base = o.base;
     if (!this._ready || this._boot === 'down') { if (!o.quiet) this.toast('文獻庫還在開啟中，請稍後再試'); return 0; }
@@ -2715,9 +2754,9 @@ class Component extends DCLogic {
         return l && JSON.stringify(l) === JSON.stringify(q) ? l : q; });
       const ids = new Set(inc.map(p => p.id));
       const papers = [...st.papers.filter(p => !ids.has(p.id)), ...inc].filter(p => !gone.has(p.id)).map(p => (p.cites || []).some(c => gone.has(c)) ? { ...p, cites: p.cites.filter(c => !gone.has(c)) } : p);
-      const lk = l => [l.a, l.b].sort().join('|') + '|' + l.note;
-      const links = [...st.links]; const seen = new Set(links.map(lk));
-      (d.links || []).forEach(l => { if (l && l.a && l.b && !seen.has(lk(l))) { seen.add(lk(l)); links.push(l); } });
+      // 先拿掉已刪除的串聯再去重複：別台裝置刪掉後又重新建立的，不會因為和這台的舊副本重複而被丟掉
+      const links = liveLinks(st.links, gone), seen = new Set(links.map(linkSig));
+      liveLinks(d.links, gone).forEach(l => { if (!seen.has(linkSig(l))) { seen.add(linkSig(l)); links.push(l); } });
       const nid = new Set(st.notes.map(n => n.id)), nin = new Map((d.notes || []).filter(n => n && n.id && n.paperId && typeof n.text === 'string').map(n => [n.id, n]));
       const notes = [...st.notes.map(n => { const r = nin.get(n.id); return r && (Number(r.at) || 0) > (Number(n.at) || 0) ? r : n; }), ...[...nin.values()].filter(n => !nid.has(n.id))].filter(n => !gone.has(n.id) && !gone.has(n.paperId));
       const qa = [...st.qa, ...(d.qa || []).filter(x => x && x.q && !st.qa.some(y => y.q === x.q && y.a === x.a))];
@@ -2740,9 +2779,9 @@ class Component extends DCLogic {
       const ms = st.mxSel;
       if (ms) { const np = papers.find(p => p.id === ms.pid), lp = local.get(ms.pid), nc = np && np.mx && np.mx[ms.c], oc = lp && lp.mx && lp.mx[ms.c];
         if (nc !== oc && (nc && nc.at) !== (oc && oc.at) && !this.mxHasDraft(ms.pid + ':' + ms.c)) { this._mxVer = (this._mxVer || 0) + 1; mxo = { mxEv: nc && Array.isArray(nc.ev) ? nc.ev.map(e => ({ ...e })) : [], mxSug: null }; } }
-      const links2 = links.filter(l => !gone.has(l.a) && !gone.has(l.b)), same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
-      if (same(papers, st.papers) && same(links2, st.links) && same(notes, st.notes) && same(qa, st.qa) && gone.size === st.gone.length && same(projects, st.projects || []) && JSON.stringify(projAt) === JSON.stringify(st.projAt || {}) && JSON.stringify(projDel) === JSON.stringify(st.projDel || {}) && JSON.stringify(projMeta) === JSON.stringify(st.projMeta || {}) && mxCols === st.mxCols) { changed = false; return { ...mxo }; }
-      return { papers, links: links2, notes, qa, gone: [...gone], sel, projects, projAt, projDel, projMeta, mxCols, ...mxo };
+      const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+      if (same(papers, st.papers) && same(links, st.links) && same(notes, st.notes) && same(qa, st.qa) && gone.size === st.gone.length && same(projects, st.projects || []) && JSON.stringify(projAt) === JSON.stringify(st.projAt || {}) && JSON.stringify(projDel) === JSON.stringify(st.projDel || {}) && JSON.stringify(projMeta) === JSON.stringify(st.projMeta || {}) && mxCols === st.mxCols) { changed = false; return { ...mxo }; }
+      return { papers, links, notes, qa, gone: [...gone], sel, projects, projAt, projDel, projMeta, mxCols, ...mxo };
     }, () => { if (o.sync) this.persistSynced(); if (o.done) o.done(changed); });
     return inc0.length;
   }
@@ -4725,7 +4764,7 @@ class Component extends DCLogic {
     const recs = recommend(nm, dir, s.papers, s.links).map(({ p, why }) => ({ title: p.title, meta: `${surname(p)} · ${p.journal} ${p.year}`, why, joinLabel: `把「${p.title}」加入「${nm}」`,
       onJoin: () => this.joinProj(p.id, nm), onOpen: () => this.open(p.id, 'reader') }));
     const links = suggestLinks(nm, s.papers, s.links).map(({ a, b, note }) => ({ a: a.title, b: b.title, note,
-      onAdd: () => { this.setState(st => ({ links: [...st.links, { a: a.id, b: b.id, note }] })); this.toast('已加入串聯'); } }));
+      onAdd: () => { this.setState(st => { const l = { a: a.id, b: b.id, note }; return { links: [...st.links, { ...l, at: linkAt(l, st.gone) }] }; }); this.toast('已加入串聯'); } }));
     // 搜尋詞：研究方向優先；沒填就用專案論文最常見的關鍵詞
     const kwc = {};
     mine.forEach(p => p.keywords.forEach(k => { const n = norm(k); kwc[n] = (kwc[n] || 0) + 1; }));
@@ -5079,12 +5118,17 @@ class Component extends DCLogic {
       cites, citedBy, citesCount: cites.length, citedByCount: citedBy.length,
       citeHint: cur && citeStrong(cur) ? '引用是拿參考文獻去比對論憶裡其他論文的標題、DOI 與 arXiv 編號，只會連到已經在論憶裡的論文。' : '這篇沒有找到「References／參考文獻」段落，改用全文比對，可能會漏掉；只會連到已經在論憶裡的論文。',
       reciteLabel: s.reciting ? '比對中…' : '重新比對整個文獻庫的引用', recitingOff: String(!!s.reciting), reciteAll: () => { if (!s.reciting) this.reciteAll(true); },
-      related: rel.map(r => ({ title: r.o.title, hasShared: r.shared.length > 0, shared: r.shared.join(', '), hasManual: r.man.length > 0, manual: r.man.map(m => m.note).join('；'), onOpen: () => this.open(r.o.id) })),
+      related: rel.map(r => ({ title: r.o.title, hasShared: r.shared.length > 0, shared: r.shared.join(', '), hasManual: r.man.length > 0,
+        // 連按兩次（例如刪除串聯後下一張卡片移到滑鼠下）的第二下不換論文
+        onOpen: e => { if (e && e.detail > 1) return; this.open(r.o.id); },
+        mans: r.man.map(m => { const nt = m.note == null || m.note === '' ? '手動串聯' : String(m.note); return { note: nt, key: linkSig(m), delAria: `刪除和「${r.o.title}」的手動串聯：${nt}`, onDel: e => this.deleteLink(m, e) }; }) })),
       noRelated: !rel.length,
       linkTarget: s.linkTarget, onLinkTarget: e => this.setState({ linkTarget: e.target.value }),
       linkNote: s.linkNote, onLinkNote: e => this.setState({ linkNote: e.target.value }),
       linkOptions: s.papers.filter(p => cur && p.id !== cur.id).map(p => ({ id: p.id, title: `${shortName(p)} · ${p.title}` })),
-      addLink: () => { if (!cur || !s.linkTarget) return this.toast('請選擇要串聯的論文'); this.setState(st => ({ links: [...st.links, { a: cur.id, b: st.linkTarget, note: st.linkNote.trim() || '手動串聯' }], linkTarget: '', linkNote: '' })); this.toast('已建立連結'); },
+      addLink: () => { if (!cur || !s.linkTarget) return this.toast('請選擇要串聯的論文'); const l = { a: cur.id, b: s.linkTarget, note: s.linkNote.trim() || '手動串聯' };
+        if (s.links.some(x => linkSig(x) === linkSig(l))) return this.toast('這兩篇已經有同樣理由的串聯了');
+        this.setState(st => ({ links: [...st.links, { ...l, at: linkAt(l, st.gone) }], linkTarget: '', linkNote: '' })); this.toast('已建立連結'); },
       hasSelPara: s.selPara != null && !!cur, noSelPara: s.selPara == null || !cur,
       selParaNum: s.selPara != null ? s.selPara + 1 : '', selParaText: cur && s.selPara != null && cur.paras[s.selPara] ? (cur.paras[s.selPara].zh || cur.paras[s.selPara].en) : '',
       onNoteDraft: e => this.setDraft(this._draftKeyNow, e.target.value),
